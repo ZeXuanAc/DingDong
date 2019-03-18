@@ -1,16 +1,13 @@
-package com.zxac.service.impl;
+package com.zxac.service;
 
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.zxac.dao.UserMapper;
 import com.zxac.model.User;
-import com.zxac.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 @Service(interfaceClass = UserService.class)
