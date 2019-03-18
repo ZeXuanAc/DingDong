@@ -11,8 +11,11 @@
     </parent>
 
     <artifactId>dingdong-api</artifactId>
+    <packaging>jar</packaging>
     <name>dingdong-api</name>
-    <description>Demo project for Spring Boot</description>
+    <description>dingdong-api</description>
+    <version>0.0.1-SNAPSHOT</version>
+
 
 
     <dependencies>
@@ -25,16 +28,13 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
     </dependencies>
 
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
