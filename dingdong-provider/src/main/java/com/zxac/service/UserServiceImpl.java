@@ -26,7 +26,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllUserByMysql() {
-        return userMapper.selectAll();
+        List<User> userList = userMapper.selectAll();
+        System.out.println(userList);
+        return userList;
     }
 
 
