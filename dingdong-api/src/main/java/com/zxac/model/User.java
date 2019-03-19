@@ -1,11 +1,13 @@
 package com.zxac.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.Date;
 
 
+@ToString
 public class User implements Serializable {
 
     private Integer id;
