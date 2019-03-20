@@ -16,6 +16,7 @@
         <module>dingdong-api</module>
         <module>dingdong-consumer</module>
         <module>dingdong-provider</module>
+        <module>dingdong-original-provider</module>
     </modules>
 
     <properties>
