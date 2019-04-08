@@ -9,13 +9,60 @@ import com.zxac.utils.JsonUtil;
 import com.zxac.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import redis.clients.jedis.Jedis;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @RestController
 @Slf4j
 public class RedisController {
+
+
+    @GetMapping(value = "redis/get")
+    public Result getRedisData(@RequestParam(value = "cityId") Integer cityId,
+                               @RequestParam(value = "buildingId") Integer buildingId,
+                               @RequestParam(value = "storeyId", required = false) Integer storeyId){
+        String redisKeyPattern = Common.REDIS_KEY_CITY + cityId + Common.UNDERLINE + Common.REDIS_KEY_BUILDING + buildingId;
+        if (storeyId != null && !storeyId.equals(0)) {
+            redisKeyPattern += Common.UNDERLINE  + Common.REDIS_KEY_STOREY + storeyId;
+        }
+        redisKeyPattern += "*";
+        Jedis jedis = null;
+        List<EquipmentStatusDto> dtoList = null;
+        try {
+            jedis = RedisUtil.getJedis();
+            if (jedis != null) {
+                Set<String> keys = jedis.keys(redisKeyPattern);
+                if (keys.size() > 0) {
+                    String[] keysArray = keys.toArray(new String[0]);
+                    List<String> valueList = jedis.mget(keysArray);
+                    dtoList = valueList.stream().map(s -> {
+                        RedisValue redisValue = JsonUtil.toBean(s, RedisValue.class);
+                        return EquipmentStatusDto.builder().createTime(redisValue.getCreateTime())
+                                .status(redisValue.getStatus()).cityId(cityId).buildingId(buildingId).build();
+                    }).collect(Collectors.toList());
+                    for (int i = 0; i < keysArray.length; i++) {
+                        dtoList.get(i).setStoreyId(Integer.valueOf(keysArray[i].split(Common.UNDERLINE)[2].substring(Common.REDIS_KEY_STOREY.length())));
+                        dtoList.get(i).setEqId(Integer.valueOf(keysArray[i].split(Common.UNDERLINE)[3].substring(Common.REDIS_KEY_EQ.length())));
+                    }
+                }
+            } else {
+                log.warn("jedis is null");
+                return Result.failure(Common.FAILURE_CODE_600, "jedis is null");
+            }
+        } catch (Exception e) {
+            log.error("redis 查询数据错误, redisKeyPattern: {}, {}", redisKeyPattern, e.getMessage());
+            return Result.failure(Common.FAILURE_CODE_602, "redis 查询数据错误, redisKeyPattern: " + redisKeyPattern + ", " + e.getMessage());
+        } finally {
+            RedisUtil.close(jedis);
+        }
+        return Result.success(dtoList);
+    }
 
 
     @GetMapping(value = "redis/set")
@@ -45,12 +92,15 @@ public class RedisController {
                     redisValue = RedisValue.builder().createTime(dto.getCreateTime()).status(dto.getStatus()).build();
                 }
                 jedis.set(redisKey, JsonUtil.toJson(redisValue));
+            } else {
+                log.warn("jedis is null");
+                return Result.failure(Common.FAILURE_CODE_600, "jedis is null");
             }
         } catch (Exception e) {
-            log.error("redis 数据更新存储错误", e);
-            return Result.failure(Common.FAILURE_CODE_500, "redis 数据更新存储错误");
+            log.error("redis 数据更新存储错误, redisKey: {}, {}", redisKey, e.getMessage());
+            return Result.failure(Common.FAILURE_CODE_601, "redis 数据更新存储错误, redisKey: " + redisKey + "----" + e.getMessage());
         } finally {
-            RedisUtil.returnResource(jedis);
+            RedisUtil.close(jedis);
         }
         return Result.success();
     }

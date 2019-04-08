@@ -9,7 +9,12 @@ public class Common {
     public static final String SUCCESS_CODE = "200";
 
     // 默认错误代码，500 表示服务端错误
-    public static final String FAILURE_CODE_500 = "-2";
+    public static final String FAILURE_CODE_500 = "500";
+
+    // 默认错误代码，6~ 表示redis错误
+    public static final String FAILURE_CODE_600 = "600"; // jedis is null
+    public static final String FAILURE_CODE_601 = "601"; // redis 更新错误
+    public static final String FAILURE_CODE_602 = "602"; // redis 查询错误
 
     // redis key 城市的代号
     public static final String REDIS_KEY_CITY = "C";

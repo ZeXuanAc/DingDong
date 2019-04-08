@@ -1,7 +1,7 @@
 package com.zxac.controller;
 
 
-import com.zxac.task.DataTask;
+import com.zxac.task.PracticeDataTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class StartController {
 
     @Autowired
-    public DataTask dataTask;
+    public PracticeDataTask practiceDataTask;
 
     @GetMapping(value = "/")
     public Object hello () {
-        dataTask.createData(3);
+        practiceDataTask.createData(5);
         return "原始数据提供者（dingdong-original-provider）启动完成";
     }
 

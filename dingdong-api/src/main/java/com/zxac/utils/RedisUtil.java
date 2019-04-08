@@ -1,9 +1,12 @@
 package com.zxac.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+
+@Slf4j
 public final class RedisUtil {
     
     // Redis服务器IP
@@ -44,7 +47,7 @@ public final class RedisUtil {
             config.setTestOnBorrow(TEST_ON_BORROW);
             jedisPool = new JedisPool(config, ADDR, PORT, TIMEOUT, AUTH);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("初始化 jedisPool 失败", e.getMessage());
         }
     }
     
@@ -55,18 +58,28 @@ public final class RedisUtil {
     public synchronized static Jedis getJedis() {
         try {
             if (jedisPool != null) {
-                Jedis resource = jedisPool.getResource();
-                return resource;
+                return jedisPool.getResource();
             } else {
                 return null;
             }
         } catch (Exception e) {
+            log.error("获取 jedis 失败", e.getMessage());
             return null;
+        }
+    }
+
+    /**
+     * 关闭jedis连接
+     * @param jedis
+     */
+    public static void close (Jedis jedis) {
+        if (jedis != null) {
+            jedis.close();
         }
     }
     
     /**
-     * 释放jedis资源
+     * 关闭jedisPool
      * @param jedis
      */
     public static void returnResource(final Jedis jedis) {

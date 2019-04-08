@@ -45,6 +45,10 @@ public class Result<T> implements Serializable {
         return success(msg, null);
     }
 
+    public static <T> Result success (T data) {
+        return success("", data);
+    }
+
     public static <T> Result success (String msg, T data) {
         return success(Common.SUCCESS_CODE, msg, data);
     }

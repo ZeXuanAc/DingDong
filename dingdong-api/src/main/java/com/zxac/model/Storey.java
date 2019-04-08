@@ -1,35 +1,20 @@
 package com.zxac.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.ToString;
-
 import java.io.Serializable;
 import java.util.Date;
 
-
-@ToString
-public class User implements Serializable {
-
+public class Storey implements Serializable {
     private Integer id;
 
     private String name;
 
-    private Integer age;
+    private Integer buildingId;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private Integer eqNum;
+
     private Date createTime;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
-
-    public User() {
-    }
-
-    public User(Integer id, String name, Integer age) {
-        this.id = id;
-        this.name = name;
-        this.age = age;
-    }
 
     public Integer getId() {
         return id;
@@ -44,15 +29,23 @@ public class User implements Serializable {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name == null ? null : name.trim();
     }
 
-    public Integer getAge() {
-        return age;
+    public Integer getBuildingId() {
+        return buildingId;
     }
 
-    public void setAge(Integer age) {
-        this.age = age;
+    public void setBuildingId(Integer buildingId) {
+        this.buildingId = buildingId;
+    }
+
+    public Integer getEqNum() {
+        return eqNum;
+    }
+
+    public void setEqNum(Integer eqNum) {
+        this.eqNum = eqNum;
     }
 
     public Date getCreateTime() {

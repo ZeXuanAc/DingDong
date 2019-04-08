@@ -13,7 +13,7 @@
         </commentGenerator>
         <!--数据库链接URL，用户名、密码 -->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://47.107.118.14:3306/czx" userId="root" password="123456">
+                        connectionURL="jdbc:mysql://localhost:3306/dingdong" userId="root" password="123456">
         </jdbcConnection>
         <javaTypeResolver>
             <!-- This property is used to specify whether MyBatis Generator should
@@ -21,7 +21,7 @@
             <property name="forceBigDecimals" value="false" />
         </javaTypeResolver>
         <!-- 生成模型的包名和位置 -->
-        <javaModelGenerator targetPackage="com.zxac.generatorMybatis" targetProject="src/main/java">
+        <javaModelGenerator targetPackage="com.zxac.model" targetProject="src/main/java">
             <property name="enableSubPackages" value="true" />
             <property name="trimStrings" value="true" />
         </javaModelGenerator>
@@ -34,8 +34,8 @@
             <property name="enableSubPackages" value="true" />
         </javaClientGenerator>
 
-        <!-- 要生成哪些表 -->
-        <table tableName="user" domainObjectName="User"
+        <!-- 要生成的表 -->
+        <table tableName="equipment" domainObjectName="Equipment"
                enableCountByExample="false" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false"/>

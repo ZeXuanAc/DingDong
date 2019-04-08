@@ -1,16 +1,20 @@
 package com.zxac.task;
 
 import com.zxac.config.UrlConfig;
+import com.zxac.constant.Common;
 import com.zxac.model.EquipmentStatusDto;
+import com.zxac.model.Result;
+import com.zxac.utils.JsonUtil;
 import com.zxac.utils.ObjectUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -18,7 +22,7 @@ import java.util.stream.IntStream;
 
 @Component
 @Slf4j
-public class DataTask {
+public class PracticeDataTask {
 
     @Autowired
     public UrlConfig urlConfig;
@@ -40,7 +44,6 @@ public class DataTask {
                                 randomArr[i] = (int)(Math.random() * 7) + 3;
                             }
                         }
-//                        log.info("设备【{}】号当前状态为{}, 时间为{}", i + 1, statusArr[i], randomArr[i]);
                     }
 
                     // 生成数据
@@ -49,9 +52,15 @@ public class DataTask {
                     log.info(dto.toString());
                     // 发起http请求更新数据
                     RestTemplate restTemplate = new RestTemplate();
-                    ResponseEntity<String> entity = restTemplate.getForEntity(urlConfig.redisSetUrl, String.class, ObjectUtil.toMap(dto, "eqName"));
-                    if (entity.getStatusCodeValue() != HttpStatus.OK.value()) {
-                        log.error("访问 redis set 接口失败");
+                    Map<String, Object> param = ObjectUtil.toMap(dto, "eqName");
+                    ResponseEntity<String> entity = null;
+                    try {
+                        entity = restTemplate.getForEntity(urlConfig.redisSetUrl, String.class, param);
+                    } catch (RestClientException e) {
+                        log.error("访问 redis set 接口失败: ", e.getMessage());
+                    }
+                    if (!Common.SUCCESS_CODE.equals(JsonUtil.toBean(entity.getBody(), Result.class).getCode())) {
+                        log.error("访问 redis set 接口失败: {}", JsonUtil.toBean(entity.getBody(), Result.class).getMsg());
                     }
                 }, 0, 1, TimeUnit.SECONDS)
         );

@@ -12,7 +12,7 @@ import java.util.Map;
 @Slf4j
 public class ObjectUtil {
 
-    public static Map toMap(Object obj, String... exclusive){
+    public static Map<String, Object> toMap(Object obj, String... exclusive){
         if(obj == null){
             return null;
         }
