@@ -6,12 +6,14 @@ import lombok.*;
 
 import java.io.Serializable;
 
-@Getter
-@Setter
-@ToString
 /**
  *  统一消息结果格式
  */
+
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
 public class Result<T> implements Serializable {
 
     // 返回状态
@@ -26,7 +28,8 @@ public class Result<T> implements Serializable {
     // 结果携带的数据包
     private T data;
 
-    private Result(boolean success, String code, String msg, T data) {
+
+    public Result(boolean success, String code, String msg, T data) {
         this.success = success;
         this.code = code;
         this.msg = msg;
@@ -55,7 +58,7 @@ public class Result<T> implements Serializable {
     }
 
     public static Result failure (String msg) {
-        return failure(Common.FAILURE_CODE_2, msg);
+        return failure(Common.FAILURE_CODE_500, msg);
     }
 
     public static Result failure (String code, String msg) {
