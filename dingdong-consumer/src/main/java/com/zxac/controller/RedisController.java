@@ -6,6 +6,7 @@ import com.zxac.model.EquipmentStatusDto;
 import com.zxac.model.RedisValue;
 import com.zxac.model.Result;
 import com.zxac.utils.JsonUtil;
+import com.zxac.utils.ObjectUtil;
 import com.zxac.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,8 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import redis.clients.jedis.Jedis;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -92,6 +92,87 @@ public class RedisController {
                     redisValue = RedisValue.builder().createTimeStr(dto.getCreateTimeStr()).status(dto.getStatus()).build();
                 }
                 jedis.set(redisKey, JsonUtil.toJson(redisValue));
+            } else {
+                log.warn("jedis is null");
+                return Result.failure(Common.FAILURE_CODE_600, "jedis is null");
+            }
+        } catch (Exception e) {
+            log.error("redis 数据更新存储错误, redisKey: {}, {}", redisKey, e.getMessage());
+            return Result.failure(Common.FAILURE_CODE_601, "redis 数据更新存储错误, redisKey: " + redisKey + "----" + e.getMessage());
+        } finally {
+            RedisUtil.close(jedis);
+        }
+        return Result.success();
+    }
+
+
+    @GetMapping(value = "redis/get/v2")
+    public Result getRedisDataV2(@RequestParam(value = "cityId") Integer cityId,
+                               @RequestParam(value = "buildingId") Integer buildingId,
+                               @RequestParam(value = "storeyId", required = false) Integer storeyId){
+        String redisKeyPattern = Common.REDIS_KEY_CITY + cityId + Common.UNDERLINE + Common.REDIS_KEY_BUILDING + buildingId;
+        if (storeyId != null && !storeyId.equals(0)) {
+            redisKeyPattern += Common.UNDERLINE  + Common.REDIS_KEY_STOREY + storeyId;
+        }
+        redisKeyPattern += "*v2";
+        Jedis jedis = null;
+        List<Map<String, String>> mapList = new ArrayList<>();
+        try {
+            jedis = RedisUtil.getJedis();
+            if (jedis != null) {
+                Set<String> keys = jedis.keys(redisKeyPattern);
+                if (keys.size() > 0) {
+                    for (String key : keys) {
+                        Map<String, String> valueMap = jedis.hgetAll(key);
+                        mapList.add(valueMap);
+                    }
+//                    dtoList = mapList.stream().map(map -> ObjectUtil.mapToBean(map, EquipmentStatusDto.class, String.class)).collect(Collectors.toList());
+                }
+            } else {
+                log.warn("jedis is null");
+                return Result.failure(Common.FAILURE_CODE_600, "jedis is null");
+            }
+        } catch (Exception e) {
+            log.error("redis 查询数据错误, redisKeyPattern: {}, {}", redisKeyPattern, e.getMessage());
+            return Result.failure(Common.FAILURE_CODE_602, "redis 查询数据错误, redisKeyPattern: " + redisKeyPattern + ", " + e.getMessage());
+        } finally {
+            RedisUtil.close(jedis);
+        }
+        return Result.success(mapList);
+    }
+    
+    
+    @GetMapping(value = "redis/set/v2")
+    public Result setRedisDataV2 (EquipmentStatusDto dto){
+        String redisKey = Common.REDIS_KEY_CITY + dto.getCityId() + Common.UNDERLINE +
+                Common.REDIS_KEY_BUILDING + dto.getBuildingId() + Common.UNDERLINE  +
+                Common.REDIS_KEY_STOREY + dto.getStoreyId() + Common.UNDERLINE  +
+                Common.REDIS_KEY_EQ + dto.getEqId() + Common.UNDERLINE  + "v2";
+        Jedis jedis = null;
+        Map<String, String> param = new HashMap<>();
+        try {
+            jedis = RedisUtil.getJedis();
+            if (jedis != null) {
+                if (jedis.exists(redisKey)){
+                    String status = jedis.hget(redisKey, "status");
+                    if (status.equals(dto.getStatus())) {
+                        if (dto.getStatus().equals("0")) {
+                            param.put("createTimeStr", dto.getCreateTimeStr());
+                        }
+                    } else {
+                        param.put("status", dto.getStatus());
+                        if (dto.getStatus().equals("0")) {
+                            param.put("createTimeStr", dto.getCreateTimeStr());
+                        }
+                    }
+                } else {
+                    param = ObjectUtil.toMap(dto, String.class);
+                }
+                if (param.size() == 1) {
+                    jedis.hset(redisKey, param);
+                } else if (param.size() > 1){
+                    jedis.hmset(redisKey, param);
+                }
             } else {
                 log.warn("jedis is null");
                 return Result.failure(Common.FAILURE_CODE_600, "jedis is null");

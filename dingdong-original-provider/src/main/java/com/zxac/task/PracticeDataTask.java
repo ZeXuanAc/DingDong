@@ -70,7 +70,7 @@ public class PracticeDataTask extends DynamicScheduledTask{
                 log.info(dto.toString());
                 // 发起http请求更新数据
                 RestTemplate restTemplate = new RestTemplate();
-                Map<String, Object> param = ObjectUtil.toMap(dto, "eqName");
+                Map<String, Object> param = ObjectUtil.toMap(dto, Object.class);
                 ResponseEntity<String> entity = null;
                 try {
                     entity = restTemplate.getForEntity(urlConfig.redisSetUrl, String.class, param);
