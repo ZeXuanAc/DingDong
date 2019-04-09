@@ -12,7 +12,7 @@ public class Equipment implements Serializable {
 
     private String address;
 
-    private String status;
+    private String condition;
 
     private String latitude;
 
@@ -56,12 +56,12 @@ public class Equipment implements Serializable {
         this.address = address == null ? null : address.trim();
     }
 
-    public String getStatus() {
-        return status;
+    public String getCondition() {
+        return condition;
     }
 
-    public void setStatus(String status) {
-        this.status = status == null ? null : status.trim();
+    public void setCondition(String condition) {
+        this.condition = condition;
     }
 
     public String getLatitude() {

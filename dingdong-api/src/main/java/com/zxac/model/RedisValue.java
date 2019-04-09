@@ -15,6 +15,6 @@ public class RedisValue {
 
     private String status;
 
-    private String createTime;
+    private String createTimeStr;
 
 }

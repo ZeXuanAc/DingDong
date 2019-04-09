@@ -43,7 +43,7 @@ public class RedisController {
                     List<String> valueList = jedis.mget(keysArray);
                     dtoList = valueList.stream().map(s -> {
                         RedisValue redisValue = JsonUtil.toBean(s, RedisValue.class);
-                        return EquipmentStatusDto.builder().createTime(redisValue.getCreateTime())
+                        return EquipmentStatusDto.builder().createTimeStr(redisValue.getCreateTimeStr())
                                 .status(redisValue.getStatus()).cityId(cityId).buildingId(buildingId).build();
                     }).collect(Collectors.toList());
                     for (int i = 0; i < keysArray.length; i++) {
@@ -80,16 +80,16 @@ public class RedisController {
                     redisValue = JsonUtil.toBean(value, RedisValue.class);
                     if (redisValue.getStatus().equals(dto.getStatus())) {
                         if (dto.getStatus().equals("0")) {
-                            redisValue.setCreateTime(dto.getCreateTime());
+                            redisValue.setCreateTimeStr(dto.getCreateTimeStr());
                         }
                     } else {
                         redisValue.setStatus(dto.getStatus());
                         if (dto.getStatus().equals("0")) {
-                            redisValue.setCreateTime(dto.getCreateTime());
+                            redisValue.setCreateTimeStr(dto.getCreateTimeStr());
                         }
                     }
                 } else {
-                    redisValue = RedisValue.builder().createTime(dto.getCreateTime()).status(dto.getStatus()).build();
+                    redisValue = RedisValue.builder().createTimeStr(dto.getCreateTimeStr()).status(dto.getStatus()).build();
                 }
                 jedis.set(redisKey, JsonUtil.toJson(redisValue));
             } else {

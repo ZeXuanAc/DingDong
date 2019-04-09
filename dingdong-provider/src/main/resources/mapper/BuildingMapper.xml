@@ -3,17 +3,18 @@
 <mapper namespace="com.zxac.dao.BuildingMapper">
   <resultMap id="BaseResultMap" type="com.zxac.model.Building">
     <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="location_name" jdbcType="VARCHAR" property="locationName" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="city_id" jdbcType="INTEGER" property="cityId" />
     <result column="city_name" jdbcType="VARCHAR" property="cityName" />
     <result column="eq_num" jdbcType="INTEGER" property="eqNum" />
     <result column="longitude" jdbcType="VARCHAR" property="longitude" />
     <result column="latitude" jdbcType="VARCHAR" property="latitude" />
+    <result column="priority" jdbcType="INTEGER" property="priority" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, location_name, city_id, city_name, eq_num, longitude, latitude, create_time, 
+    id, name, city_id, city_name, eq_num, longitude, latitude, priority, create_time,
     update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -27,13 +28,13 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.zxac.model.Building">
-    insert into building (id, location_name, city_id, 
+    insert into building (id, name, city_id,
       city_name, eq_num, longitude, 
-      latitude, create_time, update_time
+      latitude, priority, create_time, update_time
       )
-    values (#{id,jdbcType=INTEGER}, #{locationName,jdbcType=VARCHAR}, #{cityId,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{cityId,jdbcType=INTEGER},
       #{cityName,jdbcType=VARCHAR}, #{eqNum,jdbcType=INTEGER}, #{longitude,jdbcType=VARCHAR}, 
-      #{latitude,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      #{latitude,jdbcType=VARCHAR}, #{priority,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.zxac.model.Building">
@@ -42,8 +43,8 @@
       <if test="id != null">
         id,
       </if>
-      <if test="locationName != null">
-        location_name,
+      <if test="name != null">
+        name,
       </if>
       <if test="cityId != null">
         city_id,
@@ -60,6 +61,9 @@
       <if test="latitude != null">
         latitude,
       </if>
+      <if test="priority != null">
+        priority,
+      </if>
       <if test="createTime != null">
         create_time,
       </if>
@@ -71,8 +75,8 @@
       <if test="id != null">
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="locationName != null">
-        #{locationName,jdbcType=VARCHAR},
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
       </if>
       <if test="cityId != null">
         #{cityId,jdbcType=INTEGER},
@@ -89,6 +93,9 @@
       <if test="latitude != null">
         #{latitude,jdbcType=VARCHAR},
       </if>
+      <if test="priority != null">
+        #{priority,jdbcType=INTEGER},
+      </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -100,8 +107,8 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.zxac.model.Building">
     update building
     <set>
-      <if test="locationName != null">
-        location_name = #{locationName,jdbcType=VARCHAR},
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
       </if>
       <if test="cityId != null">
         city_id = #{cityId,jdbcType=INTEGER},
@@ -118,6 +125,9 @@
       <if test="latitude != null">
         latitude = #{latitude,jdbcType=VARCHAR},
       </if>
+      <if test="priority != null">
+        priority = #{priority,jdbcType=INTEGER},
+      </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -129,12 +139,13 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.zxac.model.Building">
     update building
-    set location_name = #{locationName,jdbcType=VARCHAR},
+    set name = #{name,jdbcType=VARCHAR},
       city_id = #{cityId,jdbcType=INTEGER},
       city_name = #{cityName,jdbcType=VARCHAR},
       eq_num = #{eqNum,jdbcType=INTEGER},
       longitude = #{longitude,jdbcType=VARCHAR},
       latitude = #{latitude,jdbcType=VARCHAR},
+      priority = #{priority,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}

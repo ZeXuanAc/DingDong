@@ -10,6 +10,8 @@ public class City implements Serializable {
 
     private String province;
 
+    private Integer priority;
+
     private Date createTime;
 
     private Date updateTime;
@@ -36,6 +38,14 @@ public class City implements Serializable {
 
     public void setProvince(String province) {
         this.province = province == null ? null : province.trim();
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 
     public Date getCreateTime() {

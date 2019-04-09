@@ -2,15 +2,17 @@ package com.zxac.service;
 
 
 import com.alibaba.dubbo.config.annotation.Service;
-import com.zxac.dao.*;
+import com.zxac.dao.BuildingMapper;
+import com.zxac.dao.CityMapper;
+import com.zxac.dao.EquipmentMapper;
+import com.zxac.dao.StoreyMapper;
 import com.zxac.model.*;
 import com.zxac.utils.DistanceUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import sun.rmi.runtime.Log;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -51,8 +53,10 @@ public class CityEquipmentServiceImpl implements CityEquipmentService {
     @Override
     public List<Building> getBuildingList(Integer cityId, String location) {
         List<Building> buildingList = buildingMapper.getListByCityId(cityId);
-        String[] locations = location.split(",");
-        buildingList.sort(Comparator.comparing((Building b) -> DistanceUtil.GetDistance(locations[0], locations[1], b.getLongitude(), b.getLatitude())));
+        if (location != null) {
+            String[] locations = location.split(",");
+            buildingList.sort(Comparator.comparing((Building b) -> DistanceUtil.GetDistance(locations[0], locations[1], b.getLongitude(), b.getLatitude())));
+        }
         return buildingList;
     }
 
@@ -69,6 +73,34 @@ public class CityEquipmentServiceImpl implements CityEquipmentService {
         return storeyList;
     }
 
+
+    /**
+     * 得到所有设备
+     * @return
+     */
+    @Override
+    public List<Equipment> getAllEquipment() {
+        return equipmentMapper.getAll();
+    }
+
+    @Override
+    public List<EquipmentStatusDto> getAllEquipment(Integer cityId) {
+        List<EquipmentStatusDto> dtoList = new ArrayList<>();
+        if (cityId > 0){
+            List<Building> buildingList = getBuildingList(cityId, null);
+            for (Building b : buildingList) {
+                List<Equipment> eqList = getEquipmentListByBuildingId(b.getId());
+                dtoList.addAll(EquipmentStatusDto.acceptList(eqList));
+                dtoList.forEach(dto -> {
+                    dto.setBuildingId(b.getId());
+                    dto.setCityId(cityId);
+                });
+            }
+        } else {
+            dtoList = equipmentMapper.getEqDtoList(cityId);
+        }
+        return dtoList;
+    }
 
     /**
      * 得到根据优先级排序后设备列表

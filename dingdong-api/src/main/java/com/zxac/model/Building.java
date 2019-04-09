@@ -6,7 +6,7 @@ import java.util.Date;
 public class Building implements Serializable {
     private Integer id;
 
-    private String locationName;
+    private String name;
 
     private Integer cityId;
 
@@ -18,6 +18,8 @@ public class Building implements Serializable {
 
     private String latitude;
 
+    private Integer priority;
+
     private Date createTime;
 
     private Date updateTime;
@@ -28,14 +30,6 @@ public class Building implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getLocationName() {
-        return locationName;
-    }
-
-    public void setLocationName(String locationName) {
-        this.locationName = locationName == null ? null : locationName.trim();
     }
 
     public Integer getCityId() {
@@ -76,6 +70,22 @@ public class Building implements Serializable {
 
     public void setLatitude(String latitude) {
         this.latitude = latitude == null ? null : latitude.trim();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 
     public Date getCreateTime() {

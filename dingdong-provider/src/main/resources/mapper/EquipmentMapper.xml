@@ -6,15 +6,30 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="storey_id" jdbcType="INTEGER" property="storeyId" />
     <result column="address" jdbcType="VARCHAR" property="address" />
-    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="condition" jdbcType="VARCHAR" property="condition" />
     <result column="latitude" jdbcType="VARCHAR" property="latitude" />
     <result column="longitude" jdbcType="VARCHAR" property="longitude" />
     <result column="priority" jdbcType="INTEGER" property="priority" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
+  <resultMap id="DtoResultMap" type="com.zxac.model.EquipmentStatusDto">
+    <id column="eq_id" jdbcType="INTEGER" property="eqId" />
+    <result column="eq_name" jdbcType="VARCHAR" property="eqName" />
+    <result column="storey_id" jdbcType="INTEGER" property="storeyId" />
+    <result column="storey_name" jdbcType="VARCHAR" property="storeyName" />
+    <result column="city_id" jdbcType="INTEGER" property="cityId" />
+    <result column="city_name" jdbcType="VARCHAR" property="cityName" />
+    <result column="building_id" jdbcType="INTEGER" property="buildingId" />
+    <result column="building_name" jdbcType="VARCHAR" property="buildingName" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="condition" jdbcType="VARCHAR" property="condition" />
+    <result column="latitude" jdbcType="VARCHAR" property="latitude" />
+    <result column="longitude" jdbcType="VARCHAR" property="longitude" />
+    <result column="priority" jdbcType="INTEGER" property="priority" />
+  </resultMap>
   <sql id="Base_Column_List">
-    id, name, storey_id, address, status, latitude, longitude, priority, create_time, update_time
+    id, name, storey_id, address, `condition`, latitude, longitude, priority, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -28,11 +43,11 @@
   </delete>
   <insert id="insert" parameterType="com.zxac.model.Equipment">
     insert into equipment (id, name, storey_id, 
-      address, status, latitude, 
+      address, condition, latitude,
       longitude, priority, create_time, update_time
       )
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{storeyId,jdbcType=INTEGER}, 
-      #{address,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{latitude,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{condition,jdbcType=VARCHAR}, #{latitude,jdbcType=VARCHAR},
       #{longitude,jdbcType=VARCHAR}, #{priority,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
   </insert>
@@ -51,8 +66,8 @@
       <if test="address != null">
         address,
       </if>
-      <if test="status != null">
-        status,
+      <if test="condition != null">
+        condition,
       </if>
       <if test="latitude != null">
         latitude,
@@ -83,8 +98,8 @@
       <if test="address != null">
         #{address,jdbcType=VARCHAR},
       </if>
-      <if test="status != null">
-        #{status,jdbcType=VARCHAR},
+      <if test="condition != null">
+        #{condition,jdbcType=VARCHAR},
       </if>
       <if test="latitude != null">
         #{latitude,jdbcType=VARCHAR},
@@ -115,8 +130,8 @@
       <if test="address != null">
         address = #{address,jdbcType=VARCHAR},
       </if>
-      <if test="status != null">
-        status = #{status,jdbcType=VARCHAR},
+      <if test="condition != null">
+        condition = #{condition,jdbcType=VARCHAR},
       </if>
       <if test="latitude != null">
         latitude = #{latitude,jdbcType=VARCHAR},
@@ -141,7 +156,7 @@
     set name = #{name,jdbcType=VARCHAR},
       storey_id = #{storeyId,jdbcType=INTEGER},
       address = #{address,jdbcType=VARCHAR},
-      status = #{status,jdbcType=VARCHAR},
+      condition = #{condition,jdbcType=VARCHAR},
       latitude = #{latitude,jdbcType=VARCHAR},
       longitude = #{longitude,jdbcType=VARCHAR},
       priority = #{priority,jdbcType=INTEGER},
@@ -150,6 +165,22 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
+
+  <select id="getAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from equipment
+  </select>
+
+  <select id="getEqDtoList" parameterType="java.lang.Integer" resultMap="DtoResultMap">
+    SELECT b.name as building_name, b.city_id, b.city_name, b.latitude, b.longitude, a.* from building b,
+    (select s.building_id, e.storey_id, s.name as storey_name, e.id as eq_id, e.name as eq_Name, e.address, e.condition, e.priority
+      from storey s, equipment e where s.id = e.storey_id) as a
+    where b.id = a.building_id
+    <if test="cityId != null and cityId != 0">
+      and city_id = #{cityId,jdbcType=INTEGER}
+    </if>
+  </select>
 
   <select id="getListByStoreyId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select

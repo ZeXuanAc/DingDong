@@ -14,7 +14,6 @@ public class StartController {
 
     @GetMapping(value = "/")
     public Object hello () {
-        practiceDataTask.createData(5);
         return "原始数据提供者（dingdong-original-provider）启动完成";
     }
 
