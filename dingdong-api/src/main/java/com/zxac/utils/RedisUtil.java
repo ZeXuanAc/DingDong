@@ -1,5 +1,6 @@
 package com.zxac.utils;
 
+import com.zxac.constant.Common;
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -10,13 +11,13 @@ import redis.clients.jedis.JedisPoolConfig;
 public final class RedisUtil {
     
     // Redis服务器IP
-    private static String ADDR = "47.107.118.14";
+    private static String ADDR = Common.IP;
     
     // Redis的端口号
-    private static int PORT = 6380;
+    private static int PORT = Common.PORT;
     
     // 访问密码
-    private static String AUTH = "czx";
+    private static String AUTH = Common.AUTH;
     
     // 可用连接实例的最大数目，默认值为8；
     // 如果赋值为-1，则表示不限制；如果pool已经分配了maxActive个jedis实例，则此时pool的状态为exhausted(耗尽)。

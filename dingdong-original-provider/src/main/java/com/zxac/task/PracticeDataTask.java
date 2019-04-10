@@ -62,8 +62,6 @@ public class PracticeDataTask extends DynamicScheduledTask{
                 }
 
                 // 生成数据
-//                        EquipmentStatusDto dto = EquipmentStatusDto.builder().cityId(1).buildingId(1).storeyId(1).status(String.valueOf(statusArr[i]))
-//                                .eqId(i + 1).eqName("设备【" + (i + 1) + "】号").createTime(LocalDateTime.now().toString()).build();
                 EquipmentStatusDto dto = eqList.get(i);
                 dto.setStatus(String.valueOf(statusArr[i]));
                 dto.setCreateTimeStr(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));

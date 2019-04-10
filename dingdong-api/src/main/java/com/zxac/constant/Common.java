@@ -16,19 +16,17 @@ public class Common {
     public static final String FAILURE_CODE_601 = "601"; // redis 更新错误
     public static final String FAILURE_CODE_602 = "602"; // redis 查询错误
 
-    // redis key 城市的代号
+    // redis key 的代号
     public static final String REDIS_KEY_CITY = "C";
-
-    // redis key 建筑的代号
     public static final String REDIS_KEY_BUILDING = "B";
-
-    // redis key 楼层的代号
     public static final String REDIS_KEY_STOREY = "S";
-
-    // redis key 设备的代号
     public static final String REDIS_KEY_EQ = "E";
-
-    // redis key 分割符
     public static final String UNDERLINE = "_";
+
+    // 阿里云ip, redis端口
+//    public static String IP = "47.107.118.14";
+    public static String IP = "127.0.0.1";
+    public static int PORT = 6380;
+    public static String AUTH = "czx";
 
 }
