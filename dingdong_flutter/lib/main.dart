@@ -7,18 +7,18 @@ void main()=>runApp(MyApp());
 
 class MyApp extends StatelessWidget {
 
-  @override
-  Widget build(BuildContext context) {
-      return Container(
-          child: MaterialApp(
-              title:'叮咚',
-              debugShowCheckedModeBanner: false,
-              theme: ThemeData(
+    @override
+    Widget build(BuildContext context) {
+        return Container(
+            child: MaterialApp(
+                title:'叮咚',
+                debugShowCheckedModeBanner: false,
+                theme: ThemeData(
                   primaryColor:Colors.pink
-              ),
-              home:IndexPage()
-          ),
-      );
-  }
+                ),
+                home: IndexPage()
+            ),
+        );
+    }
 
 }

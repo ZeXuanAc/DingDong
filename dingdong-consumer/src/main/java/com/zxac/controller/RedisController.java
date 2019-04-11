@@ -31,7 +31,7 @@ public class RedisController {
         redisKeyPattern += "*";
         Jedis jedis = null;
         List<Map<String, String>> mapList = new ArrayList<>();
-        Map<String, List<Map<String, String>>> storeyMap = new HashMap<>();
+        Map<String, List<Map<String, String>>> storeyMap;
         try {
             jedis = RedisUtil.getJedis();
             if (jedis != null) {
@@ -53,6 +53,7 @@ public class RedisController {
             RedisUtil.close(jedis);
         }
         storeyMap = mapList.stream().collect(Collectors.groupingBy(map -> map.get("storeyId")));
+        storeyMap.values().forEach(list -> list.sort(Comparator.comparing(map -> map.get("priority"))));
         return Result.success(storeyMap);
     }
     
