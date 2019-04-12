@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'page/index_page.dart';
-import 'dart:io';
-import 'package:flutter/services.dart';
 
 void main() {
     runApp(MyApp());
