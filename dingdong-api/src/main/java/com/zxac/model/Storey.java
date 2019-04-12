@@ -12,6 +12,8 @@ public class Storey implements Serializable {
 
     private Integer eqNum;
 
+    private Integer priority;
+
     private Date createTime;
 
     private Date updateTime;
@@ -46,6 +48,14 @@ public class Storey implements Serializable {
 
     public void setEqNum(Integer eqNum) {
         this.eqNum = eqNum;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 
     public Date getCreateTime() {

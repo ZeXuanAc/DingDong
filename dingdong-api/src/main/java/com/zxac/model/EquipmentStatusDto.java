@@ -47,6 +47,8 @@ public class EquipmentStatusDto implements Serializable {
 
     private Integer priority; // 优先级, 设备
 
+    private Integer storeyPriority; // 楼层优先级
+
     private String createTimeStr; // 数据包生成时间
 
     public static EquipmentStatusDto accept (Equipment model, Integer buildingId, Integer cityId, String status, String createTime){

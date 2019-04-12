@@ -50,13 +50,13 @@ public class PracticeDataTask extends DynamicScheduledTask{
             IntStream.range(0, eqNum).forEach(i -> {
                 randomArr[i]--;
                 if (randomArr[i] <= 0) {
-                    randomArr[i] = (int) (Math.random() * 5) + 1;
+                    randomArr[i] = (int) (Math.random() * 10) + 20;
                     if (statusArr[i] == 1) {
                         statusArr[i] = 0;
                     } else {
                         statusArr[i] = (int) (Math.random() * 2);
                         if (statusArr[i] == 1) {
-                            randomArr[i] = (int) (Math.random() * 7) + 3;
+                            randomArr[i] = (int) (Math.random() * 20) + 50;
                         }
                     }
                 }

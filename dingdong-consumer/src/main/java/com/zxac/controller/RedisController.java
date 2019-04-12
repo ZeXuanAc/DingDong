@@ -54,7 +54,9 @@ public class RedisController {
         }
         storeyMap = mapList.stream().collect(Collectors.groupingBy(map -> map.get("storeyId")));
         storeyMap.values().forEach(list -> list.sort(Comparator.comparing(map -> map.get("priority"))));
-        return Result.success(storeyMap);
+        Map<String, List<Map<String, String>>> finalMap = new LinkedHashMap<>();
+        storeyMap.entrySet().stream().sorted(Comparator.comparing(map -> map.getValue().get(0).get("storeyPriority"))).forEach(e -> finalMap.put(e.getKey(), e.getValue()));
+        return Result.success(finalMap);
     }
     
     

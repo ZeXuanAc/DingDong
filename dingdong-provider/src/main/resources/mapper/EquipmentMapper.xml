@@ -27,6 +27,7 @@
     <result column="latitude" jdbcType="VARCHAR" property="latitude" />
     <result column="longitude" jdbcType="VARCHAR" property="longitude" />
     <result column="priority" jdbcType="INTEGER" property="priority" />
+    <result column="storey_priority" jdbcType="INTEGER" property="storeyPriority" />
   </resultMap>
   <sql id="Base_Column_List">
     id, name, storey_id, address, `condition`, latitude, longitude, priority, create_time, update_time
@@ -174,7 +175,7 @@
 
   <select id="getEqDtoList" parameterType="java.lang.Integer" resultMap="DtoResultMap">
     SELECT b.name as building_name, b.city_id, b.city_name, b.latitude, b.longitude, a.* from building b,
-    (select s.building_id, e.storey_id, s.name as storey_name, e.id as eq_id, e.name as eq_Name, e.address, e.condition, e.priority
+    (select s.building_id, e.storey_id, s.name as storey_name, e.id as eq_id, e.name as eq_Name, e.address, e.condition, e.priority, s.priority as storey_priority
       from storey s, equipment e where s.id = e.storey_id) as a
     where b.id = a.building_id
     <if test="cityId != null and cityId != 0">

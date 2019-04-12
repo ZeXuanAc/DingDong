@@ -23,7 +23,16 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-  - images/green.jpg
-  - images/red.jpg
-  - images/green2.png
-  - images/red2.png
+  - assets/images/green.jpg
+  - assets/images/red.jpg
+  - assets/images/logo.png
+  fonts:
+  - family: HanYiXiaoBoHuaYueYuan-Jian-2
+    fonts:
+    - asset: assets/fonts/HanYiXiaoBoHuaYueYuan-Jian-2.ttf
+  - family: Montserrat-ExtraLight
+    fonts:
+    - asset: assets/fonts/Montserrat-ExtraLight.ttf
+  - family: Raleway-Light
+    fonts:
+    - asset: assets/fonts/Raleway-Light.ttf

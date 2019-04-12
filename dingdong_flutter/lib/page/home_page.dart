@@ -11,7 +11,9 @@ class HomePage extends StatefulWidget {
 }
 class _HomePageState extends State<HomePage> {
 
-    Map eqMap;
+    Map eqMap;  // building所有的设备信息
+    Map cityBuildingMap; // 当前 building
+    List<Map> allBuildingList; // 当前城市下的所有 building
     DateTime nowTime;
     Timer httpTimer;
     Timer nowTimeTimer;
@@ -19,22 +21,77 @@ class _HomePageState extends State<HomePage> {
 
     @override
     void initState() {
+        cityBuildingMap = getLocalBuilding(1, null);
+        getAllBuilding(1);
         const oneSec = const Duration(milliseconds: 500);
-        httpTimer = new Timer.periodic(oneSec, (Timer t) =>
-            getHomePageContent().then((val){
-                if (val != null && this.mounted) {
-                    setState(() {
-                        eqMap = val;
-                    });
-                }
-            })
-        );
-        nowTimeTimer = new Timer.periodic(oneSec, (Timer t) =>
-            setState((){
-                nowTime = DateTime.now();
-            })
-        );
+        if (cityBuildingMap != null && cityBuildingMap.isNotEmpty) {
+            httpTimer = new Timer.periodic(oneSec, (Timer t) =>
+                getHomePageContentUrl(cityBuildingMap['cityId'], cityBuildingMap['id']).then((val){
+                    if (val != null && mounted) {
+                        setState(() {
+                            eqMap = val;
+                        });
+                    }
+                })
+            );
+            nowTimeTimer = new Timer.periodic(oneSec, (Timer t) =>
+                setState((){
+                    nowTime = DateTime.now();
+                })
+            );
+        }
         super.initState();
+    }
+
+    // 得到离定位最近的 building
+    Map getLocalBuilding (cityId, location) {
+        Map map = {"cityId": "1", "id": "2", "name": "浙江科技学院图书馆东"};
+        return map;
+    }
+
+    // 得到该城市下的所有 building
+    void getAllBuilding (cityId) {
+        getBuildingUrl(cityId, null).then((val){
+            if (val != null) {
+                allBuildingList = [];
+                setState(() {
+                    for (Map map in val['data']){
+                        allBuildingList.add(map);
+                    }
+                });
+            }
+        });
+    }
+
+    // 选择building
+    void showAlertDialog(BuildContext context) {
+        getAllBuilding(1);
+        List<Widget> dialogWidget = [];
+        for (Map map in allBuildingList) {
+            dialogWidget.add(new SimpleDialogOption(
+                child:  Text(
+                    map['name'],
+                    style: TextStyle(
+                        height: 1.3,
+                        color: Colors.blue,
+                        shadows: [Shadow(color: Color(0x9900FFFF), offset: Offset(0.5, 0.5), blurRadius: 5)], // 阴影
+                    ),
+                ),
+                onPressed: () {
+                    cityBuildingMap = map;
+                    Navigator.pop(context); //关闭对话框
+                },
+            ),);
+        }
+        showDialog<Null>(
+            context: context,
+            builder: (BuildContext context) {
+                return  SimpleDialog(
+                    title:  Text('选择'),
+                    children: dialogWidget,
+                );
+            },
+        );
     }
 
 
@@ -56,14 +113,27 @@ class _HomePageState extends State<HomePage> {
     Widget build(BuildContext context) {
         ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
 
-        if (eqMap == null) {
+        if (eqMap == null || eqMap['data'] == null) {
             return Center(
                 child: new AnimatedRotationBoxRoute()
             );
         } else {
-            return Scaffold(
-                appBar: AppBar(title: Text("叮咚"),),
-                body: _listView(eqMap['data'], nowTime)
+            return Container (
+                child: Scaffold(
+                    appBar: AppBar(
+                        leading: new Icon(Icons.home, color: Colors.blue,),
+                        title: Text(cityBuildingMap['name'], style: TextStyle(color: Colors.black), overflow: TextOverflow.ellipsis,),
+                        centerTitle: true,
+                        backgroundColor: Colors.white,
+                        actions: <Widget>[
+                            new IconButton( // action button
+                                icon: new Icon(Icons.location_on, color: Colors.blue,),
+                                onPressed: () {showAlertDialog(context);},
+                            ),
+                        ],
+                    ),
+                    body: _listView(eqMap['data'], nowTime),
+                )
             );
         }
     }
@@ -92,7 +162,7 @@ Widget _listView(sEqMap, nowTime) {
                 child: new Column(
                     children: <Widget>[
                         Stack(
-                            alignment: const FractionalOffset(0.5, 0.5 ),
+                            alignment: const FractionalOffset(0.5, 0.5),
                             children: <Widget>[
                                 new Container(
                                     height: ScreenUtil.getInstance().setWidth(140),
@@ -113,7 +183,9 @@ Widget _listView(sEqMap, nowTime) {
                                     eqList.elementAt(0)['storeyName'],
                                     style: TextStyle(
                                         fontSize: ScreenUtil.getInstance().setSp(storey_font_size),
-                                        height: 1.3
+                                        height: 1.3,
+                                        color: Colors.white,
+                                        shadows: [Shadow(color: Colors.white, offset: Offset(0.2, 0.2), blurRadius: 5)], // 阴影
                                     )
                                 ),
                             ]
@@ -170,7 +242,7 @@ Widget _stackImage(eqMap, apartTime){
                     width: ScreenUtil.getInstance().setWidth(180), height: ScreenUtil.getInstance().setWidth(180),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15.0),
-                        image: DecorationImage(image: AssetImage("images/green.jpg")),
+                        image: DecorationImage(image: AssetImage("assets/images/green.jpg")),
                         // 生成俩层阴影，一层绿，一层黄， 阴影位置由offset决定,阴影模糊层度由blurRadius大小决定（大就更透明更扩散），阴影模糊大小由spreadRadius决定
                         boxShadow: [BoxShadow(color: Color(0x9900FFFF), offset: Offset(2.0, 2.0), blurRadius: 10.0, spreadRadius: 2.0),],
                     ),
@@ -188,7 +260,7 @@ Widget _stackImage(eqMap, apartTime){
                             width: ScreenUtil.getInstance().setWidth(180), height: ScreenUtil.getInstance().setWidth(180),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(15.0),
-                                image: DecorationImage(image: AssetImage("images/red.jpg")),
+                                image: DecorationImage(image: AssetImage("assets/images/red.jpg")),
                                 // 生成俩层阴影，一层绿，一层黄， 阴影位置由offset决定,阴影模糊层度由blurRadius大小决定（大就更透明更扩散），阴影模糊大小由spreadRadius决定
                                 boxShadow: [BoxShadow(color: Color(0x99FFFF00), offset: Offset(2.0, 2.0), blurRadius: 10.0, spreadRadius: 2.0),],
                             ),
@@ -203,7 +275,8 @@ Widget _stackImage(eqMap, apartTime){
                                 child: Text(
                                     apartTime,
                                     style: TextStyle(
-                                        color: Colors.white
+                                        color: Colors.white,
+                                        fontFamily: 'Raleway-Light',
                                     ),
                                 ),
                             ),

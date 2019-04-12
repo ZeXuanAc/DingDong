@@ -19,7 +19,6 @@ public interface StoreyMapper {
 
     int updateByPrimaryKey(Storey record);
 
-    // todo
     List<Storey> getListByBuildingId(@Param("buildingId") Integer buildingId);
 
 

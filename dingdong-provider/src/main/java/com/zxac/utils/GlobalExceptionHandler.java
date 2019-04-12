@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-  
+
 @CrossOrigin  
 @RestControllerAdvice  
 public class GlobalExceptionHandler {  
@@ -19,13 +19,14 @@ public class GlobalExceptionHandler {
      private static Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);  
       
     @ExceptionHandler  
-    public Result processException(Exception ex, HttpServletRequest request, HttpServletResponse response){
+    public Result processException(Exception e, HttpServletRequest request, HttpServletResponse response){
           
-        if(ex instanceof MissingServletRequestParameterException){
-            LOGGER.error("=======" + ex.getMessage() + "=======");
-            return Result.failure("400", ex.getMessage());
+        if(e instanceof MissingServletRequestParameterException){
+            LOGGER.error("=======" + e.getMessage() + "=======");
+            return Result.failure("400", e.getMessage());
         }
-        return Result.failure("500", ex.getMessage());
+        LOGGER.error("=======" + e.getCause().getMessage() + "=======");
+        return Result.failure("500", e.getMessage());
           
     }  
   

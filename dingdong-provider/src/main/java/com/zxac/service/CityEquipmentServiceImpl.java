@@ -53,9 +53,11 @@ public class CityEquipmentServiceImpl implements CityEquipmentService {
     @Override
     public List<Building> getBuildingList(Integer cityId, String location) {
         List<Building> buildingList = buildingMapper.getListByCityId(cityId);
-        if (location != null) {
+        if (location != null && !location.equals("")) {
             String[] locations = location.split(",");
-            buildingList.sort(Comparator.comparing((Building b) -> DistanceUtil.GetDistance(locations[0], locations[1], b.getLongitude(), b.getLatitude())));
+            if (locations.length == 2) {
+                buildingList.sort(Comparator.comparing((Building b) -> DistanceUtil.GetDistance(locations[0], locations[1], b.getLongitude(), b.getLatitude())));
+            }
         }
         return buildingList;
     }
