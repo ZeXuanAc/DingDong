@@ -15,6 +15,10 @@ dependencies:
   flutter_screenutil: ^0.5.0
   dio: ^2.1.1
   flutter_swiper : ^1.1.6
+  fluttertoast: ^3.0.1
+  fluttie: ^0.3.0
+  amap_location: 0.2.0
+  permission_handler: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -26,6 +30,10 @@ flutter:
   - assets/images/green.jpg
   - assets/images/red.jpg
   - assets/images/logo.png
+  - assets/animatd/loading-flutter.json
+  - assets/animatd/heart-rate.json
+  - assets/animatd/loader-animation.json
+  - assets/animatd/bouncy-mapmaker.json
   fonts:
   - family: HanYiXiaoBoHuaYueYuan-Jian-2
     fonts:

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'page/index_page.dart';
+import 'package:amap_location/amap_location.dart';
 
 void main() {
+    AMapLocationClient.setApiKey("4cad2d787551c53980ca94675c5db6b6");
     runApp(MyApp());
 }
 

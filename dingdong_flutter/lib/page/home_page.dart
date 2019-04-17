@@ -1,19 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:dingdong_flutter/service/service_method.dart';
 import 'dart:async';
-import 'package:dingdong_flutter/component/animated_rotation_box.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dingdong_flutter/config/common.dart';
-
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fluttie/fluttie.dart';
+import 'package:amap_location/amap_location.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:dingdong_flutter/utils/log_util.dart';
 
 class HomePage extends StatefulWidget {
-    _HomePageState createState() => _HomePageState();
+
+    _HomePageState createState() {
+      return _HomePageState();
+    }
 }
 class _HomePageState extends State<HomePage> {
 
     Map eqMap;  // building所有的设备信息
     Map cityBuildingMap; // 当前 building
     List<Map> allBuildingList; // 当前城市下的所有 building
+    var startUpTime; // 记录app启动的时间
+    var loadingAnimation; // 加载中的动画
+    var animationTime; // 记录当前动画开始时间
+    AMapLocation location; // 位置
     DateTime nowTime;
     Timer httpTimer;
     Timer nowTimeTimer;
@@ -21,8 +31,11 @@ class _HomePageState extends State<HomePage> {
 
     @override
     void initState() {
-        cityBuildingMap = getLocalBuilding(1, null);
-        getAllBuilding(1);
+        _initAnimation();
+        _checkPermission();
+        cityBuildingMap = _getLocalBuilding(1, null);
+        _getAllBuilding(1);
+        startUpTime = animationTime = DateTime.now();
         const oneSec = const Duration(milliseconds: 500);
         if (cityBuildingMap != null && cityBuildingMap.isNotEmpty) {
             httpTimer = new Timer.periodic(oneSec, (Timer t) =>
@@ -43,14 +56,104 @@ class _HomePageState extends State<HomePage> {
         super.initState();
     }
 
+
+    @override
+    Widget build(BuildContext context) {
+        ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
+
+        if (eqMap == null || eqMap['data'] == null) {
+            if (nowTime != null && nowTime.difference(startUpTime).inSeconds >= home_page_timeout) {
+                startUpTime = nowTime;
+                Fluttertoast.showToast(
+                    msg: "网络超时, 请检查网络",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.TOP,
+                    timeInSecForIos: 1,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0
+                );
+            }
+            if (loadingAnimation != null && nowTime != null && nowTime.difference(animationTime).inSeconds >= 2) {
+                animationTime = nowTime;
+                loadingAnimation.start();
+            }
+            return Center(
+                child: new FluttieAnimation(loadingAnimation),
+            );
+        } else {
+            return Container (
+                child: Scaffold(
+                    appBar: AppBar(
+                        leading: new Icon(Icons.home, color: Colors.blue,),
+                        title: Text(cityBuildingMap['name'], style: TextStyle(color: Colors.black), overflow: TextOverflow.ellipsis,),
+                        centerTitle: true,
+                        backgroundColor: Colors.white,
+                        actions: <Widget>[
+                            new IconButton( // action button
+                                icon: new Icon(Icons.location_on, color: Colors.blue,),
+                                onPressed: () {_showAlertDialog(context);},
+                            ),
+                        ],
+                    ),
+                    body: _listView(eqMap['data'], nowTime),
+                )
+            );
+        }
+    }
+
+
     // 得到离定位最近的 building
-    Map getLocalBuilding (cityId, location) {
+    Map _getLocalBuilding (cityId, location) {
         Map map = {"cityId": "1", "id": "2", "name": "浙江科技学院图书馆东"};
         return map;
     }
 
+    void _initAnimation () async {
+        // 先加载组件
+        var instance = new Fluttie();
+        var eComposition = await instance.loadAnimationFromAsset(
+            'assets/animatd/loading-flutter.json',
+        );
+        loadingAnimation = await instance.prepareAnimation(eComposition);
+        if (mounted) {
+            setState(() {
+                loadingAnimation.start(); //start our looped emoji animation
+            });
+        }
+
+    }
+
+    void _checkPermission() async{
+        try {
+            PermissionStatus permissionStatus = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
+            if(permissionStatus == PermissionStatus.denied){
+                Map<PermissionGroup, PermissionStatus> requestPermissionResult = await PermissionHandler().requestPermissions([PermissionGroup.location]);
+                print("申请权限结果: " + requestPermissionResult.toString());
+                if(requestPermissionResult[PermissionGroup.location] == PermissionStatus.denied){
+                    Fluttertoast.showToast(
+                        msg: "申请定位权限失败",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIos: 1,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0
+                    );
+                    return;
+                }
+            }
+            await AMapLocationClient.startup(new AMapLocationOption( desiredAccuracy:CLLocationAccuracy.kCLLocationAccuracyHundredMeters ));
+            location = await AMapLocationClient.getLocation(true);
+            LogUtil.i("定位", "lat: " + location.latitude.toString());
+        } catch(e) {
+            LogUtil.i("home_page", "定位失败" + e.error);
+        }
+    }
+
+
     // 得到该城市下的所有 building
-    void getAllBuilding (cityId) {
+    void _getAllBuilding (cityId) {
         getBuildingUrl(cityId, null).then((val){
             if (val != null) {
                 allBuildingList = [];
@@ -60,12 +163,14 @@ class _HomePageState extends State<HomePage> {
                     }
                 });
             }
+        }).catchError((e) {
+            LogUtil.e("homt_page._getAllBuilding: ", "${e.error}");     // Finally, callback fires.
         });
     }
 
     // 选择building
-    void showAlertDialog(BuildContext context) {
-        getAllBuilding(1);
+    void _showAlertDialog(BuildContext context) {
+        _getAllBuilding(1);
         List<Widget> dialogWidget = [];
         for (Map map in allBuildingList) {
             dialogWidget.add(new SimpleDialogOption(
@@ -110,33 +215,12 @@ class _HomePageState extends State<HomePage> {
     }
 
     @override
-    Widget build(BuildContext context) {
-        ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
-
-        if (eqMap == null || eqMap['data'] == null) {
-            return Center(
-                child: new AnimatedRotationBoxRoute()
-            );
-        } else {
-            return Container (
-                child: Scaffold(
-                    appBar: AppBar(
-                        leading: new Icon(Icons.home, color: Colors.blue,),
-                        title: Text(cityBuildingMap['name'], style: TextStyle(color: Colors.black), overflow: TextOverflow.ellipsis,),
-                        centerTitle: true,
-                        backgroundColor: Colors.white,
-                        actions: <Widget>[
-                            new IconButton( // action button
-                                icon: new Icon(Icons.location_on, color: Colors.blue,),
-                                onPressed: () {showAlertDialog(context);},
-                            ),
-                        ],
-                    ),
-                    body: _listView(eqMap['data'], nowTime),
-                )
-            );
-        }
+    void dispose() {
+        AMapLocationClient.shutdown();
+        super.dispose();
     }
+
+
 }
 
 Widget _listView(sEqMap, nowTime) {
