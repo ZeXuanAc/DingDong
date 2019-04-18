@@ -19,6 +19,8 @@ dependencies:
   fluttie: ^0.3.0
   amap_location: 0.2.0
   permission_handler: ^3.0.0
+  shared_preferences: ^0.5.2
+  fluro: "^1.4.0"
 
 dev_dependencies:
   flutter_test:

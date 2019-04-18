@@ -14,8 +14,8 @@
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="dingdong_flutter"
-        android:icon="@mipmap/ic_launcher">
+        android:label="叮咚"
+        android:icon="@mipmap/logo">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

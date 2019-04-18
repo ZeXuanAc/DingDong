@@ -8,6 +8,8 @@ import 'package:fluttie/fluttie.dart';
 import 'package:amap_location/amap_location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:dingdong_flutter/utils/log_util.dart';
+import 'package:dingdong_flutter/config/application.dart';
+
 
 class HomePage extends StatefulWidget {
 
@@ -23,7 +25,7 @@ class _HomePageState extends State<HomePage> {
     var startUpTime; // 记录app启动的时间
     var loadingAnimation; // 加载中的动画
     var animationTime; // 记录当前动画开始时间
-    AMapLocation location; // 位置
+    AMapLocation location;
     DateTime nowTime;
     Timer httpTimer;
     Timer nowTimeTimer;
@@ -32,8 +34,7 @@ class _HomePageState extends State<HomePage> {
     @override
     void initState() {
         _initAnimation();
-        _checkPermission();
-        cityBuildingMap = _getLocalBuilding(1, null);
+        cityBuildingMap = _getLocalBuilding();
         _getAllBuilding(1);
         startUpTime = animationTime = DateTime.now();
         const oneSec = const Duration(milliseconds: 500);
@@ -91,6 +92,12 @@ class _HomePageState extends State<HomePage> {
                         backgroundColor: Colors.white,
                         actions: <Widget>[
                             new IconButton( // action button
+                                icon: new Icon(Icons.airplay, color: Colors.blue,),
+                                onPressed: () {
+                                    Application.router.navigateTo(context, "/buildingOptions?buildingId=00933123");
+                                },
+                            ),
+                            new IconButton( // action button
                                 icon: new Icon(Icons.location_on, color: Colors.blue,),
                                 onPressed: () {_showAlertDialog(context);},
                             ),
@@ -104,7 +111,17 @@ class _HomePageState extends State<HomePage> {
 
 
     // 得到离定位最近的 building
-    Map _getLocalBuilding (cityId, location) {
+    Map _getLocalBuilding () {
+        _checkPermission().then((val) {
+            if (val != null) {
+                setState(() {
+                  location = val;
+                });
+            }
+        });
+        if (location != null) {
+
+        }
         Map map = {"cityId": "1", "id": "2", "name": "浙江科技学院图书馆东"};
         return map;
     }
@@ -124,15 +141,17 @@ class _HomePageState extends State<HomePage> {
 
     }
 
-    void _checkPermission() async{
+    // 检查定位和文件读取权限并获取定位
+    Future<AMapLocation> _checkPermission() async{
         try {
-            PermissionStatus permissionStatus = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
-            if(permissionStatus == PermissionStatus.denied){
-                Map<PermissionGroup, PermissionStatus> requestPermissionResult = await PermissionHandler().requestPermissions([PermissionGroup.location]);
-                print("申请权限结果: " + requestPermissionResult.toString());
-                if(requestPermissionResult[PermissionGroup.location] == PermissionStatus.denied){
+            PermissionStatus locationPermissionStatus = await PermissionHandler().checkPermissionStatus(PermissionGroup.location);
+            PermissionStatus storagePermissionStatus = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
+            if(locationPermissionStatus == PermissionStatus.denied || storagePermissionStatus == PermissionStatus.denied){
+                Map<PermissionGroup, PermissionStatus> requestPermissionResult = await PermissionHandler().requestPermissions([PermissionGroup.location, PermissionGroup.storage]);
+                if(requestPermissionResult[PermissionGroup.location] == PermissionStatus.denied ||
+                    requestPermissionResult[PermissionGroup.storage] == PermissionStatus.denied){
                     Fluttertoast.showToast(
-                        msg: "申请定位权限失败",
+                        msg: "申请定位权限或者读取文件失败",
                         toastLength: Toast.LENGTH_SHORT,
                         gravity: ToastGravity.CENTER,
                         timeInSecForIos: 1,
@@ -140,14 +159,14 @@ class _HomePageState extends State<HomePage> {
                         textColor: Colors.white,
                         fontSize: 16.0
                     );
-                    return;
+                    return null;
                 }
             }
-            await AMapLocationClient.startup(new AMapLocationOption( desiredAccuracy:CLLocationAccuracy.kCLLocationAccuracyHundredMeters ));
-            location = await AMapLocationClient.getLocation(true);
-            LogUtil.i("定位", "lat: " + location.latitude.toString());
+            await AMapLocationClient.startup(new AMapLocationOption(desiredAccuracy:CLLocationAccuracy.kCLLocationAccuracyHundredMeters ));
+            return await AMapLocationClient.getLocation(true);
         } catch(e) {
-            LogUtil.i("home_page", "定位失败" + e.error);
+            LogUtil.e("home_page", "定位失败" + e.error);
+            return null;
         }
     }
 
@@ -327,7 +346,7 @@ Widget _stackImage(eqMap, apartTime){
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15.0),
                         image: DecorationImage(image: AssetImage("assets/images/green.jpg")),
-                        // 生成俩层阴影，一层绿，一层黄， 阴影位置由offset决定,阴影模糊层度由blurRadius大小决定（大就更透明更扩散），阴影模糊大小由spreadRadius决定
+                        // 生成阴影， 阴影位置由offset决定,阴影模糊层度由blurRadius大小决定（大就更透明更扩散），阴影模糊大小由spreadRadius决定
                         boxShadow: [BoxShadow(color: Color(0x9900FFFF), offset: Offset(2.0, 2.0), blurRadius: 10.0, spreadRadius: 2.0),],
                     ),
                 ),
@@ -345,7 +364,7 @@ Widget _stackImage(eqMap, apartTime){
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(15.0),
                                 image: DecorationImage(image: AssetImage("assets/images/red.jpg")),
-                                // 生成俩层阴影，一层绿，一层黄， 阴影位置由offset决定,阴影模糊层度由blurRadius大小决定（大就更透明更扩散），阴影模糊大小由spreadRadius决定
+                                // 生成俩层阴影，一层黄， 阴影位置由offset决定,阴影模糊层度由blurRadius大小决定（大就更透明更扩散），阴影模糊大小由spreadRadius决定
                                 boxShadow: [BoxShadow(color: Color(0x99FFFF00), offset: Offset(2.0, 2.0), blurRadius: 10.0, spreadRadius: 2.0),],
                             ),
                         ),

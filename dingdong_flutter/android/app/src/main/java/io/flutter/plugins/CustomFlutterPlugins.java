@@ -1,9 +1,6 @@
 package io.flutter.plugins;
 
-import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
-
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodChannel;
 
