@@ -6,6 +6,8 @@ import java.util.Date;
 public class City implements Serializable {
     private Integer id;
 
+    private String citycode;
+
     private String name;
 
     private String province;
@@ -22,6 +24,14 @@ public class City implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getCitycode() {
+        return citycode;
+    }
+
+    public void setCitycode(String citycode) {
+        this.citycode = citycode;
     }
 
     public String getName() {

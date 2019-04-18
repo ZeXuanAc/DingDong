@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.zxac.model.Building">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="city_id" jdbcType="INTEGER" property="cityId" />
+    <result column="citycode" jdbcType="VARCHAR" property="citycode" />
     <result column="city_name" jdbcType="VARCHAR" property="cityName" />
     <result column="eq_num" jdbcType="INTEGER" property="eqNum" />
     <result column="longitude" jdbcType="VARCHAR" property="longitude" />
@@ -14,7 +14,7 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, city_id, city_name, eq_num, longitude, latitude, priority, create_time,
+    id, name, citycode, city_name, eq_num, longitude, latitude, priority, create_time,
     update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -28,11 +28,11 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.zxac.model.Building">
-    insert into building (id, name, city_id,
+    insert into building (id, name, citycode,
       city_name, eq_num, longitude, 
       latitude, priority, create_time, update_time
       )
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{cityId,jdbcType=INTEGER},
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{citycode,jdbcType=VARCHAR},
       #{cityName,jdbcType=VARCHAR}, #{eqNum,jdbcType=INTEGER}, #{longitude,jdbcType=VARCHAR}, 
       #{latitude,jdbcType=VARCHAR}, #{priority,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
@@ -46,8 +46,8 @@
       <if test="name != null">
         name,
       </if>
-      <if test="cityId != null">
-        city_id,
+      <if test="citycode != null">
+        citycode,
       </if>
       <if test="cityName != null">
         city_name,
@@ -78,8 +78,8 @@
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
       </if>
-      <if test="cityId != null">
-        #{cityId,jdbcType=INTEGER},
+      <if test="citycode != null">
+        #{citycode,jdbcType=VARCHAR},
       </if>
       <if test="cityName != null">
         #{cityName,jdbcType=VARCHAR},
@@ -110,8 +110,8 @@
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="cityId != null">
-        city_id = #{cityId,jdbcType=INTEGER},
+      <if test="citycode != null">
+        citycode = #{citycode,jdbcType=VARCHAR},
       </if>
       <if test="cityName != null">
         city_name = #{cityName,jdbcType=VARCHAR},
@@ -140,7 +140,7 @@
   <update id="updateByPrimaryKey" parameterType="com.zxac.model.Building">
     update building
     set name = #{name,jdbcType=VARCHAR},
-      city_id = #{cityId,jdbcType=INTEGER},
+      citycode = #{citycode,jdbcType=VARCHAR},
       city_name = #{cityName,jdbcType=VARCHAR},
       eq_num = #{eqNum,jdbcType=INTEGER},
       longitude = #{longitude,jdbcType=VARCHAR},
@@ -151,10 +151,10 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <select id="getListByCityId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="getListByCitycode" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from building
-    where city_id = #{cityId,jdbcType=INTEGER}
+    where citycode = #{citycode,jdbcType=VARCHAR}
   </select>
 </mapper>

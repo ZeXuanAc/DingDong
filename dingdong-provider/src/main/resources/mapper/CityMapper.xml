@@ -3,6 +3,7 @@
 <mapper namespace="com.zxac.dao.CityMapper">
   <resultMap id="BaseResultMap" type="com.zxac.model.City">
     <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="citycode" jdbcType="VARCHAR" property="citycode" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="province" jdbcType="VARCHAR" property="province" />
     <result column="priority" jdbcType="INTEGER" property="priority" />
@@ -10,7 +11,7 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, province, priority, create_time, update_time
+    id, citycode, name, province, priority, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -23,9 +24,9 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.zxac.model.City">
-    insert into city (id, name, province, priority,
+    insert into city (id, citycode, name, province, priority,
       create_time, update_time)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, #{priority,jdbcType=INTEGER},
+    values (#{id,jdbcType=INTEGER}, #{citycode,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, #{priority,jdbcType=INTEGER},
       #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.zxac.model.City">
@@ -33,6 +34,9 @@
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
+      </if>
+      <if test="citycode != null">
+        citycode,
       </if>
       <if test="name != null">
         name,
@@ -54,6 +58,9 @@
       <if test="id != null">
         #{id,jdbcType=INTEGER},
       </if>
+      <if test="citycode != null">
+        #{citycode,jdbcType=VARCHAR},
+      </if>
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
       </if>
@@ -74,6 +81,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.zxac.model.City">
     update city
     <set>
+      <if test="citycode != null">
+        name = #{citycode,jdbcType=VARCHAR},
+      </if>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
       </if>
@@ -94,7 +104,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.zxac.model.City">
     update city
-    set name = #{name,jdbcType=VARCHAR},
+    set citycode = #{citycode,jdbcType=VARCHAR}
+      name = #{name,jdbcType=VARCHAR},
       province = #{province,jdbcType=VARCHAR},
       priority = #{priority,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -107,4 +118,9 @@
     <include refid="Base_Column_List" />
     from city
   </select>
+
+  <select id="citycodeNum" resultType="java.lang.Integer">
+    select count(*) from city where citycode = #{citycode,jdbcType=VARCHAR}
+  </select>
+
 </mapper>

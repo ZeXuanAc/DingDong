@@ -8,7 +8,7 @@ public class Building implements Serializable {
 
     private String name;
 
-    private Integer cityId;
+    private String citycode;
 
     private String cityName;
 
@@ -32,12 +32,12 @@ public class Building implements Serializable {
         this.id = id;
     }
 
-    public Integer getCityId() {
-        return cityId;
+    public String getCitycode() {
+        return citycode;
     }
 
-    public void setCityId(Integer cityId) {
-        this.cityId = cityId;
+    public void setCitycode(String citycode) {
+        this.citycode = citycode;
     }
 
     public String getCityName() {

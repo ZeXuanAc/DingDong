@@ -19,7 +19,7 @@ public interface BuildingMapper {
 
     int updateByPrimaryKey(Building record);
 
-    // 通过 cityId 得到符合的建筑
-    List<Building> getListByCityId(@Param("cityId") Integer cityId);
+    // 通过 citycode 得到符合的建筑
+    List<Building> getListByCitycode(@Param("citycode") String citycode);
 
 }

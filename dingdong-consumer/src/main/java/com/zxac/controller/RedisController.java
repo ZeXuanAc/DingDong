@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 public class RedisController {
 
     @GetMapping(value = "redis/get")
-    public Result getRedisDataV2(@RequestParam(value = "cityId") Integer cityId,
+    public Result getRedisDataV2(@RequestParam(value = "citycode") String citycode,
                                @RequestParam(value = "buildingId") Integer buildingId,
                                @RequestParam(value = "storeyId", required = false) Integer storeyId){
-        String redisKeyPattern = Common.REDIS_KEY_CITY + cityId + Common.UNDERLINE + Common.REDIS_KEY_BUILDING + buildingId;
+        String redisKeyPattern = Common.REDIS_KEY_CITY + citycode + Common.UNDERLINE + Common.REDIS_KEY_BUILDING + buildingId;
         if (storeyId != null && !storeyId.equals(0)) {
             redisKeyPattern += Common.UNDERLINE  + Common.REDIS_KEY_STOREY + storeyId;
         }
@@ -62,7 +62,7 @@ public class RedisController {
     
     @GetMapping(value = "redis/set")
     public Result setRedisDataV2 (EquipmentStatusDto dto){
-        String redisKey = Common.REDIS_KEY_CITY + dto.getCityId() + Common.UNDERLINE +
+        String redisKey = Common.REDIS_KEY_CITY + dto.getCitycode() + Common.UNDERLINE +
                 Common.REDIS_KEY_BUILDING + dto.getBuildingId() + Common.UNDERLINE  +
                 Common.REDIS_KEY_STOREY + dto.getStoreyId() + Common.UNDERLINE  +
                 Common.REDIS_KEY_EQ + dto.getEqId();
@@ -84,7 +84,7 @@ public class RedisController {
                         }
                     }
                 } else {
-                    param = ObjectUtil.toMap(dto, String.class);
+                    param = ObjectUtil.toMap(dto, String.class, "cityId");
                 }
                 if (param.size() == 1) {
                     jedis.hset(redisKey, param);

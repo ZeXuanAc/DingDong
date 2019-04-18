@@ -44,15 +44,20 @@ public class CityEquipmentServiceImpl implements CityEquipmentService {
     }
 
 
+    @Override
+    public Integer checkCityCode(String citycode) {
+        return cityMapper.citycodeNum(citycode);
+    }
+
     /**
      * 得到排序后的building列表
-     * @param cityId
+     * @param citycode
      * @param location 经纬度, 纬度在前, 经度在后, 用逗号相隔, 如 30.1123,23232
      * @return
      */
     @Override
-    public List<Building> getBuildingList(Integer cityId, String location) {
-        List<Building> buildingList = buildingMapper.getListByCityId(cityId);
+    public List<Building> getBuildingList(String citycode, String location) {
+        List<Building> buildingList = buildingMapper.getListByCitycode(citycode);
         if (location != null && !location.equals("")) {
             String[] locations = location.split(",");
             if (locations.length == 2) {
@@ -86,20 +91,20 @@ public class CityEquipmentServiceImpl implements CityEquipmentService {
     }
 
     @Override
-    public List<EquipmentStatusDto> getAllEquipment(Integer cityId) {
+    public List<EquipmentStatusDto> getAllEquipment(String citycode) {
         List<EquipmentStatusDto> dtoList = new ArrayList<>();
-        if (cityId > 0){
-            List<Building> buildingList = getBuildingList(cityId, null);
+        if (citycode != null && !citycode.equals("")){
+            List<Building> buildingList = getBuildingList(citycode, null);
             for (Building b : buildingList) {
                 List<Equipment> eqList = getEquipmentListByBuildingId(b.getId());
                 dtoList.addAll(EquipmentStatusDto.acceptList(eqList));
                 dtoList.forEach(dto -> {
                     dto.setBuildingId(b.getId());
-                    dto.setCityId(cityId);
+                    dto.setCitycode(citycode);
                 });
             }
         } else {
-            dtoList = equipmentMapper.getEqDtoList(cityId);
+            dtoList = equipmentMapper.getEqDtoList(citycode);
         }
         return dtoList;
     }

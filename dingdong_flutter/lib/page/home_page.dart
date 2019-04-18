@@ -9,7 +9,7 @@ import 'package:amap_location/amap_location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:dingdong_flutter/utils/log_util.dart';
 import 'package:dingdong_flutter/config/application.dart';
-
+import 'package:dingdong_flutter/utils/storage_util.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -25,7 +25,8 @@ class _HomePageState extends State<HomePage> {
     var startUpTime; // 记录app启动的时间
     var loadingAnimation; // 加载中的动画
     var animationTime; // 记录当前动画开始时间
-    AMapLocation location;
+    AMapLocation location; // 当前定位信息
+    var homeCitycode; // 城市代码
     DateTime nowTime;
     Timer httpTimer;
     Timer nowTimeTimer;
@@ -34,13 +35,23 @@ class _HomePageState extends State<HomePage> {
     @override
     void initState() {
         _initAnimation();
-        cityBuildingMap = _getLocalBuilding();
-        _getAllBuilding(1);
+        _getLocalBuilding();
+//        cityBuildingMap = {"citycode": "0571", "id" : "2", "name": "浙江科技学院东图书馆"};
+        _getAllBuilding();
         startUpTime = animationTime = DateTime.now();
+        super.initState();
+    }
+
+
+    @override
+    Widget build(BuildContext context) {
+        ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
+
+        // 在初始化完成再通过初始化的数据完成页面的生成
         const oneSec = const Duration(milliseconds: 500);
         if (cityBuildingMap != null && cityBuildingMap.isNotEmpty) {
             httpTimer = new Timer.periodic(oneSec, (Timer t) =>
-                getHomePageContentUrl(cityBuildingMap['cityId'], cityBuildingMap['id']).then((val){
+                getHomePageContentUrl(cityBuildingMap['citycode'], cityBuildingMap['id']).then((val){
                     if (val != null && mounted) {
                         setState(() {
                             eqMap = val;
@@ -54,13 +65,6 @@ class _HomePageState extends State<HomePage> {
                 })
             );
         }
-        super.initState();
-    }
-
-
-    @override
-    Widget build(BuildContext context) {
-        ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
 
         if (eqMap == null || eqMap['data'] == null) {
             if (nowTime != null && nowTime.difference(startUpTime).inSeconds >= home_page_timeout) {
@@ -111,19 +115,130 @@ class _HomePageState extends State<HomePage> {
 
 
     // 得到离定位最近的 building
-    Map _getLocalBuilding () {
+    void _getLocalBuilding () {
         _checkPermission().then((val) {
             if (val != null) {
-                setState(() {
-                  location = val;
+                location = val;
+                print("citycode: " + location.citycode.toString());
+                checkCitycode(location.citycode).then((result) {
+                    if (result['data'] == 1) {
+                        // 检查本地是否存在此citycode
+                        StorageUtil.get("citycode").then((localCitycode) {
+                            if (localCitycode == null || localCitycode == "") {
+                                StorageUtil.save("citycode", location.citycode);
+                                print("本地citycode存储成功");
+                                setState(() {
+                                  homeCitycode = location.citycode;
+                                });
+                            } else {
+                                print("localCitycode: " + localCitycode);
+                                if (location.citycode != localCitycode) {
+                                    showDialog(
+                                        context: context,
+                                        child: new AboutDialog(
+                                            applicationName: "最佳助手：",
+                                            applicationVersion: "V1.0",
+                                            applicationIcon: new Icon(Icons.android,color: Colors.blueAccent,),
+                                            children: <Widget>[new Text("更新摘要\n新增飞天遁地功能\n优化用户体验")],
+                                        )
+                                    );
+                                    // todo 点击确认后的操作
+                                    StorageUtil.save("citycode", location.citycode);
+                                    setState(() {
+                                      homeCitycode = location.citycode;
+                                    });
+
+                                    // todo 点击取消后的操作
+                                    setState(() {
+                                      homeCitycode = localCitycode;
+                                    });
+                                } else {
+                                    homeCitycode = localCitycode;
+                                }
+                            }
+                            print("_getBuildingByCitycode -- homeCitycode :" + homeCitycode);
+                            _getBuildingByCitycode(homeCitycode);
+                        });
+                    } else {
+                        // 数据库不存在此citycode
+                        Fluttertoast.showToast(
+                            msg: "你所在城市暂未开通此服务",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.TOP,
+                            timeInSecForIos: 1,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0
+                        );
+                    }
                 });
             }
         });
-        if (location != null) {
+    }
 
+    void _getBuildingByCitycode (citycode) {
+        String latlong = location.latitude.toString() + "," + location.longitude.toString();
+        getBuildingUrl(homeCitycode, latlong).then((val){
+            if (val != null) {
+                print("citycode 下的 building : " + val['data'][0].toString());
+                setState(() {
+                    cityBuildingMap = val['data'][0];
+                    // todo 本地存储buildingId
+                });
+            }
+        }).catchError((e) {
+            LogUtil.e("homt_page._getAllBuilding: ", "${e.error}");     // Finally, callback fires.
+        });
+    }
+
+
+    // 得到该城市下的所有 building
+    void _getAllBuilding () {
+        if (homeCitycode != null) {
+            getBuildingUrl(homeCitycode, null).then((val){
+                if (val != null) {
+                    allBuildingList = [];
+                    setState(() {
+                        for (Map map in val['data']){
+                            allBuildingList.add(map);
+                        }
+                    });
+                }
+            }).catchError((e) {
+                LogUtil.e("homt_page._getAllBuilding: ", "${e.error}");     // Finally, callback fires.
+            });
         }
-        Map map = {"cityId": "1", "id": "2", "name": "浙江科技学院图书馆东"};
-        return map;
+    }
+
+    // 选择building
+    void _showAlertDialog(BuildContext context) {
+        _getAllBuilding();
+        List<Widget> dialogWidget = [];
+        for (Map map in allBuildingList) {
+            dialogWidget.add(new SimpleDialogOption(
+                child:  Text(
+                    map['name'],
+                    style: TextStyle(
+                        height: 1.3,
+                        color: Colors.blue,
+                        shadows: [Shadow(color: Color(0x9900FFFF), offset: Offset(0.5, 0.5), blurRadius: 5)], // 阴影
+                    ),
+                ),
+                onPressed: () {
+                    cityBuildingMap = map;
+                    Navigator.pop(context); //关闭对话框
+                },
+            ),);
+        }
+        showDialog<Null>(
+            context: context,
+            builder: (BuildContext context) {
+                return  SimpleDialog(
+                    title:  Text('选择'),
+                    children: dialogWidget,
+                );
+            },
+        );
     }
 
     void _initAnimation () async {
@@ -138,7 +253,6 @@ class _HomePageState extends State<HomePage> {
                 loadingAnimation.start(); //start our looped emoji animation
             });
         }
-
     }
 
     // 检查定位和文件读取权限并获取定位
@@ -168,54 +282,6 @@ class _HomePageState extends State<HomePage> {
             LogUtil.e("home_page", "定位失败" + e.error);
             return null;
         }
-    }
-
-
-    // 得到该城市下的所有 building
-    void _getAllBuilding (cityId) {
-        getBuildingUrl(cityId, null).then((val){
-            if (val != null) {
-                allBuildingList = [];
-                setState(() {
-                    for (Map map in val['data']){
-                        allBuildingList.add(map);
-                    }
-                });
-            }
-        }).catchError((e) {
-            LogUtil.e("homt_page._getAllBuilding: ", "${e.error}");     // Finally, callback fires.
-        });
-    }
-
-    // 选择building
-    void _showAlertDialog(BuildContext context) {
-        _getAllBuilding(1);
-        List<Widget> dialogWidget = [];
-        for (Map map in allBuildingList) {
-            dialogWidget.add(new SimpleDialogOption(
-                child:  Text(
-                    map['name'],
-                    style: TextStyle(
-                        height: 1.3,
-                        color: Colors.blue,
-                        shadows: [Shadow(color: Color(0x9900FFFF), offset: Offset(0.5, 0.5), blurRadius: 5)], // 阴影
-                    ),
-                ),
-                onPressed: () {
-                    cityBuildingMap = map;
-                    Navigator.pop(context); //关闭对话框
-                },
-            ),);
-        }
-        showDialog<Null>(
-            context: context,
-            builder: (BuildContext context) {
-                return  SimpleDialog(
-                    title:  Text('选择'),
-                    children: dialogWidget,
-                );
-            },
-        );
     }
 
 

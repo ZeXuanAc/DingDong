@@ -12,14 +12,19 @@ public interface CityEquipmentService {
      */
     List<City> getAllCity();
 
+    /**
+     * 检查是否存在此citycode
+     * @return
+     */
+    Integer checkCityCode(String citycode);
 
     /**
      * 得到该城市下的building
-     * @param cityId
+     * @param citycode
      * @param location 经纬度, 纬度在前, 经度在后, 用逗号相隔, 如 30.1123,23232
      * @return
      */
-    List<Building> getBuildingList(Integer cityId, String location);
+    List<Building> getBuildingList(String citycode, String location);
 
 
     /**
@@ -38,11 +43,11 @@ public interface CityEquipmentService {
 
 
     /**
-     * 得到该城市下的所有equipment, 当cityId为0时查询所有
-     * @param cityId
+     * 得到该城市下的所有equipment, 当citycode为""时查询所有
+     * @param citycode
      * @return
      */
-    List<EquipmentStatusDto> getAllEquipment(Integer cityId);
+    List<EquipmentStatusDto> getAllEquipment(String citycode);
 
     /**
      * 得到该楼层下的所有设备

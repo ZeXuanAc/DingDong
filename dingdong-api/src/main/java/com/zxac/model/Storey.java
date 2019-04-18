@@ -10,6 +10,10 @@ public class Storey implements Serializable {
 
     private Integer buildingId;
 
+    private String longitude;
+
+    private String latitude;
+
     private Integer eqNum;
 
     private Integer priority;
@@ -40,6 +44,22 @@ public class Storey implements Serializable {
 
     public void setBuildingId(Integer buildingId) {
         this.buildingId = buildingId;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude == null ? null : longitude.trim();
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude == null ? null : latitude.trim();
     }
 
     public Integer getEqNum() {

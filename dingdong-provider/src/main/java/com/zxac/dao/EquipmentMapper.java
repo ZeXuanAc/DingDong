@@ -27,6 +27,6 @@ public interface EquipmentMapper {
     // 通过 buildingId 得到当前层的设备
     List<Equipment> getListByBuildingId(@Param("buildingId") Integer buildingId);
 
-    // 通过cityId得到该设备的所有信息
-    List<EquipmentStatusDto> getEqDtoList(@Param("cityId") Integer cityId);
+    // 通过citycode得到该设备的所有信息
+    List<EquipmentStatusDto> getEqDtoList(@Param("citycode") String citycode);
 }

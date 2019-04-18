@@ -29,6 +29,8 @@ public class EquipmentStatusDto implements Serializable {
 
     private Integer cityId; // 城市id
 
+    private String citycode; // 城市代码
+
     private String storeyName; // 楼层名称
 
     private String cityName; // 城市名称
@@ -51,11 +53,11 @@ public class EquipmentStatusDto implements Serializable {
 
     private String createTimeStr; // 数据包生成时间
 
-    public static EquipmentStatusDto accept (Equipment model, Integer buildingId, Integer cityId, String status, String createTime){
+    public static EquipmentStatusDto accept (Equipment model, Integer buildingId, String citycode, String status, String createTime){
         EquipmentStatusDto dto = new EquipmentStatusDto();
         BeanUtils.copyProperties(model, dto);
         dto.setBuildingId(buildingId);
-        dto.setCityId(cityId);
+        dto.setCitycode(citycode);
         dto.setStatus(status);
         dto.setCreateTimeStr(createTime);
         return dto;

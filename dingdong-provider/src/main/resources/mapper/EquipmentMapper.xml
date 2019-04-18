@@ -18,7 +18,7 @@
     <result column="eq_name" jdbcType="VARCHAR" property="eqName" />
     <result column="storey_id" jdbcType="INTEGER" property="storeyId" />
     <result column="storey_name" jdbcType="VARCHAR" property="storeyName" />
-    <result column="city_id" jdbcType="INTEGER" property="cityId" />
+    <result column="citycode" jdbcType="INTEGER" property="citycode" />
     <result column="city_name" jdbcType="VARCHAR" property="cityName" />
     <result column="building_id" jdbcType="INTEGER" property="buildingId" />
     <result column="building_name" jdbcType="VARCHAR" property="buildingName" />
@@ -173,13 +173,13 @@
     from equipment
   </select>
 
-  <select id="getEqDtoList" parameterType="java.lang.Integer" resultMap="DtoResultMap">
-    SELECT b.name as building_name, b.city_id, b.city_name, b.latitude, b.longitude, a.* from building b,
+  <select id="getEqDtoList" parameterType="java.lang.String" resultMap="DtoResultMap">
+    SELECT b.name as building_name, b.citycode, b.city_name, b.latitude, b.longitude, a.* from building b,
     (select s.building_id, e.storey_id, s.name as storey_name, e.id as eq_id, e.name as eq_Name, e.address, e.condition, e.priority, s.priority as storey_priority
       from storey s, equipment e where s.id = e.storey_id) as a
     where b.id = a.building_id
-    <if test="cityId != null and cityId != 0">
-      and city_id = #{cityId,jdbcType=INTEGER}
+    <if test="citycode != null and citycode != ''">
+      and citycode = #{citycode,jdbcType=VARCHAR}
     </if>
   </select>
 

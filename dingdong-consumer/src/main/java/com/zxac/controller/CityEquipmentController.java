@@ -23,9 +23,21 @@ public class CityEquipmentController {
         return Result.success(cityList);
     }
 
+    @GetMapping(value = "citycode/get")
+    public Result checkCitycode(String citycode){
+        if (citycode == null) {
+            return Result.failure("citycode参数是必传的");
+        }
+        Integer cityList = cityEquipmentService.checkCityCode(citycode);
+        return Result.success(cityList);
+    }
+
     @GetMapping(value = "building")
-    public Result getBuilding(Integer cityId, String location){
-        List<Building> buildingList = cityEquipmentService.getBuildingList(cityId, location);
+    public Result getBuilding(String citycode , String location){
+        if (citycode == null) {
+            return Result.failure("citycode参数是必传的");
+        }
+        List<Building> buildingList = cityEquipmentService.getBuildingList(citycode, location);
         return Result.success(buildingList);
     }
 
