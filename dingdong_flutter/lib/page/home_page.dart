@@ -105,10 +105,10 @@ class _HomePageState extends State<HomePage> {
                     if (result['data'] == 1) {
                         print("3-----数据库【存在】此citycode");
                         // 检查本地是否存在此citycode
-                        StorageUtil.get("citycode").then((localCitycode) {
+                        StorageUtil.get(storageCitycode).then((localCitycode) {
                             if (localCitycode == null || localCitycode == "") {
                                 print("4------检测到本地【不存在】citycode");
-                                StorageUtil.save("citycode", location.citycode);
+                                StorageUtil.save(storageCitycode, location.citycode);
                                 print("4.1-----本地citycode存储成功");
                                 setState(() {
                                   homeCitycode = location.citycode;
@@ -127,12 +127,12 @@ class _HomePageState extends State<HomePage> {
                                                     FlatButton(
                                                         child: Text("确认"),
                                                         onPressed: () {
-                                                            StorageUtil.save("citycode", location.citycode);
+                                                            StorageUtil.save(storageCitycode, location.citycode);
                                                             setState(() {
                                                                 homeCitycode = location.citycode;
                                                                 startUpTime = DateTime.now();
                                                             });
-                                                            StorageUtil.remove("buildingMap");
+                                                            StorageUtil.remove(storageBuilding);
                                                             print("5------获取citycode成功(确认), citycode为：" + homeCitycode);
                                                             _getBuildingByCitycode(homeCitycode);
                                                             Navigator.of(context).pop();
@@ -181,7 +181,7 @@ class _HomePageState extends State<HomePage> {
     void _getBuildingByCitycode (citycode) {
         print("6------开始获取buildingMap, citycode为： " + citycode);
         print("7------开始尝试获取本地buildingMap");
-        StorageUtil.get("buildingMap").then((val) {
+        StorageUtil.get(storageBuilding).then((val) {
             var getBuildingUrlFlag = true;
             if (val != null && val != "") {
                print("8------获取本地buildingMap成功，buildingMap: " + val);
@@ -202,7 +202,7 @@ class _HomePageState extends State<HomePage> {
                         setState(() {
                             cityBuildingMap = val['data'][0];
                             // todo 本地存储buildingId
-                            StorageUtil.save("buildingMap", json.encode(cityBuildingMap));
+                            StorageUtil.save(storageBuilding, json.encode(cityBuildingMap));
                             print("9------本地存储buildingMap, mapString: " + json.encode(cityBuildingMap));
                             _startTimer();
                             print("10------开启定时器");
@@ -282,6 +282,7 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {
                     cityBuildingMap = map;
                     Navigator.pop(context); //关闭对话框
+                    StorageUtil.save(storageBuilding, json.encode(cityBuildingMap));
                 },
             ),);
         }
@@ -335,7 +336,8 @@ class _HomePageState extends State<HomePage> {
                       startUpTime = DateTime.now();
                     });
                     Navigator.pop(context); // 关闭对话框
-                    StorageUtil.remove("buildingMap");
+//                    StorageUtil.remove(storageBuilding);
+                    StorageUtil.save(storageCitycode, homeCitycode);
                     _getBuildingByCitycode(homeCitycode);
                 },
             ),);
@@ -477,16 +479,40 @@ Widget _listView(sEqMap, nowTime) {
                                 ),
                             ]
                         ),
-                        GridView.count(
-                            physics: new NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            crossAxisCount: 3,
-                            mainAxisSpacing: 10.0,
-                            crossAxisSpacing: 10.0,
-                            padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                            childAspectRatio: 1.0,
-                            children: imageWidgetList,
+                        Stack(
+                            alignment: const FractionalOffset(0.5, 0.8),
+                            children: <Widget>[
+                                GridView.count(
+                                    physics: new NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    crossAxisCount: 3,
+                                    mainAxisSpacing: 10.0,
+                                    crossAxisSpacing: 10.0,
+                                    padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                                    childAspectRatio: 1.0,
+                                    children: imageWidgetList,
+                                ),
+                                new Opacity(
+                                    opacity: 0.5,
+                                    child: new GestureDetector(
+                                        child: new ClipOval(
+                                            child: new FadeInImage.assetNetwork(
+                                                placeholder: "images/normal_user_icon.webp",//预览图
+                                                fit: BoxFit.fitWidth,
+                                                image:"http://img2.3png.com/a41ee92de63f9e3c2a4b05f2a1de7d96f114.png",
+                                                width: 58.0,
+                                                height: 58.0,
+                                            ),
+                                        ),
+                                        onTap: (){
+                                            Fluttertoast.showToast(msg: "正在导航前往 --> " + eqList.elementAt(0)['storeyName'], toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.TOP,
+                                                backgroundColor: Colors.red, textColor: Colors.white, fontSize: 16.0);
+                                        },
+                                    )
+                                )
+                            ]
                         )
+
                     ]
                 )
             ),
