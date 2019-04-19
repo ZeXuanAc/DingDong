@@ -97,6 +97,10 @@ public class RedisController {
             }
         } catch (Exception e) {
             log.error("redis 数据更新存储错误, redisKey: {}, {}", redisKey, e.getMessage());
+            if (jedis != null) {
+                jedis.del(redisKey);
+                log.info("该 redisKey {} 更新失败，删除", redisKey);
+            }
             return Result.failure(Common.FAILURE_CODE_601, "redis 数据更新存储错误, redisKey: " + redisKey + "----" + e.getMessage());
         } finally {
             RedisUtil.close(jedis);

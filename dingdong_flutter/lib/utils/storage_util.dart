@@ -12,4 +12,11 @@ class StorageUtil {
         var value = prefs.getString(key);
         return value;
     }
+
+    static Future<bool> remove(key) async {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        var value = prefs.remove(key);
+        return value;
+    }
+
 }
