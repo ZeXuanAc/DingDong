@@ -13,6 +13,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:dingdong_flutter/utils/log_util.dart';
 import 'package:dingdong_flutter/config/application.dart';
 import 'package:dingdong_flutter/utils/storage_util.dart';
+import 'package:dingdong_flutter/service/baidu_map_service.dart';
+
 
 class HomePage extends StatefulWidget {
 
@@ -94,6 +96,11 @@ class _HomePageState extends State<HomePage> {
     }
 
 
+    void toMapView(name) async {
+      bool result = await BaiduMapService.mapView();
+      print(result);
+    }
+
     // 得到离定位最近的 building
     void _getLocalBuilding () {
         print("1------开始获取最近的building");
@@ -110,9 +117,11 @@ class _HomePageState extends State<HomePage> {
                                 print("4------检测到本地【不存在】citycode");
                                 StorageUtil.save(storageCitycode, location.citycode);
                                 print("4.1-----本地citycode存储成功");
-                                setState(() {
-                                  homeCitycode = location.citycode;
-                                });
+                                if (mounted) {
+                                    setState(() {
+                                        homeCitycode = location.citycode;
+                                    });
+                                }
                             } else {
                                 print("4------检测到本地【存在】citycode, localCitycode: " + localCitycode);
                                 if (location.citycode != localCitycode) {
@@ -197,7 +206,7 @@ class _HomePageState extends State<HomePage> {
                 print("8------本地buildingMap不存在或不为该city下，开始获取该city下的最近building");
                 String latlong = location.latitude.toString() + "," + location.longitude.toString();
                 getBuildingUrl(citycode, latlong).then((val){
-                    if (val != null && val['data'] != "") {
+                    if (val != null && val['data'] != "" && mounted) {
                         print("8.1------获取最近的building成功, 为: " + val['data'][0].toString());
                         setState(() {
                             cityBuildingMap = val['data'][0];
@@ -247,7 +256,7 @@ class _HomePageState extends State<HomePage> {
         } else {
             if (homeCitycode != null) {
                 getBuildingUrl(homeCitycode, null).then((val){
-                    if (val != null) {
+                    if (val != null && mounted) {
                         allBuildingList = [];
                         setState(() {
                             for (Map map in val['data']){
@@ -304,7 +313,7 @@ class _HomePageState extends State<HomePage> {
             _loadingCityDialog(allCityList);
         } else {
             getCityUrl().then((val){
-                if (val != null) {
+                if (val != null && mounted) {
                     allCityList = [];
                     setState(() {
                         for (Map map in val['data']){
@@ -495,18 +504,11 @@ Widget _listView(sEqMap, nowTime) {
                                 new Opacity(
                                     opacity: 0.5,
                                     child: new GestureDetector(
-                                        child: new ClipOval(
-                                            child: new FadeInImage.assetNetwork(
-                                                placeholder: "images/normal_user_icon.webp",//预览图
-                                                fit: BoxFit.fitWidth,
-                                                image:"http://img2.3png.com/a41ee92de63f9e3c2a4b05f2a1de7d96f114.png",
-                                                width: 58.0,
-                                                height: 58.0,
-                                            ),
-                                        ),
+                                        child: new Icon(Icons.airplay, color: Colors.greenAccent,),
                                         onTap: (){
                                             Fluttertoast.showToast(msg: "正在导航前往 --> " + eqList.elementAt(0)['storeyName'], toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.TOP,
                                                 backgroundColor: Colors.red, textColor: Colors.white, fontSize: 16.0);
+                                            _HomePageState().toMapView(eqList.elementAt(0)['storeyName']);
                                         },
                                     )
                                 )
