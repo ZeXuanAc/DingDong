@@ -1,3 +1,5 @@
 -keep class com.baidu.** {*;}
 -keep class mapsdkvi.com.** {*;}
 -dontwarn com.baidu.**
+-keep class com.google.protobuf.micro.** { *; }
+-keep class com.baidu.entity.pb.** { *; }

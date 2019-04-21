@@ -228,6 +228,7 @@ class _HomePageState extends State<HomePage> {
 
     void _startTimer () {
         const oneSec = const Duration(milliseconds: 500);
+        startUpTime = DateTime.now();
         if (cityBuildingMap != null && cityBuildingMap.isNotEmpty) {
             httpTimer = new Timer.periodic(oneSec, (Timer t) =>
                 getHomePageContentUrl(cityBuildingMap['citycode'], cityBuildingMap['id']).then((val){
@@ -237,7 +238,7 @@ class _HomePageState extends State<HomePage> {
                         });
                     }
                 }).timeout(new Duration(milliseconds: 4000), onTimeout: (){
-                    _toastMsg("请求服务器超时, 请检查网络", home_page_timeout);
+                    _toastMsg("请求主页数据超时, 请检查网络", home_page_timeout);
                 })
             );
             nowTimeTimer = new Timer.periodic(oneSec, (Timer t) =>
