@@ -96,9 +96,8 @@ class _HomePageState extends State<HomePage> {
     }
 
 
-    void toMapView(name) async {
-      bool result = await BaiduMapService.mapView();
-      print(result);
+    void toMapView(lat, lng) async {
+      await BaiduMapService.mapView(lat, lng);
     }
 
     // 得到离定位最近的 building
@@ -345,7 +344,6 @@ class _HomePageState extends State<HomePage> {
                       startUpTime = DateTime.now();
                     });
                     Navigator.pop(context); // 关闭对话框
-//                    StorageUtil.remove(storageBuilding);
                     StorageUtil.save(storageCitycode, homeCitycode);
                     _getBuildingByCitycode(homeCitycode);
                 },
@@ -508,7 +506,7 @@ Widget _listView(sEqMap, nowTime) {
                                         onTap: (){
                                             Fluttertoast.showToast(msg: "正在导航前往 --> " + eqList.elementAt(0)['storeyName'], toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.TOP,
                                                 backgroundColor: Colors.red, textColor: Colors.white, fontSize: 16.0);
-                                            _HomePageState().toMapView(eqList.elementAt(0)['storeyName']);
+                                            _HomePageState().toMapView(eqList.elementAt(0)['latitude'], eqList.elementAt(0)['longitude']);
                                         },
                                     )
                                 )

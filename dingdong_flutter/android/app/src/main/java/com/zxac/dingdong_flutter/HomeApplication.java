@@ -1,7 +1,5 @@
 package com.zxac.dingdong_flutter;
 
-import android.app.Application;
-
 import com.baidu.mapapi.SDKInitializer;
 
 import io.flutter.app.FlutterApplication;

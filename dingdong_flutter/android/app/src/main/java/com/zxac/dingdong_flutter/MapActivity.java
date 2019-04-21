@@ -1,13 +1,20 @@
 package com.zxac.dingdong_flutter;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.baidu.location.BDAbstractLocationListener;
+import com.baidu.location.BDLocation;
+import com.baidu.location.LocationClient;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
@@ -23,6 +30,8 @@ import com.baidu.mapapi.walknavi.adapter.IWRoutePlanListener;
 import com.baidu.mapapi.walknavi.model.WalkRoutePlanError;
 import com.baidu.mapapi.walknavi.params.WalkNaviLaunchParam;
 import com.baidu.mapapi.walknavi.params.WalkRouteNodeInfo;
+import com.zxac.dingdong_flutter.utils.LocationUtil;
+import com.zxac.dingdong_flutter.utils.StatusBarUtil;
 
 public class MapActivity extends AppCompatActivity {
 
@@ -45,47 +54,69 @@ public class MapActivity extends AppCompatActivity {
     private BitmapDescriptor bdEnd = BitmapDescriptorFactory
             .fromResource(R.drawable.icon_end);
 
+    private LocationClient locationClient; // 获取定位信息入口
+    private BDLocation bdLocation; // 当前位置信息
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+        StatusBarUtil.setStatusBarTranslucent(this, true);
         setContentView(R.layout.activity_map);
 
         mMapView = findViewById(R.id.mapview);
-        Log.i(TAG, "findViewById ----》 mMapView ： " + mMapView.toString());
-        initMapStatus();
 
+        Intent intent = getIntent();
 
-        startPt = new LatLng(40.057038,116.307899);
-        endPt = new LatLng(40.035916, 116.340722);
+        BDAbstractLocationListener mListener = new BDAbstractLocationListener() {
+            @Override
+            public void onReceiveLocation(BDLocation location) {
+                bdLocation = location;
+                Log.i(TAG, "当前位置信息： " + bdLocation.toString());
+                // 定位获取当前位置
+                startPt = new LatLng(bdLocation.getLatitude(), bdLocation.getLongitude());
 
-        /*构造导航起终点参数对象*/
+                // 设置终点为传递过来的楼层经纬度
+                endPt = new LatLng(Double.parseDouble(intent.getStringExtra("lat")),
+                        Double.parseDouble(intent.getStringExtra("lng")));
 
-        WalkRouteNodeInfo walkStartNode = new WalkRouteNodeInfo();
-        walkStartNode.setLocation(startPt);
-        WalkRouteNodeInfo walkEndNode = new WalkRouteNodeInfo();
-        walkEndNode.setLocation(endPt);
-        walkParam = new WalkNaviLaunchParam().startNodeInfo(walkStartNode).endNodeInfo(walkEndNode);
+                initMapStatus();
 
-        /* 初始化起终点Marker */
-        initOverlay();
+                /*构造导航起终点参数对象*/
 
-        // 开始步行导航
-        startWalkNavi();
+                WalkRouteNodeInfo walkStartNode = new WalkRouteNodeInfo();
+                walkStartNode.setLocation(startPt);
+                WalkRouteNodeInfo walkEndNode = new WalkRouteNodeInfo();
+                walkEndNode.setLocation(endPt);
+                walkParam = new WalkNaviLaunchParam().startNodeInfo(walkStartNode).endNodeInfo(walkEndNode);
 
-        /*普通步行导航入口*/
-        Button walkBtn = findViewById(R.id.btn_walknavi_normal);
-        walkBtn.setOnClickListener(v -> {
-            walkParam.extraNaviMode(0);
-            startWalkNavi();
-        });
+                /* 初始化起终点Marker */
+                initOverlay();
 
-        /*AR步行导航入口*/
-        Button arWalkBtn = findViewById(R.id.btn_walknavi_ar);
-        arWalkBtn.setOnClickListener(v -> {
-            walkParam.extraNaviMode(1);
-            startWalkNavi();
-        });
+                // 开始步行导航
+                startWalkNavi();
 
+                /*普通步行导航入口*/
+                Button walkBtn = findViewById(R.id.btn_walknavi_normal);
+                walkBtn.setOnClickListener(v -> {
+                    walkParam.extraNaviMode(0);
+                    startWalkNavi();
+                });
+
+                /*AR步行导航入口*/
+                Button arWalkBtn = findViewById(R.id.btn_walknavi_ar);
+                arWalkBtn.setOnClickListener(v -> {
+                    walkParam.extraNaviMode(1);
+                    startWalkNavi();
+                });
+
+                locationClient.stop();
+            }
+        };
+
+        locationClient = LocationUtil.init(getApplicationContext(), mListener, null);
+
+        locationClient.start();
 
     }
 
@@ -96,7 +127,7 @@ public class MapActivity extends AppCompatActivity {
     private void initMapStatus(){
         mBaiduMap = mMapView.getMap();
         MapStatus.Builder builder = new MapStatus.Builder();
-        builder.target(new LatLng(40.048424, 116.313513)).zoom(15);
+        builder.target(new LatLng(startPt.latitude, startPt.longitude)).zoom(15);
         mBaiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
     }
 
@@ -132,7 +163,6 @@ public class MapActivity extends AppCompatActivity {
                 WalkRouteNodeInfo walkEndNode = new WalkRouteNodeInfo();
                 walkEndNode.setLocation(endPt);
                 walkParam = new WalkNaviLaunchParam().startNodeInfo(walkStartNode).endNodeInfo(walkEndNode);
-                walkParam.extraNaviMode(0);
             }
 
             public void onMarkerDragStart(Marker marker) {
@@ -190,6 +220,26 @@ public class MapActivity extends AppCompatActivity {
 
         });
     }
+
+
+//    //沉浸式体验
+//    @Override
+//    public void onWindowFocusChanged(boolean hasFocus) {
+//        super.onWindowFocusChanged(hasFocus);
+//        if (hasFocus && Build.VERSION.SDK_INT >= 19) {
+//            View decorView = getWindow().getDecorView();
+//            decorView.setSystemUiVisibility(
+//                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+//                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);//设置透明状态栏
+//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);//设置透明导航栏
+//        }
+//    }
+
 
     protected void onPause() {
         super.onPause();

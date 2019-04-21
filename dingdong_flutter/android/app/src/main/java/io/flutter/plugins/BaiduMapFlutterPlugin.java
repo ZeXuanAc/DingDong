@@ -2,22 +2,8 @@ package io.flutter.plugins;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.util.Log;
 
-import com.baidu.mapapi.bikenavi.params.BikeNaviLaunchParam;
-import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.BitmapDescriptor;
-import com.baidu.mapapi.map.BitmapDescriptorFactory;
-import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.map.Marker;
-import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.walknavi.WalkNavigateHelper;
-import com.baidu.mapapi.walknavi.adapter.IWEngineInitListener;
-import com.baidu.mapapi.walknavi.adapter.IWRoutePlanListener;
-import com.baidu.mapapi.walknavi.model.WalkRoutePlanError;
-import com.baidu.mapapi.walknavi.params.WalkNaviLaunchParam;
 import com.zxac.dingdong_flutter.MapActivity;
-import com.zxac.dingdong_flutter.R;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -46,11 +32,13 @@ public class BaiduMapFlutterPlugin implements MethodChannel.MethodCallHandler {
         switch (methodCall.method){
             case "mapView" :
                 //解析参数
-                String name = methodCall.argument("name");
+                String lat = methodCall.argument("lat");
+                String lng = methodCall.argument("lng");
 
                 //带参数跳转到指定Activity
                 Intent intent = new Intent(activity, MapActivity.class);
-                intent.putExtra("name", name);
+                intent.putExtra("lat", lat);
+                intent.putExtra("lng", lng);
                 activity.startActivity(intent);
 
                 //返回给flutter的参数
@@ -61,12 +49,9 @@ public class BaiduMapFlutterPlugin implements MethodChannel.MethodCallHandler {
                 intentMap.setClass(activity, MapActivity.class);
                 activity.startActivity(intentMap);
                 break;
+            default:
+                result.notImplemented();
         }
-
-//        } else {
-//            result.notImplemented();
-//        }
-
 
     }
 }

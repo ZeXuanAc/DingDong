@@ -43,9 +43,9 @@ public class EquipmentStatusDto implements Serializable {
 
     private String address; // 详细地址(设备)
 
-    private String latitude; // 经度（building）
+    private String latitude; // 纬度（storey）
 
-    private String longitude; // 纬度（building）
+    private String longitude; // 经度（storey）
 
     private Integer priority; // 优先级, 设备
 

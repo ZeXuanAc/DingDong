@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    //获取设备网络状态，禁用后无法获取网络状态
+    // 获取设备网络状态，禁用后无法获取网络状态
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     //网络权限，当禁用后，无法进行检索等相关业务
     <uses-permission android:name="android.permission.INTERNET" />
@@ -32,6 +32,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     //程序在手机屏幕关闭后后台进程仍然运行
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <application
         android:name=".HomeApplication"

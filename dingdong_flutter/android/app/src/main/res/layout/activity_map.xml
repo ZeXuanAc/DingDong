@@ -7,11 +7,14 @@
     tools:context="com.zxac.dingdong_flutter.MapActivity">
 
     <com.baidu.mapapi.map.MapView
+        android:fitsSystemWindows="true"
+        android:clipToPadding="true"
         android:id="@+id/mapview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
     </com.baidu.mapapi.map.MapView>
+
 
     <Button
         android:layout_width="wrap_content"
@@ -32,5 +35,6 @@
         android:id="@+id/btn_walknavi_ar"
         android:layout_alignParentRight="true"
         android:layout_marginRight="20dp"/>
+
 
 </RelativeLayout>
