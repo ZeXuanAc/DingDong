@@ -237,7 +237,7 @@ class _HomePageState extends State<HomePage> {
                             eqMap = val;
                         });
                     }
-                }).timeout(new Duration(milliseconds: 4000), onTimeout: (){
+                }).timeout(new Duration(milliseconds: 5000), onTimeout: (){
                     _toastMsg("请求主页数据超时, 请检查网络", home_page_timeout);
                 })
             );
@@ -413,6 +413,8 @@ class _HomePageState extends State<HomePage> {
         }
     }
 
+
+
     /// 释放两个定时器，因为在切换到其他页面时会导致此页面停止，但是本身两个定时器却不会停止，
     /// 这两个定时器会做 setState方法, 这可能会导致内存泄漏，重写这个方法的目的就是让此 widget
     /// 停止的时候保证没有调用setState方法的操作。
@@ -505,8 +507,6 @@ Widget _listView(sEqMap, nowTime) {
                                     child: new GestureDetector(
                                         child: new Icon(Icons.airplay, color: Colors.greenAccent,),
                                         onTap: (){
-                                            Fluttertoast.showToast(msg: "正在导航前往 --> " + eqList.elementAt(0)['storeyName'], toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.TOP,
-                                                backgroundColor: Colors.red, textColor: Colors.white, fontSize: 16.0);
                                             _HomePageState().toMapView(eqList.elementAt(0)['latitude'], eqList.elementAt(0)['longitude']);
                                         },
                                     )

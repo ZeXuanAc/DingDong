@@ -2,6 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fbutton="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.zxac.dingdong_flutter.MapActivity">
@@ -14,6 +15,7 @@
         android:layout_height="match_parent">
 
     </com.baidu.mapapi.map.MapView>
+
 
 
     <Button
@@ -35,6 +37,20 @@
         android:id="@+id/btn_walknavi_ar"
         android:layout_alignParentRight="true"
         android:layout_marginRight="20dp"/>
+
+    <!--<info.hoang8f.widget.FButton-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--fbutton:buttonColor="@android:color/holo_red_dark"-->
+        <!--fbutton:shadowColor="@android:color/holo_blue_dark"-->
+        <!--fbutton:shadowEnabled="true"-->
+        <!--fbutton:shadowHeight="5dp"-->
+        <!--fbutton:cornerRadius="5dp"-->
+        <!--android:id="@+id/btn_walknavi_normal1"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_below="@id/btn_walknavi_ar"-->
+        <!--android:text="步行导航1"-->
+        <!--/>-->
 
 
 </RelativeLayout>

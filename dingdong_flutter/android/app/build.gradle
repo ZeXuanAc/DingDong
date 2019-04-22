@@ -48,6 +48,9 @@ android {
 				AMAP_KEY     : "4cad2d787551c53980ca94675c5db6b6", /// 高德地图key
 				BAIDU_MAP_KEY: "LDehsPmP5qMRfhk2rELGbGpqMdUThsHP", /// 百度地图AK
 		]
+
+		buildConfigField "boolean","LOG","true"
+
 		ndk {
 			abiFilters 'arm64-v8a', 'armeabi', 'mips', 'mips64'
 		}
@@ -62,17 +65,12 @@ android {
 		}
 	}
 	buildTypes {
-		debug {
-			ndk {
-				abiFilters "armeabi-v7a", "x86"
-			}
-		}
 		release {
-			ndk{
-				abiFilters "armeabi-v7a", "x86"
+			ndk {
+				abiFilters 'armeabi'
 			}
-			minifyEnabled true
-			shrinkResources false
+			buildConfigField ("boolean","LOG","true")
+			minifyEnabled false
 			signingConfig signingConfigs.release
 			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 		}
@@ -92,8 +90,6 @@ flutter {
 dependencies {
 	implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 	testImplementation 'junit:junit:4.12'
-	//    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-	//    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 	androidTestImplementation 'androidx.test:runner:1.1.1'
 	androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 	/// 注意这里需要在主项目增加一条依赖，否则可能发生编译不通过的情况
@@ -101,4 +97,5 @@ dependencies {
 	implementation 'androidx.appcompat:appcompat:1.0.2'
 	implementation files('libs/BaiduLBS_Android.jar')
 	implementation files('libs/com.baidu.tts_2.3.2.20180713_6101c2a.jar')
+	implementation 'info.hoang8f:fbutton:1.0.5'
 }

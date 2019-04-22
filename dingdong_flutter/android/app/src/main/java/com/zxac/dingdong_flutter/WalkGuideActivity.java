@@ -101,16 +101,24 @@ public class WalkGuideActivity extends Activity {
         Log.e(TAG, "startWalkNavi result : " + startResult);
 
         mNaviHelper.setRouteGuidanceListener(this, new IWRouteGuidanceListener() {
+
+            //诱导图标更新
             @Override
             public void onRouteGuideIconUpdate(Drawable icon) {
 
             }
 
+            //诱导类型枚举
             @Override
             public void onRouteGuideKind(RouteGuideKind routeGuideKind) {
                 Log.d(TAG, "onRouteGuideKind: " + routeGuideKind);
             }
 
+            /**
+             * 诱导信息
+             * @param charSequence 第一行显示的信息，如“沿当前道路”
+             * @param charSequence1  第二行显示的信息，比如“向东出发”，第二行信息也可能为空
+             */
             @Override
             public void onRoadGuideTextUpdate(CharSequence charSequence, CharSequence charSequence1) {
                 Log.d(TAG, "onRoadGuideTextUpdate   charSequence=: " + charSequence + "   charSequence1 = : " +
@@ -118,41 +126,50 @@ public class WalkGuideActivity extends Activity {
 
             }
 
+
+            //总的剩余距离
             @Override
             public void onRemainDistanceUpdate(CharSequence charSequence) {
                 Log.d(TAG, "onRemainDistanceUpdate: charSequence = :" + charSequence);
 
             }
 
+            //总的剩余时间
             @Override
             public void onRemainTimeUpdate(CharSequence charSequence) {
                 Log.d(TAG, "onRemainTimeUpdate: charSequence = :" + charSequence);
 
             }
 
+            //GPS状态发生变化，来自诱导引擎的消息
             @Override
             public void onGpsStatusChange(CharSequence charSequence, Drawable drawable) {
                 Log.d(TAG, "onGpsStatusChange: charSequence = :" + charSequence);
 
             }
 
+            //已经开始偏航
             @Override
             public void onRouteFarAway(CharSequence charSequence, Drawable drawable) {
                 Log.d(TAG, "onRouteFarAway: charSequence = :" + charSequence);
 
             }
 
+            //偏航规划中
             @Override
             public void onRoutePlanYawing(CharSequence charSequence, Drawable drawable) {
                 Log.d(TAG, "onRoutePlanYawing: charSequence = :" + charSequence);
 
             }
 
+            //重新算路成功
             @Override
             public void onReRouteComplete() {
 
             }
 
+
+            //抵达目的地
             @Override
             public void onArriveDest() {
 
@@ -168,6 +185,7 @@ public class WalkGuideActivity extends Activity {
 
             }
 
+            //震动
             @Override
             public void onVibrate() {
 
