@@ -73,8 +73,13 @@ public class MapActivity extends AppCompatActivity {
 
     private int searchCount = 1; // 记录第几次室内路径规划
 
-    double lat = 30.305088; // todo
-    double lng = 120.113296; // todo
+    private Button walkBtn; // 步行导航按钮
+    private Button arWalkBtn; // ar步行导航按钮
+    private Button returnStartBtn; // 回到起点按钮
+    private Button returnEndBtn; // 回到终点按钮
+
+//    double lat = 30.305088; // todo
+//    double lng = 120.113296; // todo
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,27 +92,6 @@ public class MapActivity extends AppCompatActivity {
         mSearch = RoutePlanSearch.newInstance();
 
         mMapView = findViewById(R.id.mapview);
-
-        /*普通步行导航入口*/
-        Button walkBtn = findViewById(R.id.btn_walknavi_normal);
-        walkBtn.setOnClickListener(v -> {
-            walkParam.extraNaviMode(0);
-            startWalkNavi(indoor);
-        });
-
-        /*AR步行导航入口*/
-        Button arWalkBtn = findViewById(R.id.btn_walknavi_ar);
-        arWalkBtn.setOnClickListener(v -> {
-            walkParam.extraNaviMode(1);
-            startWalkNavi(indoor);
-        });
-
-//        /*回到起点*/
-//        Button returnStart = findViewById(R.id.btn_return_start);
-//        returnStart.setOnClickListener(v -> {
-//            indoorLocationClient.start();
-//        });
-
 
         // 室内路径规划 listener
         OnGetRoutePlanResultListener listener = new IndoorRoutePlanResultListener() {
@@ -129,7 +113,8 @@ public class MapActivity extends AppCompatActivity {
                     Log.d("====czx", "地图上显示室内路线规划");
                     walkBtn.setVisibility(View.INVISIBLE);
                     arWalkBtn.setVisibility(View.INVISIBLE);
-
+                    returnStartBtn.setVisibility(View.INVISIBLE);
+                    returnEndBtn.setVisibility(View.INVISIBLE);
                     if (searchCount == 1) {
                         startIndoorNavi();
                     }
@@ -142,6 +127,8 @@ public class MapActivity extends AppCompatActivity {
                     Log.d("=====czx", "开始步行导航");
                     walkBtn.setVisibility(View.VISIBLE);
                     arWalkBtn.setVisibility(View.VISIBLE);
+                    returnStartBtn.setVisibility(View.VISIBLE);
+                    returnEndBtn.setVisibility(View.VISIBLE);
                     if (indoorLocationClient != null && indoorLocationClient.isStarted()) {
                         indoorLocationClient.stop();
                     }
@@ -157,8 +144,8 @@ public class MapActivity extends AppCompatActivity {
             public void onReceiveLocation(BDLocation location) {
             bdLocation = location;
             // 定位获取当前位置
-            bdLocation.setLatitude(lat); // todo
-            bdLocation.setLongitude(lng); // todo
+//            bdLocation.setLatitude(lat); // todo
+//            bdLocation.setLongitude(lng); // todo
             startPt = new LatLng(bdLocation.getLatitude(), bdLocation.getLongitude());
             Log.d("======czx", "定位数据：latitude: " + startPt.latitude + " ; longitude : " + startPt.longitude);
 
@@ -166,6 +153,8 @@ public class MapActivity extends AppCompatActivity {
             // 设置终点为传递过来的楼层经纬度
             endPt = new LatLng(Double.parseDouble(intent.getStringExtra("lat")), Double.parseDouble(intent.getStringExtra("lng")));
             endFloor = intent.getStringExtra("floor");
+
+            initView();
 
             /*构造导航起终点参数对象*/
             WalkRouteNodeInfo walkStartNode = new WalkRouteNodeInfo();
@@ -177,7 +166,7 @@ public class MapActivity extends AppCompatActivity {
 
             initMapStatus(getApplicationContext());
 
-            bdLocation.setFloor("F4"); // todo
+//            bdLocation.setFloor("F4"); // todo
             // 如果定位结果在室内
             if (bdLocation.getFloor() != null) {
                 // 当前支持高精度室内定位
@@ -207,6 +196,44 @@ public class MapActivity extends AppCompatActivity {
         locationClient = LocationUtil.init(getApplicationContext(), mListener, null);
         locationClient.start();
 
+    }
+
+
+    /**
+     * 初始化控件
+     */
+    private void initView () {
+        /*普通步行导航入口*/
+        walkBtn = findViewById(R.id.btn_walknavi_normal);
+        walkBtn.setOnClickListener(v -> {
+            walkParam.extraNaviMode(0);
+            startWalkNavi(indoor);
+        });
+
+        /*AR步行导航入口*/
+        arWalkBtn = findViewById(R.id.btn_walknavi_ar);
+        arWalkBtn.setOnClickListener(v -> {
+            walkParam.extraNaviMode(1);
+            startWalkNavi(indoor);
+        });
+
+        /*回到起点*/
+        returnStartBtn = findViewById(R.id.btn_return_start);
+        returnStartBtn.setOnClickListener(v -> {
+            MapStatus.Builder builder = new MapStatus.Builder();
+            int zoomLevel = LocationUtil.getZoom(startPt, endPt);
+            builder.target(new LatLng(startPt.latitude, startPt.longitude)).zoom(zoomLevel);
+            mBaiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+        });
+
+        /*回到终点*/
+        returnEndBtn = findViewById(R.id.btn_return_end);
+        returnEndBtn.setOnClickListener(v -> {
+            MapStatus.Builder builder = new MapStatus.Builder();
+            int zoomLevel = LocationUtil.getZoom(startPt, endPt);
+            builder.target(new LatLng(endPt.latitude, endPt.longitude)).zoom(zoomLevel);
+            mBaiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+        });
     }
 
 
@@ -246,6 +273,9 @@ public class MapActivity extends AppCompatActivity {
             } else {
                 // 移除室内图
                 Toast.makeText(context, "移出室内图", Toast.LENGTH_SHORT).show();
+                if (indoorLocationClient != null && indoorLocationClient.isStarted()) {
+                    indoorLocationClient.stop();
+                }
             }
         });
     }
@@ -264,10 +294,10 @@ public class MapActivity extends AppCompatActivity {
                 }
                 Log.d("====czx", "startIndoorNavi 当前位置信息： latitude: " + location.getLatitude() + "; longitude: " + location.getLongitude());
 
-                lat += 0.00002; // todo
-                lng += 0.00002; // todo
-                location.setLatitude(lat); // todo
-                location.setLongitude(lng); // todo
+//                lat += 0.00002; // todo
+//                lng += 0.00002; // todo
+//                location.setLatitude(lat); // todo
+//                location.setLongitude(lng); // todo
                 Log.d("======czx", "重新获得定位：latitude: " + location.getLatitude() + "; longitude: " + location.getLongitude());
 
                 // 获取定位并展示在地图中
@@ -276,7 +306,7 @@ public class MapActivity extends AppCompatActivity {
                         .direction(location.getDirection()).latitude(location.getLatitude())
                         .longitude(location.getLongitude()).build();
                 mBaiduMap.setMyLocationData(locData);
-                location.setFloor("F4"); // todo
+//                location.setFloor("F4"); // todo
                 // 如果定位还在室内，则再次进行室内路径规划导航
                 if (location.getFloor() != null) {
                     IndoorPlanNode startNode = new IndoorPlanNode(new LatLng(location.getLatitude(), location.getLongitude()), location.getFloor());
