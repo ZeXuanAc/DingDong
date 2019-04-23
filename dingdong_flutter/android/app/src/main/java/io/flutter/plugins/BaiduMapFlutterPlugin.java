@@ -34,11 +34,13 @@ public class BaiduMapFlutterPlugin implements MethodChannel.MethodCallHandler {
                 //解析参数
                 String lat = methodCall.argument("lat");
                 String lng = methodCall.argument("lng");
+                String floor = methodCall.argument("floor");
 
                 //带参数跳转到指定Activity
                 Intent intent = new Intent(activity, MapActivity.class);
                 intent.putExtra("lat", lat);
                 intent.putExtra("lng", lng);
+                intent.putExtra("floor", floor);
                 activity.startActivity(intent);
 
                 //返回给flutter的参数

@@ -10,6 +10,8 @@ public class Storey implements Serializable {
 
     private Integer buildingId;
 
+    private String floor;
+
     private String longitude;
 
     private String latitude;
@@ -44,6 +46,14 @@ public class Storey implements Serializable {
 
     public void setBuildingId(Integer buildingId) {
         this.buildingId = buildingId;
+    }
+
+    public String getFloor() {
+        return floor;
+    }
+
+    public void setFloor(String floor) {
+        this.floor = floor;
     }
 
     public String getLongitude() {

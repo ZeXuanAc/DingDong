@@ -5,6 +5,7 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="building_id" jdbcType="INTEGER" property="buildingId" />
+    <result column="floor" jdbcType="VARCHAR" property="floor" />
     <result column="longitude" jdbcType="VARCHAR" property="longitude" />
     <result column="latitude" jdbcType="VARCHAR" property="latitude" />
     <result column="eq_num" jdbcType="INTEGER" property="eqNum" />
@@ -13,7 +14,7 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, building_id, longitude, latitude, eq_num, priority, create_time, update_time
+    id, name, building_id, floor, longitude, latitude, eq_num, priority, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -26,10 +27,10 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.zxac.model.Storey">
-    insert into storey (id, name, building_id, longitude,
+    insert into storey (id, name, building_id, floor, longitude,
       latitude, eq_num, priority, create_time, update_time
       )
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{buildingId,jdbcType=INTEGER}, #{longitude,jdbcType=VARCHAR},
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{buildingId,jdbcType=INTEGER}, #{floor,jdbcType=VARCHAR}, #{longitude,jdbcType=VARCHAR},
       #{latitude,jdbcType=VARCHAR}, #{eqNum,jdbcType=INTEGER}, #{priority,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
       #{updateTime,jdbcType=TIMESTAMP}
       )
@@ -45,6 +46,9 @@
       </if>
       <if test="buildingId != null">
         building_id,
+      </if>
+      <if test="floor != null">
+        floor,
       </if>
       <if test="longitude != null">
         longitude,
@@ -75,6 +79,9 @@
       <if test="buildingId != null">
         #{buildingId,jdbcType=INTEGER},
       </if>
+      <if test="floor != null">
+        #{floor,jdbcType=VARCHAR},
+      </if>
       <if test="longitude != null">
         #{longitude,jdbcType=VARCHAR},
       </if>
@@ -104,6 +111,9 @@
       <if test="buildingId != null">
         building_id = #{buildingId,jdbcType=INTEGER},
       </if>
+      <if test="floor != null">
+        floor = #{floor,jdbcType=VARCHAR},
+      </if>
       <if test="longitude != null">
         longitude = #{longitude,jdbcType=VARCHAR},
       </if>
@@ -129,6 +139,7 @@
     update storey
     set name = #{name,jdbcType=VARCHAR},
       building_id = #{buildingId,jdbcType=INTEGER},
+      floor = #{longitude,jdbcType=VARCHAR},
       longitude = #{longitude,jdbcType=VARCHAR},
       latitude = #{latitude,jdbcType=VARCHAR},
       eq_num = #{eqNum,jdbcType=INTEGER},

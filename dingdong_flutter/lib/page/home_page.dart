@@ -96,8 +96,8 @@ class _HomePageState extends State<HomePage> {
     }
 
 
-    void toMapView(lat, lng) async {
-      await BaiduMapService.mapView(lat, lng);
+    void toMapView(lat, lng, floor) async {
+      await BaiduMapService.mapView(lat, lng, floor);
     }
 
     // 得到离定位最近的 building
@@ -507,7 +507,8 @@ Widget _listView(sEqMap, nowTime) {
                                     child: new GestureDetector(
                                         child: new Icon(Icons.airplay, color: Colors.greenAccent,),
                                         onTap: (){
-                                            _HomePageState().toMapView(eqList.elementAt(0)['latitude'], eqList.elementAt(0)['longitude']);
+                                            _HomePageState().toMapView(eqList.elementAt(0)['latitude'], eqList.elementAt(0)['longitude'],
+                                                eqList.elementAt(0)['floor']);
                                         },
                                     )
                                 )

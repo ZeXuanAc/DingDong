@@ -90,7 +90,11 @@ public class CityEquipmentServiceImpl implements CityEquipmentService {
         return equipmentMapper.getAll();
     }
 
-    @Override
+
+    /**
+     * 带参数citycode的查询结果缺失所在楼层信息
+     */
+  @Override
     public List<EquipmentStatusDto> getAllEquipment(String citycode) {
         List<EquipmentStatusDto> dtoList = new ArrayList<>();
         if (citycode != null && !citycode.equals("")){
