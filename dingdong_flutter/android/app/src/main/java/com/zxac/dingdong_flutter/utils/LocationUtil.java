@@ -1,10 +1,13 @@
 package com.zxac.dingdong_flutter.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.utils.DistanceUtil;
 
 public class LocationUtil {
 
@@ -68,6 +71,22 @@ public class LocationUtil {
         locationClient.setLocOption(option);
 
         return locationClient;
+    }
+
+    //根据经纬极值计算绽放级别。
+    public static Integer getZoom (LatLng startP, LatLng endP) {
+        double distance = DistanceUtil.getDistance(startP, endP);
+        Log.d("getZoom", "距离为：" + distance);
+        if (distance <= 20) {
+            return 22;
+        }
+        int[] zoom = new int[]{2,5,10,20,50,100,200,500,1000,2000,5000,10000,20000,25000,50000,100000,200000,500000,1000000,2000000};// 级别22到3。
+        for (int i = 0,zoomLen = zoom.length; i < zoomLen; i++) {
+            if(zoom[i] - distance > 0){
+                return 22 - i + 5;
+            }
+        }
+        return 15;
     }
 
 

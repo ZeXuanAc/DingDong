@@ -15,33 +15,28 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
-import com.baidu.mapapi.map.MapBaseIndoorMapInfo;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
+import com.baidu.mapapi.map.MyLocationConfiguration;
+import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.UiSettings;
 import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.search.route.BikingRouteResult;
-import com.baidu.mapapi.search.route.DrivingRouteResult;
 import com.baidu.mapapi.search.route.IndoorPlanNode;
 import com.baidu.mapapi.search.route.IndoorRoutePlanOption;
 import com.baidu.mapapi.search.route.IndoorRouteResult;
-import com.baidu.mapapi.search.route.MassTransitRouteResult;
 import com.baidu.mapapi.search.route.OnGetRoutePlanResultListener;
 import com.baidu.mapapi.search.route.RoutePlanSearch;
-import com.baidu.mapapi.search.route.TransitRouteResult;
-import com.baidu.mapapi.search.route.WalkingRouteResult;
 import com.baidu.mapapi.walknavi.WalkNavigateHelper;
 import com.baidu.mapapi.walknavi.adapter.IWEngineInitListener;
-import com.baidu.mapapi.walknavi.adapter.IWNaviCalcRouteListener;
 import com.baidu.mapapi.walknavi.adapter.IWRoutePlanListener;
 import com.baidu.mapapi.walknavi.model.WalkRoutePlanError;
-import com.baidu.mapapi.walknavi.params.RouteNodeType;
 import com.baidu.mapapi.walknavi.params.WalkNaviLaunchParam;
 import com.baidu.mapapi.walknavi.params.WalkRouteNodeInfo;
 import com.zxac.dingdong_flutter.listener.IndoorRoutePlanResultListener;
@@ -71,8 +66,15 @@ public class MapActivity extends AppCompatActivity {
     private BitmapDescriptor bdStart;
     private BitmapDescriptor bdEnd;
 
-    private LocationClient locationClient; // 获取定位信息入口
+    private LocationClient locationClient; // 获取定位信息入口(只定位一次)
+    private LocationClient indoorLocationClient; // 室内导航定位(每秒一次)
+    private RoutePlanSearch mSearch; // 室内路线规划寻找
     private BDLocation bdLocation; // 当前位置信息
+
+    private int searchCount = 1; // 记录第几次室内路径规划
+
+    double lat = 30.305088; // todo
+    double lng = 120.113296; // todo
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,9 +84,10 @@ public class MapActivity extends AppCompatActivity {
         setContentView(R.layout.activity_map);
 
         // 路径规划
-        RoutePlanSearch mSearch = RoutePlanSearch.newInstance();
+        mSearch = RoutePlanSearch.newInstance();
 
         mMapView = findViewById(R.id.mapview);
+
         /*普通步行导航入口*/
         Button walkBtn = findViewById(R.id.btn_walknavi_normal);
         walkBtn.setOnClickListener(v -> {
@@ -98,6 +101,12 @@ public class MapActivity extends AppCompatActivity {
             walkParam.extraNaviMode(1);
             startWalkNavi(indoor);
         });
+
+//        /*回到起点*/
+//        Button returnStart = findViewById(R.id.btn_return_start);
+//        returnStart.setOnClickListener(v -> {
+//            indoorLocationClient.start();
+//        });
 
 
         // 室内路径规划 listener
@@ -113,18 +122,32 @@ public class MapActivity extends AppCompatActivity {
                     //获取室内路径规划数据（以返回的第一条路线为例）
                     //为IndoorRouteOverlay实例设置数据
                     overlay.setData(indoorRouteResult.getRouteLines().get(0));
+                    //清除地图上的所有覆盖物
+                    mBaiduMap.clear();
                     //在地图上绘制IndoorRouteOverlay
                     overlay.addToMap();
                     Log.d("====czx", "地图上显示室内路线规划");
                     walkBtn.setVisibility(View.INVISIBLE);
                     arWalkBtn.setVisibility(View.INVISIBLE);
+
+                    if (searchCount == 1) {
+                        startIndoorNavi();
+                    }
+                    searchCount ++;
                 } else {
+                    if (searchCount != 1) {
+                        return;
+                    }
                     Log.d("=====czx", "不存在合适的室内路径");
                     Log.d("=====czx", "开始步行导航");
+                    walkBtn.setVisibility(View.VISIBLE);
+                    arWalkBtn.setVisibility(View.VISIBLE);
+                    if (indoorLocationClient != null && indoorLocationClient.isStarted()) {
+                        indoorLocationClient.stop();
+                    }
                     initOverlay();
                     startWalkNavi(indoor);
                 }
-                mSearch.destroy();
             }
         };
         mSearch.setOnGetRoutePlanResultListener(listener);
@@ -134,6 +157,8 @@ public class MapActivity extends AppCompatActivity {
             public void onReceiveLocation(BDLocation location) {
             bdLocation = location;
             // 定位获取当前位置
+            bdLocation.setLatitude(lat); // todo
+            bdLocation.setLongitude(lng); // todo
             startPt = new LatLng(bdLocation.getLatitude(), bdLocation.getLongitude());
             Log.d("======czx", "定位数据：latitude: " + startPt.latitude + " ; longitude : " + startPt.longitude);
 
@@ -152,6 +177,7 @@ public class MapActivity extends AppCompatActivity {
 
             initMapStatus(getApplicationContext());
 
+            bdLocation.setFloor("F4"); // todo
             // 如果定位结果在室内
             if (bdLocation.getFloor() != null) {
                 // 当前支持高精度室内定位
@@ -175,13 +201,10 @@ public class MapActivity extends AppCompatActivity {
                 // 开始步行导航
                 startWalkNavi(indoor);
             }
-
             locationClient.stop();
             }
         };
-
         locationClient = LocationUtil.init(getApplicationContext(), mListener, null);
-
         locationClient.start();
 
     }
@@ -193,18 +216,17 @@ public class MapActivity extends AppCompatActivity {
     private void initMapStatus(Context context){
         Log.i("======czx", "11111设置室内监听");
         mBaiduMap = mMapView.getMap();
-        mBaiduMap.setIndoorEnable(true);//打开室内图，默认为关闭状态
+        mBaiduMap.setIndoorEnable(true);// 打开室内图，默认为关闭状态
         //实例化UiSettings类对象
         UiSettings mUiSettings = mBaiduMap.getUiSettings();
+        mUiSettings.setRotateGesturesEnabled(false);
         //通过设置enable为true或false 选择是否显示指南针
         mUiSettings.setCompassEnabled(true);
 
         MapStatus.Builder builder = new MapStatus.Builder();
-        int zoomLevel = 15;
-        if (indoor) {
-            zoomLevel = 20;
-        }
-        builder.target(new LatLng(endPt.latitude, endPt.longitude)).zoom(zoomLevel);
+        int zoomLevel = LocationUtil.getZoom(startPt, endPt);
+        Log.d("======czx", "设置缩放级别为：" + zoomLevel);
+        builder.target(new LatLng(startPt.latitude, startPt.longitude)).zoom(zoomLevel);
         mBaiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
 
         // 设置监听事件来监听进入和移出室内图
@@ -226,7 +248,56 @@ public class MapActivity extends AppCompatActivity {
                 Toast.makeText(context, "移出室内图", Toast.LENGTH_SHORT).show();
             }
         });
+    }
 
+    /**
+     * 开始室内导航
+     */
+    private void startIndoorNavi(){
+        mBaiduMap.setMyLocationEnabled(true); // 开启地图的定位图层
+        BDAbstractLocationListener indoorListener = new BDAbstractLocationListener() {
+            @Override
+            public void onReceiveLocation(BDLocation location) {
+                //mapView 销毁后不在处理新接收的位置
+                if (location == null || mMapView == null){
+                    return;
+                }
+                Log.d("====czx", "startIndoorNavi 当前位置信息： latitude: " + location.getLatitude() + "; longitude: " + location.getLongitude());
+
+                lat += 0.00002; // todo
+                lng += 0.00002; // todo
+                location.setLatitude(lat); // todo
+                location.setLongitude(lng); // todo
+                Log.d("======czx", "重新获得定位：latitude: " + location.getLatitude() + "; longitude: " + location.getLongitude());
+
+                // 获取定位并展示在地图中
+                MyLocationData locData = new MyLocationData.Builder().accuracy(location.getRadius())
+                        // 此处设置开发者获取到的方向信息，顺时针0-360
+                        .direction(location.getDirection()).latitude(location.getLatitude())
+                        .longitude(location.getLongitude()).build();
+                mBaiduMap.setMyLocationData(locData);
+                location.setFloor("F4"); // todo
+                // 如果定位还在室内，则再次进行室内路径规划导航
+                if (location.getFloor() != null) {
+                    IndoorPlanNode startNode = new IndoorPlanNode(new LatLng(location.getLatitude(), location.getLongitude()), location.getFloor());
+                    IndoorPlanNode endNode = new IndoorPlanNode(new LatLng(endPt.latitude, endPt.longitude), endFloor);
+                    mSearch.walkingIndoorSearch(new IndoorRoutePlanOption().from(startNode).to(endNode));
+                }
+            }
+        };
+        // 定位模式、是否开启方向、设置自定义定位图标、精度圈填充颜色、精度圈边框颜色
+        MyLocationConfiguration configuration = new MyLocationConfiguration(MyLocationConfiguration.LocationMode.FOLLOWING, true,
+                BitmapDescriptorFactory.fromBitmap(UIUtil.zoomImg(BitmapFactory.decodeResource(getResources(), R.drawable.icon_geo), 50, 50))
+                , 0x22FFFF88, 0xAAAFEEEE);
+        mBaiduMap.setMyLocationConfiguration(configuration);
+        //通过LocationClientOption设置LocationClient相关参数
+        LocationClientOption option = new LocationClientOption();
+        option.setOpenGps(true); // 打开gps
+        option.setCoorType("bd09ll"); // 设置坐标类型
+        option.setScanSpan(1000);
+        indoorLocationClient = LocationUtil.init(getApplicationContext(), indoorListener, option);
+        indoorLocationClient.startIndoorMode();
+        indoorLocationClient.start();
     }
 
 
@@ -342,10 +413,27 @@ public class MapActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         mMapView.onDestroy();
-        bdStart.recycle();
-        bdEnd.recycle();
+        mMapView = null;
+        if (mBaiduMap != null) {
+            mBaiduMap.setMyLocationEnabled(false);
+        }
+        if (bdStart != null) {
+            bdStart.recycle();
+        }
+        if (bdEnd != null) {
+            bdEnd.recycle();
+        }
+        if (locationClient != null) {
+            locationClient.stop();
+        }
+        if (indoorLocationClient != null) {
+            indoorLocationClient.stop();
+        }
+        if (mSearch != null) {
+            mSearch.destroy();
+        }
+        super.onDestroy();
     }
 
 }
