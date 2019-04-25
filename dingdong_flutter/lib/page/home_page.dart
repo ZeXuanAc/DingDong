@@ -133,8 +133,8 @@ class _HomePageState extends State<HomePage> {
                 location = val;
                 print("2-----定位获取成功, citycode: " + location.citycode.toString() + ", 纬度：" + location.latitude.toString() + ", 经度：" + location.longitude.toString());
                 checkCitycode(location.citycode).then((result) {
-                    if (result['data'] == 0) { // todo 测试
-//                    if (result['data'] == 1) {
+//                    if (result['data'] == 0) { // todo 测试
+                    if (result['data'] == 1) {
                         print("3-----数据库【存在】此citycode");
                         // 检查本地是否存在此citycode
                         StorageUtil.get(storageCitycode).then((localCitycode) {
