@@ -1,1 +1,3 @@
-<resources></resources>
+<resources>
+    <string name="floor_tips">目的地楼层: </string>
+</resources>

@@ -6,7 +6,6 @@ import 'package:dingdong_flutter/service/service_method.dart';
 import 'dart:async';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dingdong_flutter/config/common.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fluttie/fluttie.dart';
 import 'package:amap_location/amap_location.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -14,6 +13,7 @@ import 'package:dingdong_flutter/utils/log_util.dart';
 import 'package:dingdong_flutter/config/application.dart';
 import 'package:dingdong_flutter/utils/storage_util.dart';
 import 'package:dingdong_flutter/service/baidu_map_service.dart';
+import 'package:dingdong_flutter/utils/toast_util.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -33,6 +33,7 @@ class _HomePageState extends State<HomePage> {
     var animationTime; // 记录当前动画开始时间
     AMapLocation location; // 当前定位信息
     var homeCitycode; // 城市代码
+    bool noCitycode = false; // 是否存在此citycode标志
     DateTime nowTime;
     Timer httpTimer;
     Timer nowTimeTimer;
@@ -42,7 +43,6 @@ class _HomePageState extends State<HomePage> {
     void initState() {
         _initAnimation();
         _getLocalBuilding();
-//        _getAllBuilding();
         startUpTime = animationTime = DateTime.now();
         super.initState();
     }
@@ -52,16 +52,41 @@ class _HomePageState extends State<HomePage> {
     Widget build(BuildContext context) {
         ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
 
+        // 初始化ui
+//        print("======cxz,  初始化ui-----------");
         if (eqMap == null || eqMap['data'] == null) {
+//            print("======cxz,  eqMap == null || eqMap['data'] == null");
             _toastMsg("网络开了小差, 请检查网络", home_page_timeout);
             if (loadingAnimation != null && nowTime != null && nowTime.difference(animationTime).inSeconds >= 2) {
                 animationTime = nowTime;
                 loadingAnimation.start();
             }
-            return Center(
-                child: new FluttieAnimation(loadingAnimation),
+            return Scaffold(
+                appBar: AppBar(
+                    leading: new Icon(Icons.home, color: Colors.blue,),
+                    title: new Text.rich(new TextSpan(
+                        text: "无",
+                        style: TextStyle(color: Colors.black,),
+                        recognizer: new TapGestureRecognizer()
+                            ..onTap = () {
+                                _showBuildingAlertDialog(context);
+                            }
+                    )),
+                    centerTitle: true,
+                    backgroundColor: Colors.white,
+                    actions: <Widget>[
+                        new IconButton( // action button
+                            icon: new Icon(Icons.location_on, color: Colors.blue,),
+                            onPressed: () {_showCityAlertDialog(context);},
+                        ),
+                    ],
+                ),
+                body: Center(
+                    child: new FluttieAnimation(loadingAnimation),
+                ),
             );
         } else {
+//            print("======cxz,  eqMap 获取成功");
             return Container (
                 child: Scaffold(
                     appBar: AppBar(
@@ -100,7 +125,7 @@ class _HomePageState extends State<HomePage> {
       await BaiduMapService.mapView(lat, lng, floor);
     }
 
-    // 得到离定位最近的 building
+    // 得到离定位最近的 building, 先定位再检查本地是否存在是为了在外地时能检测到而提示切换城市
     void _getLocalBuilding () {
         print("1------开始获取最近的building");
         _checkPermission().then((val) {
@@ -108,7 +133,8 @@ class _HomePageState extends State<HomePage> {
                 location = val;
                 print("2-----定位获取成功, citycode: " + location.citycode.toString() + ", 纬度：" + location.latitude.toString() + ", 经度：" + location.longitude.toString());
                 checkCitycode(location.citycode).then((result) {
-                    if (result['data'] == 1) {
+                    if (result['data'] == 0) { // todo 测试
+//                    if (result['data'] == 1) {
                         print("3-----数据库【存在】此citycode");
                         // 检查本地是否存在此citycode
                         StorageUtil.get(storageCitycode).then((localCitycode) {
@@ -170,18 +196,26 @@ class _HomePageState extends State<HomePage> {
                             _getBuildingByCitycode(homeCitycode);
                         });
                     } else {
-                        print("3-----数据库【不存在】此citycode, 结束");
-                        // 数据库不存在此citycode
-                        Fluttertoast.showToast(msg: "你所在城市暂未开通此服务", toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.TOP,
-                            timeInSecForIos: 1, backgroundColor: Colors.red, textColor: Colors.white, fontSize: 16.0
-                        );
+                        print("3-----数据库【不存在】此citycode, 检查本地是否存储");
+                        StorageUtil.get(storageCitycode).then((localCitycode) {
+                            if (localCitycode != null && localCitycode != '') {
+                                _getBuildingByCitycode(localCitycode);
+                            } else {
+                                ToastUtil.toastNoCitycode();
+                                _getBuildingByCitycode("-1");
+                            }
+                        });
+
                     }
                 }).timeout(new Duration(milliseconds: 3000), onTimeout: (){
-                    Fluttertoast.showToast(msg: "请求服务器超时, 请检查网络", toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.TOP,
-                        timeInSecForIos: 1, backgroundColor: Colors.red, textColor: Colors.white, fontSize: 16.0);
+                    ToastUtil.toastInternetTimeout();
+                }).catchError((e){
+                    print("=====czx : " + e.toString());
+                    ToastUtil.toastInternetError();
                 });
             }
         }).catchError((e) {
+            ToastUtil.toastLocationPermission();
             LogUtil.e("homt_page._getLocalBuilding 获取最近的 building 失败: ", "${e.error}");     // Finally, callback fires.
         });
     }
@@ -201,10 +235,10 @@ class _HomePageState extends State<HomePage> {
                    print("8.1------开启定时器");
                }
             }
-            if (getBuildingUrlFlag) {
+            if (citycode != "-1" && getBuildingUrlFlag) {
                 print("8------本地buildingMap不存在或不为该city下，开始获取该city下的最近building");
-                String latlong = location.latitude.toString() + "," + location.longitude.toString();
-                getBuildingUrl(citycode, latlong).then((val){
+                String latlng = location.latitude.toString() + "," + location.longitude.toString();
+                getBuildingUrl(citycode, latlng).then((val){
                     if (val != null && val['data'] != "" && mounted) {
                         print("8.1------获取最近的building成功, 为: " + val['data'][0].toString());
                         setState(() {
@@ -216,18 +250,21 @@ class _HomePageState extends State<HomePage> {
                             print("10------开启定时器");
                         });
                     } else {
-                        Fluttertoast.showToast(msg: "该城市暂无此服务!", toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.TOP,
-                            timeInSecForIos: 1, backgroundColor: Colors.red, textColor: Colors.white, fontSize: 16.0);
+                        ToastUtil.toastNoBuilding();
                     }
                 }).catchError((e) {
-                    LogUtil.e("homt_page._getAllBuilding: ", "${e.error}");     // Finally, callback fires.
+                    LogUtil.e("homt_page._getAllBuilding: ", "${e.toString()}");     // Finally, callback fires.
                 });
+            }
+            if (citycode == "-1") {
+                _showCityAlertDialog(context);
             }
         });
     }
 
     void _startTimer () {
-        const oneSec = const Duration(milliseconds: 500);
+        print("开启定时器");
+        const oneSec = const Duration(milliseconds: timer_duration);
         startUpTime = DateTime.now();
         if (cityBuildingMap != null && cityBuildingMap.isNotEmpty) {
             httpTimer = new Timer.periodic(oneSec, (Timer t) =>
@@ -237,15 +274,21 @@ class _HomePageState extends State<HomePage> {
                             eqMap = val;
                         });
                     }
-                }).timeout(new Duration(milliseconds: 5000), onTimeout: (){
+                }).timeout(new Duration(milliseconds: home_page_content_url), onTimeout: (){
                     _toastMsg("请求主页数据超时, 请检查网络", home_page_timeout);
                 })
             );
             nowTimeTimer = new Timer.periodic(oneSec, (Timer t) =>
-                setState((){
-                    nowTime = DateTime.now();
-                })
+                setNowTimeState()
             );
+        }
+    }
+
+    void setNowTimeState () {
+        if (mounted) {
+            setState((){
+                nowTime = DateTime.now();
+            });
         }
     }
 
@@ -269,9 +312,7 @@ class _HomePageState extends State<HomePage> {
                     LogUtil.e("homt_page._getAllBuilding: ", "${e.error}");     // Finally, callback fires.
                 });
             } else {
-                Fluttertoast.showToast(msg: "请先选择所在城市", toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.TOP,
-                    timeInSecForIos: 1, backgroundColor: Colors.red, textColor: Colors.white, fontSize: 16.0
-                );
+                ToastUtil.toastMsg("请先选择所在城市");
             }
         }
     }
@@ -384,15 +425,7 @@ class _HomePageState extends State<HomePage> {
                 Map<PermissionGroup, PermissionStatus> requestPermissionResult = await PermissionHandler().requestPermissions([PermissionGroup.location, PermissionGroup.storage]);
                 if(requestPermissionResult[PermissionGroup.location] == PermissionStatus.denied ||
                     requestPermissionResult[PermissionGroup.storage] == PermissionStatus.denied){
-                    Fluttertoast.showToast(
-                        msg: "申请定位权限或者读取文件失败",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.CENTER,
-                        timeInSecForIos: 1,
-                        backgroundColor: Colors.red,
-                        textColor: Colors.white,
-                        fontSize: 16.0
-                    );
+                    ToastUtil.toastMsg("申请定位权限或者读取文件失败");
                     return null;
                 }
             }
@@ -408,8 +441,7 @@ class _HomePageState extends State<HomePage> {
     void _toastMsg (msg, period) {
         if (nowTime != null && nowTime.difference(startUpTime).inSeconds >= period) {
             startUpTime = nowTime;
-            Fluttertoast.showToast(msg: msg, toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.TOP,
-                timeInSecForIos: 1, backgroundColor: Colors.red, textColor: Colors.white, fontSize: 16.0);
+            ToastUtil.toastMsg(msg);
         }
     }
 
@@ -420,6 +452,7 @@ class _HomePageState extends State<HomePage> {
     /// 停止的时候保证没有调用setState方法的操作。
     @override
     void deactivate() {
+        print("deactivate");
         if (httpTimer != null) {
             httpTimer.cancel();
         }
@@ -431,6 +464,7 @@ class _HomePageState extends State<HomePage> {
 
     @override
     void dispose() {
+        print("dispose");
         AMapLocationClient.shutdown();
         super.dispose();
     }

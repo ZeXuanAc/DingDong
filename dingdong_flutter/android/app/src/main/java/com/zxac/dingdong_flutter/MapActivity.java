@@ -39,6 +39,7 @@ import com.baidu.mapapi.walknavi.adapter.IWRoutePlanListener;
 import com.baidu.mapapi.walknavi.model.WalkRoutePlanError;
 import com.baidu.mapapi.walknavi.params.WalkNaviLaunchParam;
 import com.baidu.mapapi.walknavi.params.WalkRouteNodeInfo;
+import com.hanks.htextview.line.LineTextView;
 import com.zxac.dingdong_flutter.listener.IndoorRoutePlanResultListener;
 import com.zxac.dingdong_flutter.overlayutil.IndoorRouteOverlay;
 import com.zxac.dingdong_flutter.utils.LocationUtil;
@@ -77,6 +78,7 @@ public class MapActivity extends AppCompatActivity {
     private ImageButton arWalkBtn; // ar步行导航按钮
     private ImageButton returnStartBtn; // 回到起点按钮
     private ImageButton returnEndBtn; // 回到终点按钮
+    private LineTextView floorText; // floor文本
 
 //    double lat = 30.305088; // todo
 //    double lng = 120.113296; // todo
@@ -234,6 +236,12 @@ public class MapActivity extends AppCompatActivity {
             builder.target(new LatLng(endPt.latitude, endPt.longitude)).zoom(zoomLevel);
             mBaiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
         });
+
+        floorText = findViewById(R.id.floor_text);
+        floorText.setTextColor(getResources().getColor(R.color.fbutton_default_color));
+        floorText.setAnimationDuration(1500);
+        floorText.animateText(getString(R.string.floor_tips) + endFloor);
+
     }
 
 
@@ -241,7 +249,7 @@ public class MapActivity extends AppCompatActivity {
      * 初始化地图状态
      */
     private void initMapStatus(Context context){
-        Log.i("======czx", "11111设置室内监听");
+        Log.i("======czx", "设置进出入室内监听");
         mBaiduMap = mMapView.getMap();
         mBaiduMap.setIndoorEnable(true);// 打开室内图，默认为关闭状态
         //实例化UiSettings类对象
@@ -428,21 +436,25 @@ public class MapActivity extends AppCompatActivity {
         });
     }
 
-
-
     protected void onPause() {
         super.onPause();
         mMapView.onPause();
+        Log.d("====czx", "onPause");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mMapView.onResume();
+        if (floorText != null) {
+            floorText.animateText(getString(R.string.floor_tips) + " 【 " + endFloor + " 】");
+        }
+        Log.d("====czx", "onResume");
     }
 
     @Override
     protected void onDestroy() {
+        Log.d("====czx", "onDestroy");
         mMapView.onDestroy();
         mMapView = null;
         if (mBaiduMap != null) {
