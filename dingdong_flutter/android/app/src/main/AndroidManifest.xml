@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.zxac.dingdong_flutter">
     <!--
      io.flutter.app.FlutterApplication is an android.app.Application that
@@ -38,7 +39,9 @@
     <application
         android:name=".HomeApplication"
         android:icon="@mipmap/logo"
-        android:label="叮咚">
+        android:label="叮咚"
+        tools:replace="android:label">
+
 
         <!--<meta-data-->
             <!--android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"-->

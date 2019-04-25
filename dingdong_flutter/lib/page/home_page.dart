@@ -478,43 +478,63 @@ Widget _listView(sEqMap, nowTime) {
                                         ),
                                     ),
                                 ),
-                                Text(
-                                    eqList.elementAt(0)['storeyName'],
-                                    style: TextStyle(
-                                        fontSize: ScreenUtil.getInstance().setSp(storey_font_size),
-                                        height: 1.3,
-                                        color: Colors.white,
-                                        shadows: [Shadow(color: Colors.white, offset: Offset(0.2, 0.2), blurRadius: 5)], // 阴影
-                                    )
-                                ),
-                            ]
-                        ),
-                        Stack(
-                            alignment: const FractionalOffset(0.5, 0.8),
-                            children: <Widget>[
-                                GridView.count(
-                                    physics: new NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    crossAxisCount: 3,
-                                    mainAxisSpacing: 10.0,
-                                    crossAxisSpacing: 10.0,
-                                    padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                                    childAspectRatio: 1.0,
-                                    children: imageWidgetList,
-                                ),
-                                new Opacity(
-                                    opacity: 0.5,
-                                    child: new GestureDetector(
-                                        child: new Icon(Icons.airplay, color: Colors.greenAccent,),
-                                        onTap: (){
-                                            _HomePageState().toMapView(eqList.elementAt(0)['latitude'], eqList.elementAt(0)['longitude'],
-                                                eqList.elementAt(0)['floor']);
-                                        },
-                                    )
+                                Center(
+                                    child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                            Container(
+                                                width: ScreenUtil.getInstance().setWidth(150),
+                                                child: Center(
+                                                    child: Text(
+                                                        eqList.elementAt(0)['floor'],
+                                                        style: TextStyle(
+                                                            fontSize: ScreenUtil.getInstance().setSp(storey_font_size),
+                                                            color: Colors.cyanAccent,
+                                                            shadows: [Shadow(color: Colors.cyanAccent, offset: Offset(0.2, 0.2), blurRadius: 5)], // 阴影
+                                                        )
+                                                    ),
+                                                )
+                                            ),
+                                            Container(
+                                                margin: EdgeInsets.only(left: 30, right: 30), //容器外补白
+                                                width: ScreenUtil.getInstance().setWidth(500),
+                                                child: Center(
+                                                    child: Text(
+                                                        eqList.elementAt(0)['storeyName'],
+                                                        style: TextStyle(
+                                                            fontSize: ScreenUtil.getInstance().setSp(storey_font_size),
+                                                            color: Colors.white,
+                                                            shadows: [Shadow(color: Colors.white, offset: Offset(0.2, 0.2), blurRadius: 5)], // 阴影
+                                                        )
+                                                    ),
+                                                )
+                                            ),
+                                            Container(
+                                                width: ScreenUtil.getInstance().setWidth(150),
+                                                child: new IconButton( // action button
+                                                    icon: ImageIcon(AssetImage('assets/images/icons_foot.png'), color: Colors.cyanAccent,),
+                                                    onPressed: () {
+                                                        _HomePageState().toMapView(eqList.elementAt(0)['latitude'], eqList.elementAt(0)['longitude'],
+                                                            eqList.elementAt(0)['floor']);
+                                                    },
+                                                ),
+                                            ),
+
+                                        ],
+                                    ),
                                 )
                             ]
-                        )
-
+                        ),
+                        GridView.count(
+                            physics: new NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            crossAxisCount: 3,
+                            mainAxisSpacing: 10.0,
+                            crossAxisSpacing: 10.0,
+                            padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                            childAspectRatio: 1.0,
+                            children: imageWidgetList,
+                        ),
                     ]
                 )
             ),
@@ -531,6 +551,7 @@ Widget _listView(sEqMap, nowTime) {
             )
     );
 }
+
 
 Widget _singleGridWidget(eqMap, nowTime){
     var difference = nowTime.difference(DateTime.parse(eqMap['createTimeStr']));

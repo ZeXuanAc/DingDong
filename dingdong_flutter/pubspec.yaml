@@ -28,13 +28,8 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-  - assets/images/green.jpg
-  - assets/images/red.jpg
-  - assets/images/logo.png
-  - assets/animatd/loading-flutter.json
-  - assets/animatd/heart-rate.json
-  - assets/animatd/loader-animation.json
-  - assets/animatd/bouncy-mapmaker.json
+  - assets/images/
+  - assets/animatd/
   fonts:
   - family: HanYiXiaoBoHuaYueYuan-Jian-2
     fonts:

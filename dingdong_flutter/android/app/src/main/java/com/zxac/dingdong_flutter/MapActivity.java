@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -73,10 +74,10 @@ public class MapActivity extends AppCompatActivity {
 
     private int searchCount = 1; // 记录第几次室内路径规划
 
-    private Button walkBtn; // 步行导航按钮
-    private Button arWalkBtn; // ar步行导航按钮
-    private Button returnStartBtn; // 回到起点按钮
-    private Button returnEndBtn; // 回到终点按钮
+    private ImageButton walkBtn; // 步行导航按钮
+    private ImageButton arWalkBtn; // ar步行导航按钮
+    private ImageButton returnStartBtn; // 回到起点按钮
+    private ImageButton returnEndBtn; // 回到终点按钮
 
 //    double lat = 30.305088; // todo
 //    double lng = 120.113296; // todo
