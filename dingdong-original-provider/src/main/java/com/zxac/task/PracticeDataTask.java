@@ -3,7 +3,7 @@ package com.zxac.task;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.zxac.config.UrlConfig;
 import com.zxac.constant.Common;
-import com.zxac.model.EquipmentStatusDto;
+import com.zxac.dto.EquipmentStatusDto;
 import com.zxac.model.Result;
 import com.zxac.service.CityEquipmentService;
 import com.zxac.utils.JsonUtil;

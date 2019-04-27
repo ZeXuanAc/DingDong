@@ -1,6 +1,7 @@
-package com.zxac.model;
+package com.zxac.dto;
 
 
+import com.zxac.model.Equipment;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 

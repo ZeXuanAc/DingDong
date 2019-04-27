@@ -2,7 +2,7 @@ package com.zxac.controller;
 
 
 import com.zxac.constant.Common;
-import com.zxac.model.EquipmentStatusDto;
+import com.zxac.dto.EquipmentStatusDto;
 import com.zxac.model.Result;
 import com.zxac.utils.ObjectUtil;
 import com.zxac.utils.RedisUtil;
@@ -58,8 +58,8 @@ public class RedisController {
         storeyMap.entrySet().stream().sorted(Comparator.comparing(map -> map.getValue().get(0).get("storeyPriority"))).forEach(e -> finalMap.put(e.getKey(), e.getValue()));
         return Result.success(finalMap);
     }
-    
-    
+
+
     @GetMapping(value = "redis/set")
     public Result setRedisDataV2 (EquipmentStatusDto dto){
         String redisKey = Common.REDIS_KEY_CITY + dto.getCitycode() + Common.UNDERLINE +

@@ -1,5 +1,6 @@
 package com.zxac.service;
 
+import com.zxac.dto.EquipmentStatusDto;
 import com.zxac.model.*;
 
 import java.util.List;

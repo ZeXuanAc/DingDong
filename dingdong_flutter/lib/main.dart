@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
                 title:'叮咚',
                 debugShowCheckedModeBanner: false,
                 theme: ThemeData(
-                  primaryColor:Colors.pink
+                  primaryColor:Colors.blue
                 ),
                 home: IndexPage()
             ),

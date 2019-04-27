@@ -6,6 +6,7 @@ import com.zxac.dao.BuildingMapper;
 import com.zxac.dao.CityMapper;
 import com.zxac.dao.EquipmentMapper;
 import com.zxac.dao.StoreyMapper;
+import com.zxac.dto.EquipmentStatusDto;
 import com.zxac.model.*;
 import com.zxac.utils.DistanceUtil;
 import lombok.extern.slf4j.Slf4j;

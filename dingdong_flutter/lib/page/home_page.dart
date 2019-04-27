@@ -14,6 +14,7 @@ import 'package:dingdong_flutter/config/application.dart';
 import 'package:dingdong_flutter/utils/storage_util.dart';
 import 'package:dingdong_flutter/service/baidu_map_service.dart';
 import 'package:dingdong_flutter/utils/toast_util.dart';
+import 'package:dingdong_flutter/utils/common_util.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -22,7 +23,7 @@ class HomePage extends StatefulWidget {
       return _HomePageState();
     }
 }
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
     Map eqMap;  // building所有的设备信息
     Map cityBuildingMap; // 当前 building
@@ -45,81 +46,66 @@ class _HomePageState extends State<HomePage> {
         _getLocalBuilding();
         startUpTime = animationTime = DateTime.now();
         super.initState();
+        WidgetsBinding.instance.addObserver(this);
     }
 
 
     @override
     Widget build(BuildContext context) {
         ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
+//        CommonUtil.setBarStatus(true);
 
-        // 初始化ui
-//        print("======cxz,  初始化ui-----------");
         if (eqMap == null || eqMap['data'] == null) {
-//            print("======cxz,  eqMap == null || eqMap['data'] == null");
             _toastMsg("网络开了小差, 请检查网络", home_page_timeout);
             if (loadingAnimation != null && nowTime != null && nowTime.difference(animationTime).inSeconds >= 2) {
                 animationTime = nowTime;
                 loadingAnimation.start();
             }
             return Scaffold(
-                appBar: AppBar(
-                    leading: new Icon(Icons.home, color: Colors.blue,),
-                    title: new Text.rich(new TextSpan(
-                        text: "无",
-                        style: TextStyle(color: Colors.black,),
-                        recognizer: new TapGestureRecognizer()
-                            ..onTap = () {
-                                _showBuildingAlertDialog(context);
-                            }
-                    )),
-                    centerTitle: true,
-                    backgroundColor: Colors.white,
-                    actions: <Widget>[
-                        new IconButton( // action button
-                            icon: new Icon(Icons.location_on, color: Colors.blue,),
-                            onPressed: () {_showCityAlertDialog(context);},
-                        ),
-                    ],
-                ),
+                appBar: _buildAppBar("无"),
                 body: Center(
                     child: new FluttieAnimation(loadingAnimation),
                 ),
             );
         } else {
-//            print("======cxz,  eqMap 获取成功");
             return Container (
                 child: Scaffold(
-                    appBar: AppBar(
-                        leading: new Icon(Icons.home, color: Colors.blue,),
-                        title: new Text.rich(new TextSpan(
-                            text: cityBuildingMap['name'],
-                            style: TextStyle(color: Colors.black,),
-                            recognizer: new TapGestureRecognizer()
-                                ..onTap = () {
-                                    _showBuildingAlertDialog(context);
-                                }
-                        )),
-                        centerTitle: true,
-                        backgroundColor: Colors.white,
-                        actions: <Widget>[
-                            new IconButton( // action button
-                                icon: new Icon(Icons.airplay, color: Colors.blue,),
-                                onPressed: () {
-                                    Application.router.navigateTo(context, "/buildingOptions?buildingId=00933123");
-                                },
-                            ),
-                            new IconButton( // action button
-                                icon: new Icon(Icons.location_on, color: Colors.blue,),
-                                onPressed: () {_showCityAlertDialog(context);},
-                            ),
-                        ],
-                    ),
+                    appBar: _buildAppBar(cityBuildingMap['name']),
                     body: _listView(eqMap['data'], nowTime),
                 )
             );
         }
     }
 
+
+    Widget _buildAppBar (titleText) {
+        return AppBar(
+            leading: new Icon(Icons.home, color: Colors.blue,),
+            title: new Text.rich(new TextSpan(
+                text: titleText,
+                style: TextStyle(color: Colors.black,),
+                recognizer: new TapGestureRecognizer()
+                    ..onTap = () {
+                        _showBuildingAlertDialog(context);
+                    }
+            )),
+            centerTitle: true,
+            backgroundColor: Colors.white,
+            actions: <Widget>[
+                new IconButton( // action button
+                    icon: new Icon(Icons.location_on, color: Colors.blue,),
+                    onPressed: () {
+                        Future future = Application.router.navigateTo(context, "/buildingOptions?buildingId=00933123");
+                        future.then((value) {
+                            if (value != null) {
+                                _loadingPresentCity(value['citycode']);
+                            }
+                        });
+                    },
+                ),
+            ],
+        );
+    }
 
     void toMapView(lat, lng, floor) async {
       await BaiduMapService.mapView(lat, lng, floor);
@@ -155,7 +141,7 @@ class _HomePageState extends State<HomePage> {
                                         context: context,
                                         builder: (BuildContext context) {
                                             return new AlertDialog(
-                                                title: Text('Rewind and remember'),
+                                                title: Text('Notice'),
                                                 content: Text("检测到你在【" + location.city + "】, 是否切换？"),
                                                 actions: <Widget>[
                                                     FlatButton(
@@ -330,9 +316,11 @@ class _HomePageState extends State<HomePage> {
                     ),
                 ),
                 onPressed: () {
-                    cityBuildingMap = map;
+                    if (cityBuildingMap == null || (cityBuildingMap != null && cityBuildingMap['name'] != map['name'])) {
+                        cityBuildingMap = map;
+                        StorageUtil.save(storageBuilding, json.encode(cityBuildingMap));
+                    }
                     Navigator.pop(context); //关闭对话框
-                    StorageUtil.save(storageBuilding, json.encode(cityBuildingMap));
                 },
             ),);
         }
@@ -363,6 +351,19 @@ class _HomePageState extends State<HomePage> {
                     });
                     _loadingCityDialog(allCityList);
                 }
+            });
+        }
+    }
+
+    // 重新加载城市
+    void _loadingPresentCity (citycode) {
+        if (homeCitycode == null || (homeCitycode != null && homeCitycode != citycode)) {
+            setState(() {
+                homeCitycode = citycode;
+                eqMap = null;
+                startUpTime = DateTime.now();
+                StorageUtil.save(storageCitycode, homeCitycode);
+                _getBuildingByCitycode(homeCitycode);
             });
         }
     }
@@ -446,19 +447,35 @@ class _HomePageState extends State<HomePage> {
     }
 
 
+    @override
+    void didChangeAppLifecycleState(AppLifecycleState state) {
+        switch (state) {
+            case AppLifecycleState.inactive:
+                print('AppLifecycleState.inactive');
+                break;
+            case AppLifecycleState.paused:
+                print('AppLifecycleState.paused');
+                /// 释放两个定时器，因为在切换到其他页面时会导致此页面停止，但是本身两个定时器却不会停止，
+                /// 这两个定时器会做 setState方法, 这可能会导致内存泄漏，重写这个方法的目的就是让此 widget
+                /// 停止的时候保证没有调用setState方法的操作。
+                _stopTimer();
+                break;
+            case AppLifecycleState.resumed:
+                print('AppLifecycleState.resumed');
+                _startTimer();
+                break;
+            case AppLifecycleState.suspending:
+                print('AppLifecycleState.suspending');
+                break;
+        }
+        super.didChangeAppLifecycleState(state);
+    }
 
-    /// 释放两个定时器，因为在切换到其他页面时会导致此页面停止，但是本身两个定时器却不会停止，
-    /// 这两个定时器会做 setState方法, 这可能会导致内存泄漏，重写这个方法的目的就是让此 widget
-    /// 停止的时候保证没有调用setState方法的操作。
+
+
     @override
     void deactivate() {
         print("deactivate");
-        if (httpTimer != null) {
-            httpTimer.cancel();
-        }
-        if (nowTimeTimer != null) {
-            nowTimeTimer.cancel();
-        }
         super.deactivate();
     }
 
@@ -466,9 +483,18 @@ class _HomePageState extends State<HomePage> {
     void dispose() {
         print("dispose");
         AMapLocationClient.shutdown();
+        _stopTimer();
         super.dispose();
     }
 
+    void _stopTimer() {
+        if (httpTimer != null) {
+            httpTimer.cancel();
+        }
+        if (nowTimeTimer != null) {
+            nowTimeTimer.cancel();
+        }
+    }
 
 }
 

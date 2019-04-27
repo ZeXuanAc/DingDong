@@ -1,7 +1,7 @@
 package com.zxac.dao;
 
 import com.zxac.model.Equipment;
-import com.zxac.model.EquipmentStatusDto;
+import com.zxac.dto.EquipmentStatusDto;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
