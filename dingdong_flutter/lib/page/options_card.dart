@@ -18,7 +18,7 @@ class OptionCard extends StatelessWidget {
           clipper: TicketClipper(12.0),
           child: Card(
             elevation: 0.0,
-            margin: const EdgeInsets.all(2.0),
+            margin: const EdgeInsets.fromLTRB(2.0, 2.0, 2.0, 8.0),
             child: _buildCardContent(context),
           ),
         ),

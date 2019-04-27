@@ -61,6 +61,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                 animationTime = nowTime;
                 loadingAnimation.start();
             }
+            _startTimer();
             return Scaffold(
                 appBar: _buildAppBar("无"),
                 body: Center(
@@ -253,20 +254,24 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         const oneSec = const Duration(milliseconds: timer_duration);
         startUpTime = DateTime.now();
         if (cityBuildingMap != null && cityBuildingMap.isNotEmpty) {
+          if (httpTimer == null) {
             httpTimer = new Timer.periodic(oneSec, (Timer t) =>
                 getHomePageContentUrl(cityBuildingMap['citycode'], cityBuildingMap['id']).then((val){
-                    if (val != null && mounted) {
-                        setState(() {
-                            eqMap = val;
-                        });
-                    }
+                  if (val != null && mounted) {
+                    setState(() {
+                      eqMap = val;
+                    });
+                  }
                 }).timeout(new Duration(milliseconds: home_page_content_url), onTimeout: (){
-                    _toastMsg("请求主页数据超时, 请检查网络", home_page_timeout);
+                  _toastMsg("请求主页数据超时, 请检查网络", home_page_timeout);
                 })
             );
+          }
+          if (nowTimeTimer == null) {
             nowTimeTimer = new Timer.periodic(oneSec, (Timer t) =>
                 setNowTimeState()
             );
+          }
         }
     }
 

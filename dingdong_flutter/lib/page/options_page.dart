@@ -111,7 +111,7 @@ class BuildingOptionsPageState extends State<BuildingOptionsPage>{
       return Text("加载中");
     } else {
       return ListView(
-        padding: EdgeInsets.symmetric(vertical: 8.0),
+        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
         children: isSearching ? _buildSearchList() : _buildList(),
       );
     }
