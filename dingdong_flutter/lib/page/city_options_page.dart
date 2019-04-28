@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:dingdong_flutter/page/options_card.dart';
+import 'package:dingdong_flutter/page/city_options_card.dart';
 import 'package:dingdong_flutter/service/service_method.dart';
 import 'package:dingdong_flutter/utils/toast_util.dart';
 
-class BuildingOptionsPage extends StatefulWidget {
-  final String buildingId;
-  BuildingOptionsPage(this.buildingId);
+class CityOptionsPage extends StatefulWidget {
+  CityOptionsPage();
 
   @override
-  BuildingOptionsPageState createState() => new BuildingOptionsPageState();
+  CityOptionsPageState createState() => new CityOptionsPageState();
 }
 
-class BuildingOptionsPageState extends State<BuildingOptionsPage>{
+class CityOptionsPageState extends State<CityOptionsPage>{
 
   final TextEditingController searchView = TextEditingController();
   List<Map> resultList; // 结果list
@@ -20,7 +19,7 @@ class BuildingOptionsPageState extends State<BuildingOptionsPage>{
   Icon actionIcon = Icon(Icons.search, color: Colors.black);
   Widget appBarTextView = Text("", style: new TextStyle(color: Colors.black),);
 
-  BuildingOptionsPageState() {
+  CityOptionsPageState() {
     searchView.addListener(() {
       if (searchView.text.isEmpty) {
         setState(() {
@@ -118,13 +117,13 @@ class BuildingOptionsPageState extends State<BuildingOptionsPage>{
   }
 
 
-  List<OptionCard> _buildList() {
-    return resultList.map((map) => OptionCard(map)).toList();
+  List<CityOptionCard> _buildList() {
+    return resultList.map((map) => CityOptionCard(map)).toList();
   }
 
-  List<OptionCard> _buildSearchList() {
+  List<CityOptionCard> _buildSearchList() {
     if (searchString.isEmpty) {
-      return resultList.map((map) => OptionCard(map)).toList();
+      return resultList.map((map) => CityOptionCard(map)).toList();
     } else {
       List<Map> searchList = List();
       for (int i = 0; i < resultList.length; i++) {
@@ -133,7 +132,7 @@ class BuildingOptionsPageState extends State<BuildingOptionsPage>{
           searchList.add(equipmentInfo);
         }
       }
-      return searchList.map((map) => OptionCard(map)).toList();
+      return searchList.map((map) => CityOptionCard(map)).toList();
     }
   }
 

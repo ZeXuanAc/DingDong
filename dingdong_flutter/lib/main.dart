@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttie/fluttie.dart';
 import 'page/index_page.dart';
 import 'package:amap_location/amap_location.dart';
 import 'package:fluro/fluro.dart';
@@ -15,12 +16,13 @@ void main() {
 
 class MyApp extends StatelessWidget {
 
+
     @override
     Widget build(BuildContext context) {
         final router = Router();
         Routes.configureRoutes(router);
         Application.router = router;
-
+        _initAnimation();
 
         return Container(
             child: MaterialApp(
@@ -32,6 +34,16 @@ class MyApp extends StatelessWidget {
                 home: IndexPage()
             ),
         );
+    }
+
+
+    void _initAnimation () async {
+        // 先加载组件
+        var instance = new Fluttie();
+        var eComposition = await instance.loadAnimationFromAsset(
+            'assets/animatd/loading-flutter.json',
+        );
+        Application.loadingAnimation = await instance.prepareAnimation(eComposition);
     }
 
 }

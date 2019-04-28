@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-class OptionCard extends StatelessWidget {
+class CityOptionCard extends StatelessWidget {
   final Map map;
 
-  const OptionCard(this.map,{Key key}) : super(key: key);
+  const CityOptionCard(this.map,{Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

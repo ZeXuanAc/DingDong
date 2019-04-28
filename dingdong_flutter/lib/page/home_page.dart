@@ -30,7 +30,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     List<Map> allBuildingList; // 当前城市下的所有 building
     List<Map> allCityList; // 所有city 列表
     var startUpTime; // 记录app启动的时间
-    var loadingAnimation; // 加载中的动画
     var animationTime; // 记录当前动画开始时间
     AMapLocation location; // 当前定位信息
     var homeCitycode; // 城市代码
@@ -42,7 +41,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
     @override
     void initState() {
-        _initAnimation();
+        _startLoadingAnimation();
         _getLocalBuilding();
         startUpTime = animationTime = DateTime.now();
         super.initState();
@@ -57,15 +56,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
         if (eqMap == null || eqMap['data'] == null) {
             _toastMsg("网络开了小差, 请检查网络", home_page_timeout);
-            if (loadingAnimation != null && nowTime != null && nowTime.difference(animationTime).inSeconds >= 2) {
+            if (Application.loadingAnimation != null && nowTime != null && nowTime.difference(animationTime).inSeconds >= 1) {
                 animationTime = nowTime;
-                loadingAnimation.start();
+                _startLoadingAnimation();
             }
             _startTimer();
             return Scaffold(
                 appBar: _buildAppBar("无"),
                 body: Center(
-                    child: new FluttieAnimation(loadingAnimation),
+                    child: new FluttieAnimation(Application.loadingAnimation),
                 ),
             );
         } else {
@@ -96,7 +95,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                 new IconButton( // action button
                     icon: new Icon(Icons.location_on, color: Colors.blue,),
                     onPressed: () {
-                        Future future = Application.router.navigateTo(context, "/buildingOptions?buildingId=00933123");
+                        Future future = Application.router.navigateTo(context, "/cityOptions");
                         future.then((value) {
                             if (value != null) {
                                 _loadingPresentCity(value['citycode']);
@@ -408,17 +407,23 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         );
     }
 
-    void _initAnimation () async {
-        // 先加载组件
-        var instance = new Fluttie();
-        var eComposition = await instance.loadAnimationFromAsset(
-            'assets/animatd/loading-flutter.json',
-        );
-        loadingAnimation = await instance.prepareAnimation(eComposition);
-        if (mounted) {
+    void _startLoadingAnimation () async {
+        if (Application.loadingAnimation != null && mounted) {
             setState(() {
-                loadingAnimation.start(); //start our looped emoji animation
+                Application.loadingAnimation.start(); //start our looped emoji animation
             });
+        } else {
+            // 先加载组件
+            var instance = new Fluttie();
+            var eComposition = await instance.loadAnimationFromAsset(
+                'assets/animatd/loading-flutter.json',
+            );
+            Application.loadingAnimation = await instance.prepareAnimation(eComposition);
+            if (mounted) {
+                setState(() {
+                    Application.loadingAnimation.start(); //start our looped emoji animation
+                });
+            }
         }
     }
 
@@ -460,9 +465,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                 break;
             case AppLifecycleState.paused:
                 print('AppLifecycleState.paused');
-                /// 释放两个定时器，因为在切换到其他页面时会导致此页面停止，但是本身两个定时器却不会停止，
-                /// 这两个定时器会做 setState方法, 这可能会导致内存泄漏，重写这个方法的目的就是让此 widget
-                /// 停止的时候保证没有调用setState方法的操作。
                 _stopTimer();
                 break;
             case AppLifecycleState.resumed:
