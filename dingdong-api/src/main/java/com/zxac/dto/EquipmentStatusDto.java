@@ -46,6 +46,8 @@ public class EquipmentStatusDto implements Serializable {
 
     private String floor; // 楼层，如“F1”（地上一层）,“B1”（地下一层）
 
+    private String storeyGender; // 性别（storey）
+
     private String latitude; // 纬度（storey）
 
     private String longitude; // 经度（storey）

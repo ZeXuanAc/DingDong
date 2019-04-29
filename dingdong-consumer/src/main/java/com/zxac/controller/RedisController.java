@@ -23,10 +23,16 @@ public class RedisController {
     @GetMapping(value = "redis/get")
     public Result getRedisDataV2(@RequestParam(value = "citycode") String citycode,
                                @RequestParam(value = "buildingId") Integer buildingId,
-                               @RequestParam(value = "storeyId", required = false) Integer storeyId){
+                               @RequestParam(value = "storeyId", required = false) Integer storeyId,
+                               @RequestParam(value = "gender", required = false) String gender){
         String redisKeyPattern = Common.REDIS_KEY_CITY + citycode + Common.UNDERLINE + Common.REDIS_KEY_BUILDING + buildingId;
+        if (gender != null) {
+            redisKeyPattern += Common.UNDERLINE + "[A," + getStoreyGenderCode(gender) + "]";
+        } else {
+            redisKeyPattern += "*";
+        }
         if (storeyId != null && !storeyId.equals(0)) {
-            redisKeyPattern += Common.UNDERLINE  + Common.REDIS_KEY_STOREY + storeyId;
+            redisKeyPattern += Common.UNDERLINE + Common.REDIS_KEY_STOREY + storeyId;
         }
         redisKeyPattern += "*";
         Jedis jedis = null;
@@ -43,8 +49,8 @@ public class RedisController {
                     }
                 }
             } else {
-                log.warn("jedis is null");
-                return Result.failure(Common.FAILURE_CODE_600, "jedis is null");
+                log.warn("jedis is null, 请检查redis相关是否正常");
+                return Result.failure(Common.FAILURE_CODE_600, "jedis is null, 请检查redis相关是否正常");
             }
         } catch (Exception e) {
             log.error("redis 查询数据错误, redisKeyPattern: {}, {}", redisKeyPattern, e.getMessage());
@@ -64,6 +70,7 @@ public class RedisController {
     public Result setRedisDataV2 (EquipmentStatusDto dto){
         String redisKey = Common.REDIS_KEY_CITY + dto.getCitycode() + Common.UNDERLINE +
                 Common.REDIS_KEY_BUILDING + dto.getBuildingId() + Common.UNDERLINE  +
+                getStoreyGenderCode(dto.getStoreyGender()) + Common.UNDERLINE  +
                 Common.REDIS_KEY_STOREY + dto.getStoreyId() + Common.UNDERLINE  +
                 Common.REDIS_KEY_EQ + dto.getEqId();
         Jedis jedis = null;
@@ -107,4 +114,17 @@ public class RedisController {
         }
         return Result.success();
     }
+
+
+    // gender 为 0，1，2
+    private String getStoreyGenderCode (String gender) {
+        String storeyGenderCode = Common.REDIS_KEY_STOREY_ALL;
+        if ("1".equals(gender)) {
+            storeyGenderCode = Common.REDIS_KEY_STOREY_MALE;
+        } else if ("2".equals(gender)) {
+            storeyGenderCode = Common.REDIS_KEY_STOREY_FEMALE;
+        }
+        return storeyGenderCode;
+    }
+
 }

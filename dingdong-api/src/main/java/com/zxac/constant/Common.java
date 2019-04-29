@@ -19,6 +19,9 @@ public class Common {
     // redis key 的代号
     public static final String REDIS_KEY_CITY = "C";
     public static final String REDIS_KEY_BUILDING = "B";
+    public static final String REDIS_KEY_STOREY_ALL = "A";
+    public static final String REDIS_KEY_STOREY_MALE = "M";
+    public static final String REDIS_KEY_STOREY_FEMALE = "F";
     public static final String REDIS_KEY_STOREY = "S";
     public static final String REDIS_KEY_EQ = "E";
     public static final String UNDERLINE = "_";

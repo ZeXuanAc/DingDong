@@ -12,6 +12,8 @@ public class Storey implements Serializable {
 
     private String floor;
 
+    private String gender;
+
     private String longitude;
 
     private String latitude;
@@ -54,6 +56,14 @@ public class Storey implements Serializable {
 
     public void setFloor(String floor) {
         this.floor = floor;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getLongitude() {

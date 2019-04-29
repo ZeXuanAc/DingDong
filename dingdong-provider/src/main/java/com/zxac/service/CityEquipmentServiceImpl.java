@@ -68,7 +68,7 @@ public class CityEquipmentServiceImpl implements CityEquipmentService {
             String[] locations = location.split(",");
             if (locations.length == 2) {
                 dtoList.forEach(dto -> {
-                    Double distance = DistanceUtil.GetDistance(locations[0], locations[1], dto.getLongitude(), dto.getLatitude());
+                    Double distance = DistanceUtil.GetDistance(locations[0], locations[1], dto.getLatitude(), dto.getLongitude());
                     dto.setDistance(distance);
                     dto.setDistanceStr(DistanceUtil.format2decimal(distance));
                 });
@@ -105,7 +105,7 @@ public class CityEquipmentServiceImpl implements CityEquipmentService {
     /**
      * 带参数citycode的查询结果缺失所在楼层信息
      */
-  @Override
+    @Override
     public List<EquipmentStatusDto> getAllEquipment(String citycode) {
         List<EquipmentStatusDto> dtoList = new ArrayList<>();
         if (citycode != null && !citycode.equals("")){
