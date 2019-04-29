@@ -4,6 +4,7 @@ import 'package:fluro/fluro.dart';
 
 class Routes{
     static String root='/';
+    static String indexPage = '/indexPage';
     static String cityOptionsPage = '/cityOptions';
     static String buildingOptionsPage = '/buildingOptions';
     static void configureRoutes(Router router){
@@ -14,6 +15,7 @@ class Routes{
         );
 
         // 定义 building选项 router
+        router.define(indexPage, handler:indexPageHandler);
         router.define(cityOptionsPage, handler:cityOptionsHandler);
         router.define(buildingOptionsPage, handler:buildingOptionsHandler);
     }

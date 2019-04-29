@@ -3,6 +3,7 @@ package com.zxac.controller;
 
 import com.zxac.constant.Common;
 import com.zxac.dto.EquipmentStatusDto;
+import com.zxac.exception.FailureCode;
 import com.zxac.model.Result;
 import com.zxac.utils.ObjectUtil;
 import com.zxac.utils.RedisUtil;
@@ -50,11 +51,11 @@ public class RedisController {
                 }
             } else {
                 log.warn("jedis is null, 请检查redis相关是否正常");
-                return Result.failure(Common.FAILURE_CODE_600, "jedis is null, 请检查redis相关是否正常");
+                return Result.failure(FailureCode.CODE600);
             }
         } catch (Exception e) {
             log.error("redis 查询数据错误, redisKeyPattern: {}, {}", redisKeyPattern, e.getMessage());
-            return Result.failure(Common.FAILURE_CODE_602, "redis 查询数据错误, redisKeyPattern: " + redisKeyPattern + ", " + e.getMessage());
+            return Result.failure(FailureCode.CODE602.getCode(), "redis 查询数据错误, redisKeyPattern: " + redisKeyPattern + ", " + e.getMessage());
         } finally {
             RedisUtil.close(jedis);
         }
@@ -100,7 +101,7 @@ public class RedisController {
                 }
             } else {
                 log.warn("jedis is null");
-                return Result.failure(Common.FAILURE_CODE_600, "jedis is null");
+                return Result.failure(FailureCode.CODE600);
             }
         } catch (Exception e) {
             log.error("redis 数据更新存储错误, redisKey: {}, {}", redisKey, e.getMessage());
@@ -108,7 +109,7 @@ public class RedisController {
                 jedis.del(redisKey);
                 log.info("该 redisKey {} 更新失败，删除", redisKey);
             }
-            return Result.failure(Common.FAILURE_CODE_601, "redis 数据更新存储错误, redisKey: " + redisKey + "----" + e.getMessage());
+            return Result.failure(FailureCode.CODE601.getCode(), "redis 数据更新存储错误, redisKey: " + redisKey + "----" + e.getMessage());
         } finally {
             RedisUtil.close(jedis);
         }

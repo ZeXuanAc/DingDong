@@ -2,7 +2,11 @@ package com.zxac.model;
 
 
 import com.zxac.constant.Common;
-import lombok.*;
+import com.zxac.exception.FailureCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -63,6 +67,10 @@ public class Result<T> implements Serializable {
 
     public static Result failure (String msg) {
         return failure(Common.FAILURE_CODE_500, msg);
+    }
+
+    public static Result failure (FailureCode failureCode) {
+        return failure(failureCode.getCode(), failureCode.getName(), null);
     }
 
     public static Result failure (String code, String msg) {
