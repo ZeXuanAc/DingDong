@@ -1,7 +1,10 @@
 package com.zxac.service;
 
+import com.zxac.dto.BuildingDto;
 import com.zxac.dto.EquipmentStatusDto;
-import com.zxac.model.*;
+import com.zxac.model.City;
+import com.zxac.model.Equipment;
+import com.zxac.model.Storey;
 
 import java.util.List;
 
@@ -25,7 +28,7 @@ public interface CityEquipmentService {
      * @param location 经纬度, 纬度在前, 经度在后, 用逗号相隔, 如 30.1123,23232
      * @return
      */
-    List<Building> getBuildingList(String citycode, String location);
+    List<BuildingDto> getBuildingList(String citycode, String location);
 
 
     /**

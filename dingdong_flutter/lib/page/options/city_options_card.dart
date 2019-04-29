@@ -27,9 +27,8 @@ class CityOptionCard extends StatelessWidget {
   }
 
   Widget _buildCardContent(context) {
-    TextStyle airportNameStyle = new TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600);
-    TextStyle airportShortNameStyle = new TextStyle(fontSize: 36.0, fontWeight: FontWeight.w200);
-    TextStyle flightNumberStyle = new TextStyle(fontSize: 12.0, fontWeight: FontWeight.w500);
+    TextStyle citycodeStyle = new TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400);
+    TextStyle provinceNameStyle = new TextStyle(fontSize: 30.0, fontWeight: FontWeight.w200);
     return GestureDetector(
       child: Container(
         height: 104.0,
@@ -44,39 +43,24 @@ class CityOptionCard extends StatelessWidget {
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Text("MASDDA", style: airportNameStyle),
+                      child: Text(map['citycode'], style: citycodeStyle),
                     ),
-                    Text(map['name'], style: airportShortNameStyle),
+                    Text(map['name'], style: provinceNameStyle, overflow: TextOverflow.fade,),
                   ],
                 ),
               ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Icon(
-                    Icons.airplanemode_active,
-                    color: Colors.red,
-                  ),
-                ),
-                Text("asd123123", style: flightNumberStyle),
-              ],
+            Center(
+              child: Icon(
+                Icons.location_city,
+                color: Colors.red,
+              ),
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.only(left: 40.0, top: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Text("12312as", style: airportNameStyle),
-                    ),
-                    Text("4fsdq", style: airportShortNameStyle),
-                  ],
+                padding: const EdgeInsets.only(left: 40.0, top: 0.0),
+                child: Center(
+                  child: Text(map['province'], style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w300)),
                 ),
               ),
             ),

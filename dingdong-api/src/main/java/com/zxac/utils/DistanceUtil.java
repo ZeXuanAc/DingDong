@@ -2,6 +2,8 @@ package com.zxac.utils;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.text.DecimalFormat;
+
 @Slf4j
 public class DistanceUtil {
 
@@ -31,4 +33,16 @@ public class DistanceUtil {
         s = s * EARTH_RADIUS;
         return s;
     }
+
+
+    public static String format2decimal(Double distance) {
+        String unit = "m";
+        DecimalFormat df = new DecimalFormat("#.0");
+        if (distance > 1000) {
+            distance /= 1000;
+            unit = "km";
+        }
+        return df.format(distance) + unit;
+    }
+
 }

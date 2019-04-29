@@ -15,6 +15,7 @@ class Routes{
 
         // 定义 building选项 router
         router.define(cityOptionsPage, handler:cityOptionsHandler);
+        router.define(buildingOptionsPage, handler:buildingOptionsHandler);
     }
 
 }

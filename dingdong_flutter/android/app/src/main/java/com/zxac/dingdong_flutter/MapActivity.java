@@ -99,44 +99,44 @@ public class MapActivity extends AppCompatActivity {
         OnGetRoutePlanResultListener listener = new IndoorRoutePlanResultListener() {
             @Override
             public void onGetIndoorRouteResult(IndoorRouteResult indoorRouteResult) {
-                Log.d("====czx", "onGetIndoorRouteResult");
-                //创建IndoorRouteOverlay实例
-                IndoorRouteOverlay overlay = new IndoorRouteOverlay(mBaiduMap);
-                Log.d("=====czx", "baiduMap is null: " + (mBaiduMap == null));
-                if (indoorRouteResult.getRouteLines() != null && indoorRouteResult.getRouteLines().size() > 0) {
-                    Log.d("=====czx", "获取室内路径成功");
-                    //获取室内路径规划数据（以返回的第一条路线为例）
-                    //为IndoorRouteOverlay实例设置数据
-                    overlay.setData(indoorRouteResult.getRouteLines().get(0));
-                    //清除地图上的所有覆盖物
-                    mBaiduMap.clear();
-                    //在地图上绘制IndoorRouteOverlay
-                    overlay.addToMap();
-                    Log.d("====czx", "地图上显示室内路线规划");
-                    walkBtn.setVisibility(View.INVISIBLE);
-                    arWalkBtn.setVisibility(View.INVISIBLE);
-                    returnStartBtn.setVisibility(View.INVISIBLE);
-                    returnEndBtn.setVisibility(View.INVISIBLE);
-                    if (searchCount == 1) {
-                        startIndoorNavi();
-                    }
-                    searchCount ++;
-                } else {
-                    if (searchCount != 1) {
-                        return;
-                    }
-                    Log.d("=====czx", "不存在合适的室内路径");
-                    Log.d("=====czx", "开始步行导航");
-                    walkBtn.setVisibility(View.VISIBLE);
-                    arWalkBtn.setVisibility(View.VISIBLE);
-                    returnStartBtn.setVisibility(View.VISIBLE);
-                    returnEndBtn.setVisibility(View.VISIBLE);
-                    if (indoorLocationClient != null && indoorLocationClient.isStarted()) {
-                        indoorLocationClient.stop();
-                    }
-                    initOverlay();
-                    startWalkNavi(indoor);
+            Log.d("====czx", "onGetIndoorRouteResult");
+            //创建IndoorRouteOverlay实例
+            IndoorRouteOverlay overlay = new IndoorRouteOverlay(mBaiduMap);
+            Log.d("=====czx", "baiduMap is null: " + (mBaiduMap == null));
+            if (indoorRouteResult.getRouteLines() != null && indoorRouteResult.getRouteLines().size() > 0) {
+                Log.d("=====czx", "获取室内路径成功");
+                //获取室内路径规划数据（以返回的第一条路线为例）
+                //为IndoorRouteOverlay实例设置数据
+                overlay.setData(indoorRouteResult.getRouteLines().get(0));
+                //清除地图上的所有覆盖物
+                mBaiduMap.clear();
+                //在地图上绘制IndoorRouteOverlay
+                overlay.addToMap();
+                Log.d("====czx", "地图上显示室内路线规划");
+                walkBtn.setVisibility(View.INVISIBLE);
+                arWalkBtn.setVisibility(View.INVISIBLE);
+                returnStartBtn.setVisibility(View.INVISIBLE);
+                returnEndBtn.setVisibility(View.INVISIBLE);
+                if (searchCount == 1) {
+                    startIndoorNavi();
                 }
+                searchCount ++;
+            } else {
+                if (searchCount != 1) {
+                    return;
+                }
+                Log.d("=====czx", "不存在合适的室内路径");
+                Log.d("=====czx", "开始步行导航");
+                walkBtn.setVisibility(View.VISIBLE);
+                arWalkBtn.setVisibility(View.VISIBLE);
+                returnStartBtn.setVisibility(View.VISIBLE);
+                returnEndBtn.setVisibility(View.VISIBLE);
+                if (indoorLocationClient != null && indoorLocationClient.isStarted()) {
+                    indoorLocationClient.stop();
+                }
+                initOverlay();
+                startWalkNavi(indoor);
+            }
             }
         };
         mSearch.setOnGetRoutePlanResultListener(listener);
@@ -359,6 +359,12 @@ public class MapActivity extends AppCompatActivity {
                 .zIndex(5);
         mEndMarker = (Marker) (mBaiduMap.addOverlay(ooB));
         mEndMarker.setDraggable(true);
+
+        // 设置地图移到起点和终点的中点，并这只zoom + 2
+        MapStatus.Builder builder = new MapStatus.Builder();
+        int zoomLevel = LocationUtil.getZoom(startPt, endPt) - 2;
+        builder.target(new LatLng((startPt.latitude + endPt.latitude) / 2, (startPt.longitude + endPt.longitude) / 2)).zoom(zoomLevel);
+        mBaiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
 
         // 设置marker拖拽移动时的监听
         mBaiduMap.setOnMarkerDragListener(new BaiduMap.OnMarkerDragListener() {

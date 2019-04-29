@@ -1,6 +1,7 @@
 package com.zxac.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.zxac.dto.BuildingDto;
 import com.zxac.model.*;
 import com.zxac.service.CityEquipmentService;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,7 @@ public class CityEquipmentController {
         if (citycode == null) {
             return Result.failure("citycode参数是必传的");
         }
-        List<Building> buildingList = cityEquipmentService.getBuildingList(citycode, location);
+        List<BuildingDto> buildingList = cityEquipmentService.getBuildingList(citycode, location);
         return Result.success(buildingList);
     }
 

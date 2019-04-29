@@ -73,7 +73,7 @@ public class LocationUtil {
         return locationClient;
     }
 
-    //根据经纬极值计算绽放级别。
+    //根据经纬度得到距离计算缩放级别。
     public static Integer getZoom (LatLng startP, LatLng endP) {
         double distance = DistanceUtil.getDistance(startP, endP);
         Log.d("getZoom", "距离为：" + distance);
@@ -81,7 +81,7 @@ public class LocationUtil {
             return 22;
         }
         int[] zoom = new int[]{2,5,10,20,50,100,200,500,1000,2000,5000,10000,20000,25000,50000,100000,200000,500000,1000000,2000000};// 级别22到3。
-        for (int i = 0,zoomLen = zoom.length; i < zoomLen; i++) {
+        for (int i = 0, zoomLen = zoom.length; i < zoomLen; i++) {
             if(zoom[i] - distance > 0){
                 return 22 - i + 5;
             }

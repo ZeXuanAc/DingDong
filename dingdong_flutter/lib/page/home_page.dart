@@ -1,20 +1,19 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:amap_location/amap_location.dart';
+import 'package:dingdong_flutter/config/application.dart';
+import 'package:dingdong_flutter/config/common.dart';
+import 'package:dingdong_flutter/service/baidu_map_service.dart';
+import 'package:dingdong_flutter/service/service_method.dart';
+import 'package:dingdong_flutter/utils/log_util.dart';
+import 'package:dingdong_flutter/utils/storage_util.dart';
+import 'package:dingdong_flutter/utils/toast_util.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:dingdong_flutter/service/service_method.dart';
-import 'dart:async';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:dingdong_flutter/config/common.dart';
 import 'package:fluttie/fluttie.dart';
-import 'package:amap_location/amap_location.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:dingdong_flutter/utils/log_util.dart';
-import 'package:dingdong_flutter/config/application.dart';
-import 'package:dingdong_flutter/utils/storage_util.dart';
-import 'package:dingdong_flutter/service/baidu_map_service.dart';
-import 'package:dingdong_flutter/utils/toast_util.dart';
-import 'package:dingdong_flutter/utils/common_util.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -34,6 +33,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     AMapLocation location; // 当前定位信息
     var homeCitycode; // 城市代码
     bool noCitycode = false; // 是否存在此citycode标志
+    bool onOwnPage = true; // 是否在此页面
     DateTime nowTime;
     Timer httpTimer;
     Timer nowTimeTimer;
@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             return Container (
                 child: Scaffold(
                     appBar: _buildAppBar(cityBuildingMap['name']),
-                    body: _listView(eqMap['data'], nowTime),
+                    body: _buildBody(),
                 )
             );
         }
@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                 style: TextStyle(color: Colors.black,),
                 recognizer: new TapGestureRecognizer()
                     ..onTap = () {
-                        _showBuildingAlertDialog(context);
+                        _buildingOption();
                     }
             )),
             centerTitle: true,
@@ -95,16 +95,22 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                 new IconButton( // action button
                     icon: new Icon(Icons.location_on, color: Colors.blue,),
                     onPressed: () {
-                        Future future = Application.router.navigateTo(context, "/cityOptions");
-                        future.then((value) {
-                            if (value != null) {
-                                _loadingPresentCity(value['citycode']);
-                            }
-                        });
+                        _cityOption();
                     },
                 ),
             ],
         );
+    }
+
+    Widget _buildBody () {
+        if (eqMap['data'][eqMap['data'].keys.elementAt(0)][0]['buildingId'].toString() != cityBuildingMap['id'].toString()) {
+            _startLoadingAnimation();
+            return Center(
+                child: new FluttieAnimation(Application.loadingAnimation),
+            );
+        } else {
+            return _listView(eqMap['data'], nowTime);
+        }
     }
 
     void toMapView(lat, lng, floor) async {
@@ -243,13 +249,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                 });
             }
             if (citycode == "-1") {
-                _showCityAlertDialog(context);
+                _cityOption();
             }
         });
     }
 
     void _startTimer () {
-        print("开启定时器");
         const oneSec = const Duration(milliseconds: timer_duration);
         startUpTime = DateTime.now();
         if (cityBuildingMap != null && cityBuildingMap.isNotEmpty) {
@@ -265,11 +270,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                   _toastMsg("请求主页数据超时, 请检查网络", home_page_timeout);
                 })
             );
+            print("开启httpTimer定时器");
           }
           if (nowTimeTimer == null) {
             nowTimeTimer = new Timer.periodic(oneSec, (Timer t) =>
                 setNowTimeState()
             );
+            print("开启nowTimeTimer定时器");
           }
         }
     }
@@ -282,82 +289,51 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         }
     }
 
-    // 选择building
-    void _showBuildingAlertDialog(BuildContext context) {
-        if (allBuildingList != null && homeCitycode != null && allBuildingList[0]['citycode'] == homeCitycode) {
-            _loadingBuildingDialog(allBuildingList);
-        } else {
-            if (homeCitycode != null) {
-                getBuildingUrl(homeCitycode, null).then((val){
-                    if (val != null && mounted) {
-                        allBuildingList = [];
-                        setState(() {
-                            for (Map map in val['data']){
-                                allBuildingList.add(map);
-                            }
-                        });
-                        _loadingBuildingDialog(allBuildingList);
-                    }
-                }).catchError((e) {
-                    LogUtil.e("homt_page._getAllBuilding: ", "${e.error}");     // Finally, callback fires.
-                });
-            } else {
-                ToastUtil.toastMsg("请先选择所在城市");
-            }
-        }
-    }
-
-    void _loadingBuildingDialog (buildingList) {
-        List<Widget> dialogWidget = [];
-        for (Map map in allBuildingList) {
-            dialogWidget.add(new SimpleDialogOption(
-                child:  Text(
-                    map['name'],
-                    style: TextStyle(
-                        height: 1.3,
-                        color: Colors.blue,
-                        shadows: [Shadow(color: Color(0x9900FFFF), offset: Offset(0.5, 0.5), blurRadius: 5)], // 阴影
-                    ),
-                ),
-                onPressed: () {
-                    if (cityBuildingMap == null || (cityBuildingMap != null && cityBuildingMap['name'] != map['name'])) {
-                        cityBuildingMap = map;
-                        StorageUtil.save(storageBuilding, json.encode(cityBuildingMap));
-                    }
-                    Navigator.pop(context); //关闭对话框
-                },
-            ),);
-        }
-        showDialog<Null>(
-            context: context,
-            builder: (BuildContext context) {
-                return  SimpleDialog(
-                    title:  Text('选择'),
-                    children: dialogWidget,
-                );
-            },
-        );
-    }
-
-
-    // 选择city
-    void _showCityAlertDialog(BuildContext context) {
-        if (allCityList != null) {
-            _loadingCityDialog(allCityList);
-        } else {
-            getCityUrl().then((val){
-                if (val != null && mounted) {
-                    allCityList = [];
-                    setState(() {
-                        for (Map map in val['data']){
-                            allCityList.add(map);
-                        }
-                    });
-                    _loadingCityDialog(allCityList);
+    // 进行building选择
+    void _buildingOption () {
+        if (homeCitycode != null) {
+            onOwnPage = false;
+            print("进入building route页");
+            Future future = Application.router.navigateTo(context, "/buildingOptions?citycode=" + homeCitycode +
+                "&lat=" + location.latitude.toString() + "&lng=" + location.longitude.toString());
+            future.then((value) {
+                print('building route 返回页面');
+                onOwnPage = true;
+                if (value != null) {
+                    _loadingPresentBuilding(value);
                 }
             });
+        } else {
+            ToastUtil.toastMsg("请先点击右侧图标选择城市");
         }
     }
+
+
+    // 重新加载building
+    void _loadingPresentBuilding (map) {
+        if (cityBuildingMap == null || (cityBuildingMap != null && map != null && cityBuildingMap['name'] != map['name'])) {
+            setState(() {
+                cityBuildingMap = map;
+            });
+            StorageUtil.save(storageBuilding, json.encode(cityBuildingMap));
+        }
+    }
+
+
+    // 进行城市选择
+    void _cityOption () {
+        onOwnPage = false;
+        print("进入city route页");
+        Future future = Application.router.navigateTo(context, "/cityOptions");
+        future.then((value) {
+            print('city route 返回页面');
+            onOwnPage = true;
+            if (value != null) {
+                _loadingPresentCity(value['citycode']);
+            }
+        });
+    }
+
 
     // 重新加载城市
     void _loadingPresentCity (citycode) {
@@ -370,41 +346,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                 _getBuildingByCitycode(homeCitycode);
             });
         }
-    }
-
-    void _loadingCityDialog (cityList) {
-        List<Widget> dialogWidget = [];
-        for (Map map in cityList) {
-            dialogWidget.add(new SimpleDialogOption(
-                child:  Text(
-                    map['name'],
-                    style: TextStyle(
-                        height: 1.3,
-                        color: Colors.blue,
-                        shadows: [Shadow(color: Color(0x9900FFFF), offset: Offset(0.5, 0.5), blurRadius: 5)], // 阴影
-                    ),
-                ),
-                onPressed: () {
-                    setState(() {
-                      homeCitycode = map['citycode'];
-                      eqMap = null;
-                      startUpTime = DateTime.now();
-                    });
-                    Navigator.pop(context); // 关闭对话框
-                    StorageUtil.save(storageCitycode, homeCitycode);
-                    _getBuildingByCitycode(homeCitycode);
-                },
-            ),);
-        }
-        showDialog<Null>(
-            context: context,
-            builder: (BuildContext context) {
-                return  SimpleDialog(
-                    title:  Text('选择城市'),
-                    children: dialogWidget,
-                );
-            },
-        );
     }
 
     void _startLoadingAnimation () async {
@@ -483,6 +424,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     @override
     void deactivate() {
         print("deactivate");
+        if (onOwnPage) {
+            _startTimer();
+        } else {
+            _stopTimer();
+        }
         super.deactivate();
     }
 
@@ -494,12 +440,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         super.dispose();
     }
 
+
+    // 在timer 取消后要设置为null，因为在开启的时候是根据timer是否为null判断的
     void _stopTimer() {
         if (httpTimer != null) {
             httpTimer.cancel();
+            httpTimer = null;
         }
         if (nowTimeTimer != null) {
             nowTimeTimer.cancel();
+            nowTimeTimer = null;
         }
     }
 

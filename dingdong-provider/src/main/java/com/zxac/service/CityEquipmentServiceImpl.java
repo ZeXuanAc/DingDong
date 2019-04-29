@@ -6,8 +6,12 @@ import com.zxac.dao.BuildingMapper;
 import com.zxac.dao.CityMapper;
 import com.zxac.dao.EquipmentMapper;
 import com.zxac.dao.StoreyMapper;
+import com.zxac.dto.BuildingDto;
 import com.zxac.dto.EquipmentStatusDto;
-import com.zxac.model.*;
+import com.zxac.model.Building;
+import com.zxac.model.City;
+import com.zxac.model.Equipment;
+import com.zxac.model.Storey;
 import com.zxac.utils.DistanceUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,15 +61,21 @@ public class CityEquipmentServiceImpl implements CityEquipmentService {
      * @return
      */
     @Override
-    public List<Building> getBuildingList(String citycode, String location) {
+    public List<BuildingDto> getBuildingList(String citycode, String location) {
         List<Building> buildingList = buildingMapper.getListByCitycode(citycode);
+        List<BuildingDto> dtoList = BuildingDto.acceptList(buildingList);
         if (location != null && !location.equals("")) {
             String[] locations = location.split(",");
             if (locations.length == 2) {
-                buildingList.sort(Comparator.comparing((Building b) -> DistanceUtil.GetDistance(locations[0], locations[1], b.getLongitude(), b.getLatitude())));
+                dtoList.forEach(dto -> {
+                    Double distance = DistanceUtil.GetDistance(locations[0], locations[1], dto.getLongitude(), dto.getLatitude());
+                    dto.setDistance(distance);
+                    dto.setDistanceStr(DistanceUtil.format2decimal(distance));
+                });
+                dtoList.sort(Comparator.comparing(BuildingDto::getDistance));
             }
         }
-        return buildingList;
+        return dtoList;
     }
 
 
@@ -99,8 +109,8 @@ public class CityEquipmentServiceImpl implements CityEquipmentService {
     public List<EquipmentStatusDto> getAllEquipment(String citycode) {
         List<EquipmentStatusDto> dtoList = new ArrayList<>();
         if (citycode != null && !citycode.equals("")){
-            List<Building> buildingList = getBuildingList(citycode, null);
-            for (Building b : buildingList) {
+            List<BuildingDto> buildingList = getBuildingList(citycode, null);
+            for (BuildingDto b : buildingList) {
                 List<Equipment> eqList = getEquipmentListByBuildingId(b.getId());
                 dtoList.addAll(EquipmentStatusDto.acceptList(eqList));
                 dtoList.forEach(dto -> {

@@ -1,7 +1,9 @@
+import 'package:dingdong_flutter/config/application.dart';
 import 'package:flutter/material.dart';
-import 'package:dingdong_flutter/page/city_options_card.dart';
+import 'package:dingdong_flutter/page/options/city_options_card.dart';
 import 'package:dingdong_flutter/service/service_method.dart';
 import 'package:dingdong_flutter/utils/toast_util.dart';
+import 'package:fluttie/fluttie.dart';
 
 class CityOptionsPage extends StatefulWidget {
   CityOptionsPage();
@@ -13,11 +15,11 @@ class CityOptionsPage extends StatefulWidget {
 class CityOptionsPageState extends State<CityOptionsPage>{
 
   final TextEditingController searchView = TextEditingController();
-  List<Map> resultList; // 结果list
+  List<Map> resultList = []; // 结果list
   bool isSearching;
   String searchString = "";
   Icon actionIcon = Icon(Icons.search, color: Colors.black);
-  Widget appBarTextView = Text("", style: new TextStyle(color: Colors.black),);
+  Widget appBarTextView = Text("选择所在城市", style: new TextStyle(color: Colors.black),);
 
   CityOptionsPageState() {
     searchView.addListener(() {
@@ -56,7 +58,6 @@ class CityOptionsPageState extends State<CityOptionsPage>{
   void init () {
     getCityUrl().then((val){
       if (val != null && mounted) {
-        resultList = [];
         setState(() {
           for (Map map in val['data']){
             resultList.add(map);
@@ -107,7 +108,10 @@ class CityOptionsPageState extends State<CityOptionsPage>{
 
   Widget buildBody () {
     if (resultList == null) {
-      return Text("加载中");
+      _startLoadingAnimation();
+      return Center(
+        child: new FluttieAnimation(Application.loadingAnimation),
+      );
     } else {
       return ListView(
         padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
@@ -150,12 +154,34 @@ class CityOptionsPageState extends State<CityOptionsPage>{
         color: Colors.black,
       );
       this.appBarTextView = Text(
-        "",
+        "选择所在城市",
         style: TextStyle(color: Colors.black),
       );
       isSearching = false;
       searchView.clear();
     });
   }
+
+  void _startLoadingAnimation () async {
+    if (Application.loadingAnimation != null && mounted) {
+      setState(() {
+        Application.loadingAnimation.start(); //start our looped emoji animation
+      });
+    } else {
+      // 先加载组件
+      var instance = new Fluttie();
+      var eComposition = await instance.loadAnimationFromAsset(
+        'assets/animatd/loading-flutter.json',
+      );
+      Application.loadingAnimation = await instance.prepareAnimation(eComposition);
+      if (mounted) {
+        setState(() {
+          Application.loadingAnimation.start(); //start our looped emoji animation
+        });
+      }
+    }
+  }
+
+
 
 }
