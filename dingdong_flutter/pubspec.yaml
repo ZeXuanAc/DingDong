@@ -12,7 +12,6 @@ dependencies:
   cupertino_icons: ^0.1.2
   flutter_screenutil: ^0.5.0
   dio: ^2.1.1
-  flutter_swiper : ^1.1.6
   fluttertoast: ^3.0.1
   fluttie: ^0.3.0
   amap_location: 0.2.0
@@ -50,3 +49,6 @@ flutter:
   - family: WorkSansMedium
     fonts:
     - asset: assets/fonts/WorkSans-Medium.ttf
+  - family: NothingYouCouldDo
+    fonts:
+    - asset: assets/fonts/NothingYouCouldDo.ttf

@@ -26,6 +26,8 @@ public class UserDto implements Serializable {
 
     private String gender;
 
+    private String token;
+
     private String vip;
 
     private Integer age;

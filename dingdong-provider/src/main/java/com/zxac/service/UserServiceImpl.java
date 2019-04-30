@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
             try {
                 jedis = RedisUtil.getJedis();
                 if (jedis != null) {
-                    userInfoMap = ObjectUtil.toMap(userDto, String.class);
+                    userInfoMap = ObjectUtil.toMap(userDto, String.class, "token");
                     jedis.hmset(token, userInfoMap);
                     jedis.expire(token, RedisUtil.tokenExpire);
                     userInfoMap.put("token", token);
@@ -121,9 +121,11 @@ public class UserServiceImpl implements UserService {
         if (userMapper.selectCountByPhone(dto.getPhone()) > 0) {
             return Result.failure(FailureCode.CODE708);
         }
-        int result = userMapper.insertSelective(User.accept(dto));
+        User user = User.accept(dto);
+        int result = userMapper.insertSelective(user);
         if (result == 1) {
-            userInfoMap = ObjectUtil.toMap(dto, String.class);
+            dto.setId(user.getId());
+            userInfoMap = ObjectUtil.toMap(dto, String.class, "token");
             String token = UuidUtil.getUUID();
             try {
                 jedis = RedisUtil.getJedis();
@@ -144,5 +146,46 @@ public class UserServiceImpl implements UserService {
             return Result.success("注册成功", userInfoMap);
         }
         return Result.failure(FailureCode.CODE709);
+    }
+
+
+    /**
+     * 修改用户信息，数据库修改，token数据修改
+     * @param dto
+     * @return
+     */
+    @Override
+    @Transactional
+    public Result editInfo(UserDto dto) {
+        Jedis jedis = null;
+        if (dto.getId() == null) {
+            throw new BusinessException(FailureCode.CODE752);
+        }
+        int result = userMapper.updateByPrimaryKeySelective(User.accept(dto));
+        if (result == 1) {
+            log.info("mysql 用户信息修改成功");
+            try {
+                jedis = RedisUtil.getJedis();
+                if (jedis != null) {
+                    if (jedis.exists(dto.getToken())) {
+                        jedis.hmset(dto.getToken(), ObjectUtil.toMap(dto, String.class, "token"));
+                        return Result.success("用户信息修改成功");
+                    } else {
+                        return Result.failure(FailureCode.CODE701);
+                    }
+                } else {
+                    log.error("jedis is null");
+                    return Result.failure(FailureCode.CODE600);
+                }
+            } catch (Exception e) {
+                log.error("修改用户信息异常, 用户token: {}", dto.getToken());
+                return Result.failure(FailureCode.CODE750);
+            } finally {
+                RedisUtil.close(jedis);
+            }
+        } else {
+            return Result.failure(FailureCode.CODE751);
+        }
+
     }
 }

@@ -52,7 +52,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     @override
     Widget build(BuildContext context) {
         ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
-//        CommonUtil.setBarStatus(true);
 
         if (eqMap == null || eqMap['data'] == null) {
             _toastMsg("网络开了小差, 请检查网络", home_page_timeout);

@@ -21,7 +21,7 @@
     from user
     where id = #{id,jdbcType=INTEGER}
   </select>
-  <insert id="insertSelective" parameterType="com.zxac.model.User">
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.zxac.model.User">
     insert into user
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">

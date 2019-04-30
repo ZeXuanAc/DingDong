@@ -30,4 +30,12 @@ public interface UserService {
      */
     Result signUp(UserDto dto);
 
+
+    /**
+     * 修改个人信息
+     * @param dto
+     * @return
+     */
+    Result editInfo(UserDto dto);
+
 }

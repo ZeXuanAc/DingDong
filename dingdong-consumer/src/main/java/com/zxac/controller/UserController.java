@@ -42,6 +42,15 @@ public class UserController {
         } catch (Exception e) {
             throw new BusinessException(FailureCode.CODE705);
         }
-
     }
+
+    @GetMapping(value = "user/editInfo")
+    public Result editInfo(UserDto dto) {
+        try {
+            return userService.editInfo(dto);
+        } catch (Exception e) {
+            throw new BusinessException(FailureCode.CODE750);
+        }
+    }
+
 }
