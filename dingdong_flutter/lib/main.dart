@@ -8,15 +8,13 @@ import 'package:dingdong_flutter/config/application.dart';
 import 'package:dingdong_flutter/utils/storage_util.dart';
 import 'package:dingdong_flutter/config/common.dart';
 import 'package:dingdong_flutter/page/login_page.dart';
+import 'package:dingdong_flutter/service/service_method.dart';
 
 void main() {
     AMapLocationClient.setApiKey("4cad2d787551c53980ca94675c5db6b6");
 
     runApp(MaterialApp(
         home: MyApp(), // becomes the route named '/'
-//        routes: <String, WidgetBuilder> {
-//            '/indexPage': (BuildContext context) => IndexPage(),
-//        },
     ));
 }
 
@@ -43,6 +41,7 @@ class _MyAppState extends State<MyApp>{
     @override
     Widget build(BuildContext context) {
         if (firstPage == null && Application.loadingAnimation != null) {
+            Application.loadingAnimation.start();
             return Center(
                 child: new FluttieAnimation(Application.loadingAnimation),
             );
@@ -84,15 +83,26 @@ class _MyAppState extends State<MyApp>{
 
 
     void _login(){
-        StorageUtil.get(token).then((val){
+        StorageUtil.get(storageToken).then((val){
             if (val != null) {
                 // todo 验证本地token，存在则返回用户信息，不存在则转至登录页登陆
-                print("获取本地token，取得用户信息: " + val.toString());
-                setState(() {
-                    firstPage =  new IndexPage();
+                print("login(1)---> 获取本地token");
+                autoLogin(val).then((result){
+                   if(result['code'] == "200") {
+                       Application.userInfo = result['data'];
+                       print ("login(2)---> 用户自动登陆成功: " + Application.userInfo.toString());
+                       setState(() {
+                           firstPage =  new IndexPage();
+                       });
+                   } else {
+                       print ("login(2)---> 用户未注册或未登陆");
+                       setState(() {
+                           firstPage =  new LoginPage();
+                       });
+                   }
                 });
             } else {
-                print("本地token不存在或者获取失败");
+                print("login(1)---> 本地token不存在或者获取失败");
                 setState(() {
                     firstPage =  new LoginPage();
                 });

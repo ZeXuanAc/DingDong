@@ -1,6 +1,20 @@
 package com.zxac.dto;
 
-public class UserDto {
+
+import com.zxac.model.User;
+import lombok.*;
+import org.springframework.beans.BeanUtils;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserDto implements Serializable {
 
     private Integer id;
 
@@ -12,5 +26,23 @@ public class UserDto {
 
     private String gender;
 
+    private String vip;
 
+    private Integer age;
+
+    public static UserDto accept (User model) {
+        if (model == null) {
+            return null;
+        }
+        UserDto dto = new UserDto();
+        BeanUtils.copyProperties(model, dto);
+        return dto;
+    }
+
+    public static List<UserDto> acceptDto (List<User> modelList) {
+        if (modelList == null || modelList.isEmpty()) {
+            return null;
+        }
+        return modelList.stream().map(UserDto::accept).collect(Collectors.toList());
+    }
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-class TwoPage extends StatefulWidget {
-    _TwoPageState createState() => _TwoPageState();
+class FollowBuildingPage extends StatefulWidget {
+    _FollowBuildingPageState createState() => _FollowBuildingPageState();
 }
-class _TwoPageState extends State<TwoPage> {
+class _FollowBuildingPageState extends State<FollowBuildingPage> {
     TextEditingController typeController = TextEditingController();
     String showText = '欢迎你来到美好人间2';
 

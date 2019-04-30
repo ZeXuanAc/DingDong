@@ -260,7 +260,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         if (cityBuildingMap != null && cityBuildingMap.isNotEmpty) {
           if (httpTimer == null) {
             httpTimer = new Timer.periodic(oneSec, (Timer t) =>
-                getHomePageContentUrl(cityBuildingMap['citycode'], cityBuildingMap['id']).then((val){
+                getHomePageContentUrl(cityBuildingMap['citycode'], cityBuildingMap['id'], Application.userInfo['gender']).then((val){
                   if (val != null && mounted) {
                     setState(() {
                       eqMap = val;
@@ -470,7 +470,8 @@ Widget _listView(sEqMap, nowTime) {
             child: new Container(
                 decoration: BoxDecoration(
                     image: DecorationImage(
-                        image: NetworkImage("http://img7.3png.com/c4314640cf6f234a98ca48d6c9532e4f344a.jpeg/p"),
+                        image: AssetImage("assets/images/flower.jpg"),
+//                        image: NetworkImage("http://img7.3png.com/c4314640cf6f234a98ca48d6c9532e4f344a.jpeg/p"),
                         fit: BoxFit.cover,
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(20.0),),

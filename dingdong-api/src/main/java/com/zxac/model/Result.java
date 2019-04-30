@@ -66,7 +66,7 @@ public class Result<T> implements Serializable {
     }
 
     public static Result failure (String msg) {
-        return failure(Common.FAILURE_CODE_500, msg);
+        return failure(FailureCode.CODE500.getCode(), msg);
     }
 
     public static Result failure (FailureCode failureCode) {

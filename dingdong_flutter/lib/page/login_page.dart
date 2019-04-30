@@ -4,6 +4,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:dingdong_flutter/config/login_theme.dart' as Theme;
 import 'package:dingdong_flutter/widgets/bubble_indication_painter.dart';
 import 'package:dingdong_flutter/page/index_page.dart';
+import 'package:dingdong_flutter/service/service_method.dart';
+import 'package:dingdong_flutter/config/application.dart';
+import 'package:dingdong_flutter/utils/storage_util.dart';
+import 'package:dingdong_flutter/config/common.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -17,25 +21,28 @@ class _LoginPageState extends State<LoginPage>
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  final FocusNode myFocusNodeEmailLogin = FocusNode();
+  final FocusNode myFocusNodePhoneLogin = FocusNode();
   final FocusNode myFocusNodePasswordLogin = FocusNode();
 
   final FocusNode myFocusNodePassword = FocusNode();
-  final FocusNode myFocusNodeEmail = FocusNode();
+  final FocusNode myFocusNodePhone = FocusNode();
   final FocusNode myFocusNodeName = FocusNode();
 
-  TextEditingController loginEmailController = new TextEditingController();
+  TextEditingController loginPhoneController = new TextEditingController();
   TextEditingController loginPasswordController = new TextEditingController();
 
   bool _obscureTextLogin = true;
   bool _obscureTextSignup = true;
   bool _obscureTextSignupConfirm = true;
 
-  TextEditingController signupEmailController = new TextEditingController();
+  TextEditingController signupPhoneController = new TextEditingController();
   TextEditingController signupNameController = new TextEditingController();
   TextEditingController signupPasswordController = new TextEditingController();
-  TextEditingController signupConfirmPasswordController =
-      new TextEditingController();
+  TextEditingController signupGenderController = new TextEditingController();
+
+  bool _genderSwitch = true;
+  String _genderText = "男";
+  String _genderValue = "1";
 
   PageController _pageController;
 
@@ -122,7 +129,7 @@ class _LoginPageState extends State<LoginPage>
   @override
   void dispose() {
     myFocusNodePassword.dispose();
-    myFocusNodeEmail.dispose();
+    myFocusNodePhone.dispose();
     myFocusNodeName.dispose();
     _pageController?.dispose();
     super.dispose();
@@ -153,7 +160,7 @@ class _LoginPageState extends State<LoginPage>
             fontFamily: "WorkSansSemiBold"),
       ),
       backgroundColor: Colors.blue,
-      duration: Duration(seconds: 3),
+      duration: Duration(seconds: 1),
     ));
   }
 
@@ -229,9 +236,9 @@ class _LoginPageState extends State<LoginPage>
                         padding: EdgeInsets.only(
                             top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
                         child: TextField(
-                          focusNode: myFocusNodeEmailLogin,
-                          controller: loginEmailController,
-                          keyboardType: TextInputType.emailAddress,
+                          focusNode: myFocusNodePhoneLogin,
+                          controller: loginPhoneController,
+                          keyboardType: TextInputType.phone,
                           style: TextStyle(
                               fontFamily: "WorkSansSemiBold",
                               fontSize: 16.0,
@@ -239,11 +246,11 @@ class _LoginPageState extends State<LoginPage>
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             icon: Icon(
-                              FontAwesomeIcons.envelope,
+                              FontAwesomeIcons.mobileAlt,
                               color: Colors.black,
                               size: 22.0,
                             ),
-                            hintText: "Email Address",
+                            hintText: "Phone",
                             hintStyle: TextStyle(
                                 fontFamily: "WorkSansSemiBold", fontSize: 17.0),
                           ),
@@ -332,13 +339,22 @@ class _LoginPageState extends State<LoginPage>
                       ),
                     ),
                     onPressed: (){
-                      showInSnackBar("Login button pressed");
-                      Navigator.pushAndRemoveUntil(context,
-                          new MaterialPageRoute(
-                            builder: (BuildContext context) {
-                              return IndexPage();
-                            },
-                          ), (route) => route == null);
+                      myFocusNodePhoneLogin.unfocus();
+                      myFocusNodePasswordLogin.unfocus();
+                      login(loginPhoneController.text, loginPasswordController.text).then((val) {
+                        if (val['code'] != "200") {
+                          showInSnackBar(val['msg']);
+                        } else {
+                          Application.userInfo = val['data'];
+                          StorageUtil.save(storageToken, val['data']['token']);
+                          Navigator.pushAndRemoveUntil(context,
+                              new MaterialPageRoute(
+                                builder: (BuildContext context) {
+                                  return IndexPage();
+                                },
+                              ), (route) => route == null);
+                        }
+                      });
                     }
                 )
               ),
@@ -357,6 +373,7 @@ class _LoginPageState extends State<LoginPage>
                       fontFamily: "WorkSansMedium"),
                 )),
           ),
+          // or 再加两条线
           Padding(
             padding: EdgeInsets.only(top: 10.0),
             child: Row(
@@ -405,6 +422,7 @@ class _LoginPageState extends State<LoginPage>
               ],
             ),
           ),
+          // 两个图标，微信 和 支付宝
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -469,6 +487,7 @@ class _LoginPageState extends State<LoginPage>
                   height: 360.0,
                   child: Column(
                     children: <Widget>[
+                      // name
                       Padding(
                         padding: EdgeInsets.only(
                             top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
@@ -498,13 +517,14 @@ class _LoginPageState extends State<LoginPage>
                         height: 1.0,
                         color: Colors.grey[400],
                       ),
+                      // phone
                       Padding(
                         padding: EdgeInsets.only(
                             top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
                         child: TextField(
-                          focusNode: myFocusNodeEmail,
-                          controller: signupEmailController,
-                          keyboardType: TextInputType.emailAddress,
+                          focusNode: myFocusNodePhone,
+                          controller: signupPhoneController,
+                          keyboardType: TextInputType.phone,
                           style: TextStyle(
                               fontFamily: "WorkSansSemiBold",
                               fontSize: 16.0,
@@ -512,10 +532,10 @@ class _LoginPageState extends State<LoginPage>
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             icon: Icon(
-                              FontAwesomeIcons.envelope,
+                              FontAwesomeIcons.mobileAlt,
                               color: Colors.black,
                             ),
-                            hintText: "Email Address",
+                            hintText: "Phone",
                             hintStyle: TextStyle(
                                 fontFamily: "WorkSansSemiBold", fontSize: 16.0),
                           ),
@@ -526,9 +546,9 @@ class _LoginPageState extends State<LoginPage>
                         height: 1.0,
                         color: Colors.grey[400],
                       ),
+                      // password
                       Padding(
-                        padding: EdgeInsets.only(
-                            top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
+                        padding: EdgeInsets.only(top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
                         child: TextField(
                           focusNode: myFocusNodePassword,
                           controller: signupPasswordController,
@@ -544,8 +564,7 @@ class _LoginPageState extends State<LoginPage>
                               color: Colors.black,
                             ),
                             hintText: "Password",
-                            hintStyle: TextStyle(
-                                fontFamily: "WorkSansSemiBold", fontSize: 16.0),
+                            hintStyle: TextStyle(fontFamily: "WorkSansSemiBold", fontSize: 16.0),
                             suffixIcon: GestureDetector(
                               onTap: _toggleSignup,
                               child: Icon(
@@ -562,35 +581,36 @@ class _LoginPageState extends State<LoginPage>
                         height: 1.0,
                         color: Colors.grey[400],
                       ),
+                      // gender
                       Padding(
-                        padding: EdgeInsets.only(
-                            top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
-                        child: TextField(
-                          controller: signupConfirmPasswordController,
-                          obscureText: _obscureTextSignupConfirm,
-                          style: TextStyle(
-                              fontFamily: "WorkSansSemiBold",
-                              fontSize: 16.0,
-                              color: Colors.black),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            icon: Icon(
-                              FontAwesomeIcons.lock,
-                              color: Colors.black,
-                            ),
-                            hintText: "Confirmation",
-                            hintStyle: TextStyle(
-                                fontFamily: "WorkSansSemiBold", fontSize: 16.0),
-                            suffixIcon: GestureDetector(
-                              onTap: _toggleSignupConfirm,
-                              child: Icon(
-                                FontAwesomeIcons.eye,
-                                size: 15.0,
-                                color: Colors.black,
+                        padding: EdgeInsets.only(top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
+                        child: Container(
+                          child: Row(
+                            children: <Widget>[
+                              Switch(//传入value和onChanged,传入value按钮初始化状态,onChanged状态改变回调
+                                value: _genderSwitch,
+                                activeColor: Colors.red,
+                                onChanged: (value){
+                                  setState(() {//setState动态更新
+                                    _genderSwitch = value;
+                                    if (value == true) {
+                                      print ("switch: " + value.toString());
+                                      _genderText = "男";
+                                      _genderValue = "1";
+                                    } else {
+                                      print ("switch: " + value.toString());
+                                      _genderText = "女";
+                                      _genderValue = "2";
+                                    }
+                                  });
+                                },
                               ),
-                            ),
+                              Center(
+                                  child: Text(_genderText, style: TextStyle(fontFamily: "WorkSansSemiBold", fontSize: 16.0))
+                              )
+                            ],
                           ),
-                        ),
+                        )
                       ),
                     ],
                   ),
@@ -627,8 +647,7 @@ class _LoginPageState extends State<LoginPage>
                     splashColor: Theme.Colors.loginGradientEnd,
                     //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0))),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 42.0),
+                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 42.0),
                       child: Text(
                         "SIGN UP",
                         style: TextStyle(
@@ -637,8 +656,28 @@ class _LoginPageState extends State<LoginPage>
                             fontFamily: "WorkSansBold"),
                       ),
                     ),
-                    onPressed: () =>
-                        showInSnackBar("SignUp button pressed")),
+                    onPressed: () {
+                      myFocusNodePassword.unfocus();
+                      myFocusNodePhone.unfocus();
+                      myFocusNodeName.unfocus();
+                      signUp(signupNameController.text, signupPhoneController.text, signupPasswordController.text, _genderValue)
+                          .then((val){
+                            print ("signUp : " + val.toString());
+                            if (val['code'] != "200") {
+                              showInSnackBar(val['msg']);
+                            } else {
+                              Application.userInfo = val['data'];
+                              StorageUtil.save(storageToken, val['data']['token']);
+                              Navigator.pushAndRemoveUntil(context,
+                                  new MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                                      return IndexPage();
+                                    },
+                                  ), (route) => route == null);
+                            }
+                      });
+                      showInSnackBar("SignUp button pressed");
+                    }),
               ),
             ],
           ),

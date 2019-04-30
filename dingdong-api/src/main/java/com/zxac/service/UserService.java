@@ -7,14 +7,27 @@ public interface UserService {
 
 
     /**
-     * 登陆或者注册，用户名不存在的时候就注册，存在就登陆
+     * 自动登陆，验证token是否存在，存在则登陆
+     * @param token
+     * @return
+     */
+    Result autoLogin(String token);
+
+
+    /**
+     * 登陆
      * @param phone
      * @param password
      * @return
      */
-    Result<UserDto> login(String phone, String password);
+    Result login(String phone, String password);
 
 
-
+    /**
+     * 注册
+     * @param dto
+     * @return
+     */
+    Result signUp(UserDto dto);
 
 }

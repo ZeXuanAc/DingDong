@@ -7,4 +7,4 @@ const timer_duration = 500; // 定时器时间间隔， 500毫秒
 
 const storageBuilding = "buildgingMap"; // shared_preferences存储时的 building key
 const storageCitycode = "citycode"; // shared_preferences存储时的 citycode key
-const token = "token"; // 存储用户的token
+const storageToken = "token"; // 存储用户的token

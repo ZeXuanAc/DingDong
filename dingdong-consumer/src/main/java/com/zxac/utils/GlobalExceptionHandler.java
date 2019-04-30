@@ -1,33 +1,33 @@
 package com.zxac.utils;
 
+import com.zxac.exception.BusinessException;
+import com.zxac.exception.FailureCode;
 import com.zxac.model.Result;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.MissingServletRequestParameterException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-  
-@CrossOrigin  
-@RestControllerAdvice  
-public class GlobalExceptionHandler {  
-  
-     private static Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);  
-      
-    @ExceptionHandler  
-    public Result processException(Exception ex, HttpServletRequest request, HttpServletResponse response){
-          
-        if(ex instanceof MissingServletRequestParameterException){
-            LOGGER.error("=======" + ex.getMessage() + "=======");
-            return Result.failure("400", ex.getMessage());
+
+@CrossOrigin
+@RestControllerAdvice
+@Slf4j
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler
+    @ResponseBody
+    public <T> Result<?> defaultExceptionHandler(HttpServletRequest request, Exception e) {
+        e.printStackTrace();
+        if(e instanceof BusinessException) {
+            log.error("业务异常：" + e.getMessage());
+            BusinessException businessException = (BusinessException)e;
+            return Result.failure(businessException.getCode(), businessException.getMessage());
         }
-        LOGGER.error("=======" + ex.getMessage() + "=======");
-        return Result.failure("500", ex.getMessage());
-          
-    }  
-  
-}  
+        //未知错误
+        return Result.failure(FailureCode.CODE1);
+    }
+
+}

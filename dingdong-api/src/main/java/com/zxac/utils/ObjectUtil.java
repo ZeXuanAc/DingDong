@@ -42,7 +42,11 @@ public class ObjectUtil {
                     Method getter = property.getReadMethod();
                     T value;
                     if (t.getName().equals("java.lang.String")) {
-                        value = (T) getter.invoke(obj).toString();
+                        if (getter.invoke(obj) != null) {
+                            value = (T) getter.invoke(obj).toString();
+                        } else {
+                            value = (T)"";
+                        }
                     } else {
                         value = (T) getter.invoke(obj);
                     }

@@ -1,6 +1,7 @@
 package com.zxac.dao;
 
 import com.zxac.model.User;
+import org.apache.ibatis.annotations.Param;
 
 public interface UserMapper {
 
@@ -9,5 +10,9 @@ public interface UserMapper {
     User selectByPrimaryKey(Integer id);
 
     int updateByPrimaryKeySelective(User record);
+
+    int selectCountByPhone(@Param("phone") String phone);
+
+    User selectByPhonePassword(@Param("phone") String phone, @Param("password") String password);
 
 }

@@ -8,9 +8,6 @@ public class Common {
     // 成功代码
     public static final String SUCCESS_CODE = "200";
 
-    // 默认错误代码，500 表示服务端错误
-    public static final String FAILURE_CODE_500 = "500";
-
     // redis key 的代号
     public static final String REDIS_KEY_CITY = "C";
     public static final String REDIS_KEY_BUILDING = "B";

@@ -5,6 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Application{
     static Router router;
     static FluttieAnimationController loadingAnimation;
-    static var userInfo;
+    static Map userInfo;
     static SharedPreferences prefs;
 }

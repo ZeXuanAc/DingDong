@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'third_page.dart';
-import 'two_page.dart';
+import 'user_center_page.dart';
+import 'follow_building_page.dart';
 import 'home_page.dart';
 
 class IndexPage extends StatefulWidget {
@@ -12,8 +12,8 @@ class _IndexPageState extends State<IndexPage> {
 
     final List tabBodies = [
         HomePage(),
-        TwoPage(),
-        ThirdPage()
+        FollowBuildingPage(),
+        UserCenterPage()
     ];
 
     final List<BottomNavigationBarItem> bottomTabs = [
