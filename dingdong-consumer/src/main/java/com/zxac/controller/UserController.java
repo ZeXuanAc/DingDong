@@ -53,4 +53,41 @@ public class UserController {
         }
     }
 
+    @GetMapping(value = "user/followBuildingCount")
+    public Result followBuildingCount(Integer uid, Integer buildingId) {
+        try {
+            return userService.followBuildingCount(uid, buildingId);
+        } catch (Exception e) {
+            throw new BusinessException(FailureCode.CODE780);
+        }
+    }
+
+
+    @GetMapping(value = "user/followBuilding")
+    public Result followBuilding(Integer uid, String phone, Integer buildingId) {
+        try {
+            return userService.followBuilding(uid, phone, buildingId);
+        } catch (Exception e) {
+            throw new BusinessException(FailureCode.CODE773);
+        }
+    }
+
+    @GetMapping(value = "user/unFollowBuilding")
+    public Result unFollowBuilding(Integer uid, Integer buildingId) {
+        try {
+            return userService.unFollowBuilding(uid, buildingId);
+        } catch (Exception e) {
+            throw new BusinessException(FailureCode.CODE778);
+        }
+    }
+
+    @GetMapping(value = "user/allFollowBuilding")
+    public Result allFollowBuilding(Integer uid) {
+        try {
+            return userService.allFollowBuilding(uid);
+        } catch (Exception e) {
+            throw new BusinessException(FailureCode.CODE785);
+        }
+    }
+
 }

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxac.dao.BuildingFollowMapper">
+  <resultMap id="BaseResultMap" type="com.zxac.model.BuildingFollow">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="uid" jdbcType="INTEGER" property="uid" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="building_id" jdbcType="INTEGER" property="buildingId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, uid, phone, building_id, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from building_follow
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from building_follow
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertSelective" parameterType="com.zxac.model.BuildingFollow">
+    insert into building_follow
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="uid != null">
+        uid,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="buildingId != null">
+        building_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="uid != null">
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="buildingId != null">
+        #{buildingId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+
+  <select id="selectCountByUidBuildingId" resultType="java.lang.Integer">
+    select count(*) from building_follow
+    where uid = #{uid,jdbcType=INTEGER}
+    and building_id = #{buildingId,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByUidBuildingId">
+    delete from building_follow
+    where uid = #{uid,jdbcType=INTEGER}
+    and building_id = #{buildingId,jdbcType=INTEGER}
+  </delete>
+
+  <select id="allFollowBuilding" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from building_follow
+    where uid = #{uid,jdbcType=INTEGER}
+    order by create_time desc
+  </select>
+
+</mapper>

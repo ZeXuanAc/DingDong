@@ -38,6 +38,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     Timer httpTimer;
     Timer nowTimeTimer;
 
+    Icon favoriteIcon = Icon(Icons.favorite_border, color: Colors.red);
 
     @override
     void initState() {
@@ -91,6 +92,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             centerTitle: true,
             backgroundColor: Colors.white,
             actions: <Widget>[
+                new IconButton( // action button
+                  icon: favoriteIcon,
+                  onPressed: () {
+                    _pressFavorite();
+                  },
+                ),
                 new IconButton( // action button
                     icon: new Icon(Icons.location_on, color: Colors.blue,),
                     onPressed: () {
@@ -223,6 +230,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                    cityBuildingMap = localBuildingMap;
                    getBuildingUrlFlag = false;
                    _startTimer();
+                   _initFavorite(Application.userInfo['id'], cityBuildingMap['id']);
                    print("8.1------开启定时器");
                }
             }
@@ -238,6 +246,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                             StorageUtil.save(storageBuilding, json.encode(cityBuildingMap));
                             print("9------本地存储buildingMap, mapString: " + json.encode(cityBuildingMap));
                             _startTimer();
+                            _initFavorite(Application.userInfo['id'], cityBuildingMap['id']);
                             print("10------开启定时器");
                         });
                     } else {
@@ -288,6 +297,54 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         }
     }
 
+
+    // 获取是否关注初始值并初始化
+    void _initFavorite(uid, buildingId) {
+        print("初始化favorite");
+        followBuildingCount(Application.userInfo['id'], cityBuildingMap['id']).then((val) {
+           if (val != null && val['code'] == "200") {
+               setState(() {
+                   if (val['data'] == 0) {
+                       favoriteIcon = Icon(Icons.favorite_border, color: Colors.red,);
+                   } else {
+                       favoriteIcon = Icon(Icons.favorite, color: Colors.red,);
+                   }
+               });
+           }
+        }).catchError((e){
+            ToastUtil.toastMsg("获取该building关注值失败");
+        });
+    }
+
+
+
+    // 关注和取消关注
+    void _pressFavorite() {
+        if (Application.userInfo != null && cityBuildingMap != null) {
+            if (favoriteIcon.icon == Icons.favorite_border) {
+                followBuilding(Application.userInfo['id'], Application.userInfo['phone'], cityBuildingMap['id']).then((val) {
+                    if (val != null && val['code'] == "200") {
+                        setState(() {
+                            favoriteIcon = Icon(Icons.favorite, color: Colors.red,);
+                        });
+                    }
+                }).catchError((e){
+                    ToastUtil.toastMsg("关注失败");
+                });
+            } else {
+                unFollowBuilding(Application.userInfo['id'], cityBuildingMap['id']).then((val) {
+                    if (val != null && val['code'] == "200") {
+                        setState(() {
+                            favoriteIcon = Icon(Icons.favorite_border, color: Colors.red,);
+                        });
+                    }
+                }).catchError((e){
+                    ToastUtil.toastMsg("取消关注失败");
+                });
+            }
+        }
+    }
+
     // 进行building选择
     void _buildingOption () {
         if (homeCitycode != null) {
@@ -313,6 +370,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         if (cityBuildingMap == null || (cityBuildingMap != null && map != null && cityBuildingMap['name'] != map['name'])) {
             setState(() {
                 cityBuildingMap = map;
+                _initFavorite(Application.userInfo['id'], cityBuildingMap['id']);
             });
             StorageUtil.save(storageBuilding, json.encode(cityBuildingMap));
         }

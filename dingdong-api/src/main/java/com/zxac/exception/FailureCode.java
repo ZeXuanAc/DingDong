@@ -29,6 +29,21 @@ public enum FailureCode {
     CODE751("751", "mysql 用户信息修改错误"),
     CODE752("752", "修改用户信息请携带用户id"),
 
+    CODE770("770", "关注building失败，参数错误"),
+    CODE771("771", "关注building失败，mysql插入错误"),
+    CODE772("772", "已关注此building"),
+    CODE773("773", "关注building异常"),
+
+    CODE775("775", "取消关注失败，参数错误"),
+    CODE776("776", "取消关注失败, mysql数据错误（不存在或存在多条）"),
+    CODE777("777", "取消关注失败, 删除失败"),
+    CODE778("778", "取消关注异常"),
+
+    CODE779("779", "查询是否已关注失败，参数异常"),
+    CODE780("780", "查询是否已关注异常"),
+    CODE785("785", "查询allFollowBuilding异常"),
+    CODE786("786", "查询allFollowBuilding失败，参数异常"),
+
     ;
 
     private String name;

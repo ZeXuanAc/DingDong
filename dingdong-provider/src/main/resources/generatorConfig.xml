@@ -35,7 +35,7 @@
         </javaClientGenerator>
 
         <!-- 要生成的表 -->
-        <table tableName="user" domainObjectName="User"
+        <table tableName="building_follow" domainObjectName="buildingFollow"
                enableCountByExample="false" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false"/>

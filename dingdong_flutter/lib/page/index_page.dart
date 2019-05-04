@@ -23,11 +23,11 @@ class _IndexPageState extends State<IndexPage> {
         ),
         BottomNavigationBarItem(
             icon:Icon(CupertinoIcons.search),
-            title:Text('分类'),
+            title:Text('关注'),
         ),
         BottomNavigationBarItem(
             icon:Icon(CupertinoIcons.profile_circled),
-            title:Text('会员中心'),
+            title:Text('个人中心'),
         ),
     ];
 

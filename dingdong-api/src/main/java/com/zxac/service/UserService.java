@@ -38,4 +38,36 @@ public interface UserService {
      */
     Result editInfo(UserDto dto);
 
+
+    /**
+     * 是否关注building
+     * @param uid, buildingId
+     * @return
+     */
+    Result followBuildingCount(Integer uid, Integer buildingId);
+
+
+    /**
+     * 关注building
+     * @param uid, phone, buildingId
+     * @return
+            */
+    Result followBuilding(Integer uid, String phone, Integer buildingId);
+
+
+    /**
+     * 取消关注
+     * @param uid
+     * @param buildingId
+     * @return
+     */
+    Result unFollowBuilding(Integer uid, Integer buildingId);
+
+
+    /**
+     *
+     * @param uid
+     * @return
+     */
+    Result allFollowBuilding(Integer uid);
 }

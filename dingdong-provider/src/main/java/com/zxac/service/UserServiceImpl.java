@@ -2,10 +2,12 @@ package com.zxac.service;
 
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.zxac.dao.BuildingFollowMapper;
 import com.zxac.dao.UserMapper;
 import com.zxac.dto.UserDto;
 import com.zxac.exception.BusinessException;
 import com.zxac.exception.FailureCode;
+import com.zxac.model.BuildingFollow;
 import com.zxac.model.Result;
 import com.zxac.model.User;
 import com.zxac.utils.ObjectUtil;
@@ -27,6 +29,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private BuildingFollowMapper buildingFollowMapper;
 
     @Override
     public Result autoLogin(String token) {
@@ -145,7 +150,7 @@ public class UserServiceImpl implements UserService {
             }
             return Result.success("注册成功", userInfoMap);
         }
-        return Result.failure(FailureCode.CODE709);
+        throw new BusinessException(FailureCode.CODE709);
     }
 
 
@@ -184,8 +189,64 @@ public class UserServiceImpl implements UserService {
                 RedisUtil.close(jedis);
             }
         } else {
-            return Result.failure(FailureCode.CODE751);
+            throw new BusinessException(FailureCode.CODE751);
         }
+    }
 
+
+    @Override
+    public Result followBuildingCount(Integer uid, Integer buildingId) {
+        if (uid == null || buildingId == null) {
+            return Result.failure(FailureCode.CODE779);
+        }
+        return Result.success(buildingFollowMapper.selectCountByUidBuildingId(uid, buildingId));
+    }
+
+    @Override
+    @Transactional
+    public Result followBuilding(Integer uid, String phone, Integer buildingId) {
+        if (uid == null || phone == null || buildingId == null) {
+            return Result.failure(FailureCode.CODE770);
+        }
+        int count = buildingFollowMapper.selectCountByUidBuildingId(uid, buildingId);
+        if (count < 1) {
+            int result = buildingFollowMapper.insertSelective(BuildingFollow.builder().uid(uid)
+                    .phone(phone).buildingId(buildingId).build());
+            if (result == 1) {
+                return Result.success("关注成功");
+            } else {
+                throw new BusinessException(FailureCode.CODE771);
+            }
+        } else {
+            return Result.failure(FailureCode.CODE772);
+        }
+    }
+
+
+    @Override
+    @Transactional
+    public Result unFollowBuilding(Integer uid, Integer buildingId) {
+        if (uid == null || buildingId == null) {
+            return Result.failure(FailureCode.CODE775);
+        }
+        int count = buildingFollowMapper.selectCountByUidBuildingId(uid, buildingId);
+        if (count == 1) {
+            int result = buildingFollowMapper.deleteByUidBuildingId(uid, buildingId);
+            if (result == 1) {
+                return Result.success("取消关注成功");
+            } else {
+                throw new BusinessException(FailureCode.CODE777);
+            }
+        } else {
+            return Result.failure(FailureCode.CODE776);
+        }
+    }
+
+    @Override
+    public Result allFollowBuilding(Integer uid) {
+        if (uid == null) {
+            return Result.failure(FailureCode.CODE786);
+        }
+        return Result.success(buildingFollowMapper.allFollowBuilding(uid));
     }
 }

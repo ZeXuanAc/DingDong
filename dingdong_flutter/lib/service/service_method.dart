@@ -92,3 +92,43 @@ Future signUp (name, phone, password, gender) async{
         throw Exception('【${servicePath['signUp']}】接口出现异常.........');
     }
 }
+
+/// 查询该building是否已关注
+Future followBuildingCount (uid, buildingId) async{
+    Response response;
+    Dio dio = new Dio();
+    var data = {'uid': int.parse(uid), 'buildingId': buildingId};
+    response = await dio.get(servicePath['followBuildingCount'], queryParameters: data);
+    if (response.statusCode == 200){
+        return response.data;
+    } else {
+        throw Exception('【${servicePath['followBuildingCount']}】接口出现异常.........');
+    }
+}
+
+
+/// 关注building
+Future followBuilding (uid, phone, buildingId) async{
+    Response response;
+    Dio dio = new Dio();
+    var data = {'uid': int.parse(uid), 'phone': phone.toString(), 'buildingId': buildingId};
+    response = await dio.get(servicePath['followBuilding'], queryParameters: data);
+    if (response.statusCode == 200){
+        return response.data;
+    } else {
+        throw Exception('【${servicePath['followBuilding']}】接口出现异常.........');
+    }
+}
+
+/// 取消关注building
+Future unFollowBuilding (uid, buildingId) async{
+    Response response;
+    Dio dio = new Dio();
+    var data = {'uid': uid, 'buildingId': buildingId};
+    response = await dio.get(servicePath['unFollowBuilding'], queryParameters: data);
+    if (response.statusCode == 200){
+        return response.data;
+    } else {
+        throw Exception('【${servicePath['unFollowBuilding']}】接口出现异常.........');
+    }
+}
