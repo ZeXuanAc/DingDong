@@ -12,4 +12,5 @@ const servicePath = {
     'followBuildingCount': serviceUrl + 'user/followBuildingCount', // 查询该building是否已关注
     'followBuilding': serviceUrl + 'user/followBuilding', // 关注building
     'unFollowBuilding': serviceUrl + 'user/unFollowBuilding', // 取消关注building
+    'allFollowBuilding': serviceUrl + 'user/allFollowBuilding', // 获取所有关注building
 };

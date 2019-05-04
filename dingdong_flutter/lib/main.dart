@@ -92,7 +92,7 @@ class _MyAppState extends State<MyApp>{
                        Application.userInfo = result['data'];
                        print ("login(2)---> 用户自动登陆成功: " + Application.userInfo.toString());
                        setState(() {
-                           firstPage =  new IndexPage();
+                           firstPage =  new IndexPage(0);
                        });
                    } else {
                        print ("login(2)---> 用户未注册或未登陆");

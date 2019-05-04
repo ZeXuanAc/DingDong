@@ -132,3 +132,16 @@ Future unFollowBuilding (uid, buildingId) async{
         throw Exception('【${servicePath['unFollowBuilding']}】接口出现异常.........');
     }
 }
+
+/// 获取所有关注building
+Future allFollowBuilding (uid, location) async{
+    Response response;
+    Dio dio = new Dio();
+    var data = {'uid': uid, 'location': location};
+    response = await dio.get(servicePath['allFollowBuilding'], queryParameters: data);
+    if (response.statusCode == 200){
+        return response.data;
+    } else {
+        throw Exception('【${servicePath['allFollowBuilding']}】接口出现异常.........');
+    }
+}

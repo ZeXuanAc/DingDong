@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,6 +19,10 @@ class CommonUtil {
         SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
       }
     }
+  }
+
+  static Color randomColor() {
+    return Color.fromARGB(255, Random().nextInt(256) + 0, Random().nextInt(256) + 0, Random().nextInt(256) + 0);
   }
 
 

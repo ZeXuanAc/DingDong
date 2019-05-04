@@ -66,8 +66,8 @@ public interface UserService {
 
     /**
      *
-     * @param uid
+     * @param uid, location
      * @return
      */
-    Result allFollowBuilding(Integer uid);
+    Result allFollowBuilding(Integer uid, String location);
 }

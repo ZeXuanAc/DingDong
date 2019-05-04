@@ -127,9 +127,12 @@ class BuildingOptionsPageState extends State<BuildingOptionsPage>{
         child: new FluttieAnimation(Application.loadingAnimation),
       );
     } else {
-      return ListView(
-        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
-        children: isSearching ? _buildSearchList() : _buildList(),
+      return Container(
+//        color: Colors.grey[200],
+        child: ListView(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
+          children: isSearching ? _buildSearchList() : _buildList(),
+        ),
       );
     }
   }

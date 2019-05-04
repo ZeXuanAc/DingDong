@@ -1,5 +1,6 @@
 package com.zxac.dao;
 
+import com.zxac.dto.BuildingFollowDto;
 import com.zxac.model.BuildingFollow;
 import org.apache.ibatis.annotations.Param;
 
@@ -16,5 +17,5 @@ public interface BuildingFollowMapper {
 
     int deleteByUidBuildingId(@Param("uid") Integer uid, @Param("buildingId") Integer buildingId);
 
-    List<BuildingFollow> allFollowBuilding(@Param("uid") Integer uid);
+    List<BuildingFollowDto> allFollowBuilding(@Param("uid") Integer uid);
 }

@@ -82,9 +82,9 @@ public class UserController {
     }
 
     @GetMapping(value = "user/allFollowBuilding")
-    public Result allFollowBuilding(Integer uid) {
+    public Result allFollowBuilding(Integer uid, String location) {
         try {
-            return userService.allFollowBuilding(uid);
+            return userService.allFollowBuilding(uid, location);
         } catch (Exception e) {
             throw new BusinessException(FailureCode.CODE785);
         }

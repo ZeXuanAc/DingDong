@@ -4,12 +4,14 @@ package com.zxac.service;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.zxac.dao.BuildingFollowMapper;
 import com.zxac.dao.UserMapper;
+import com.zxac.dto.BuildingFollowDto;
 import com.zxac.dto.UserDto;
 import com.zxac.exception.BusinessException;
 import com.zxac.exception.FailureCode;
 import com.zxac.model.BuildingFollow;
 import com.zxac.model.Result;
 import com.zxac.model.User;
+import com.zxac.utils.DistanceUtil;
 import com.zxac.utils.ObjectUtil;
 import com.zxac.utils.RedisUtil;
 import com.zxac.utils.UuidUtil;
@@ -19,8 +21,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import redis.clients.jedis.Jedis;
 
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service(interfaceClass = UserService.class)
 @Component
@@ -242,11 +248,36 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
+    /**
+     *
+     * @param uid
+     * @param location 经纬度, 纬度在前, 经度在后, 用逗号相隔, 如 30.1123,23232
+     * @return
+     */
     @Override
-    public Result allFollowBuilding(Integer uid) {
+    public Result allFollowBuilding(Integer uid, String location) {
         if (uid == null) {
             return Result.failure(FailureCode.CODE786);
         }
-        return Result.success(buildingFollowMapper.allFollowBuilding(uid));
+        List<BuildingFollowDto> dtoList = buildingFollowMapper.allFollowBuilding(uid);
+        if (location != null && !location.equals("")) {
+            String[] locations = location.split(",");
+            if (locations.length == 2) {
+                dtoList.forEach(dto -> {
+                    Double distance = DistanceUtil.GetDistance(locations[0], locations[1], dto.getLatitude(), dto.getLongitude());
+                    dto.setDistance(distance);
+                    dto.setDistanceStr(DistanceUtil.format2decimal(distance));
+                });
+            }
+        } else {
+            return Result.failure(FailureCode.CODE501);
+        }
+        Map<String, List<BuildingFollowDto>> dtoListMap = dtoList.stream().collect(Collectors.groupingBy(BuildingFollowDto::getCityName));
+        dtoListMap.values().forEach(list -> list.sort(Comparator.comparing(BuildingFollowDto::getCreateTime).reversed()));
+        Map<String, List<BuildingFollowDto>> finalMap = new LinkedHashMap<>();
+        dtoListMap.entrySet().stream().sorted(Comparator.comparing(map -> map.getValue().get(0).getDistance())).forEach(e -> finalMap.put(e.getKey(), e.getValue()));
+//        dtoListMap.entrySet().stream().sorted((map1, map2) -> map2.getValue().get(0).getCreateTime().compareTo(map1.getValue().get(0).getCreateTime())).forEach(e -> finalMap.put(e.getKey(), e.getValue()));
+        return Result.success(finalMap);
     }
 }

@@ -69,7 +69,7 @@ class BuildingOptionCard extends StatelessWidget {
         ),
       ),
       onTap: () => {
-      Navigator.pop(context, map)
+        Navigator.pop(context, map)
       },
     );
   }

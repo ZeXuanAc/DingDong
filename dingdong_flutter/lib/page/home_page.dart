@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:amap_location/amap_location.dart';
 import 'package:dingdong_flutter/config/application.dart';
 import 'package:dingdong_flutter/config/common.dart';
@@ -14,10 +13,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttie/fluttie.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:dingdong_flutter/config/application.dart';
 
 
 class HomePage extends StatefulWidget {
-
     _HomePageState createState() {
       return _HomePageState();
     }
@@ -43,7 +42,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     @override
     void initState() {
         _startLoadingAnimation();
-        _getLocalBuilding();
+        initLocationBuilding();
         startUpTime = animationTime = DateTime.now();
         super.initState();
         WidgetsBinding.instance.addObserver(this);
@@ -123,12 +122,31 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       await BaiduMapService.mapView(lat, lng, floor);
     }
 
+
+    void initLocationBuilding () {
+        if (Application.cityBuildingMap != null) {
+            if (mounted) {
+                setState(() {
+                    cityBuildingMap = Application.cityBuildingMap;
+                    homeCitycode = Application.citycode;
+                    location = Application.location;
+                    StorageUtil.save(storageBuilding, json.encode(cityBuildingMap));
+                    _startTimer();
+                    _initFavorite(Application.userInfo['id'], cityBuildingMap['id']);
+                });
+            }
+        } else {
+            _getLocalBuilding();
+        }
+    }
+
     // 得到离定位最近的 building, 先定位再检查本地是否存在是为了在外地时能检测到而提示切换城市
     void _getLocalBuilding () {
         print("1------开始获取最近的building");
         _checkPermission().then((val) {
             if (val != null) {
                 location = val;
+                Application.location = location;
                 print("2-----定位获取成功, citycode: " + location.citycode.toString() + ", 纬度：" + location.latitude.toString() + ", 经度：" + location.longitude.toString());
                 checkCitycode(location.citycode).then((result) {
 //                    if (result['data'] == 0) { // todo 测试
@@ -142,7 +160,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                                 print("4.1-----本地citycode存储成功");
                                 if (mounted) {
                                     setState(() {
-                                        homeCitycode = location.citycode;
+                                        homeCitycode = Application.citycode = location.citycode;
                                     });
                                 }
                             } else {
@@ -161,7 +179,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                                                         onPressed: () {
                                                             StorageUtil.save(storageCitycode, location.citycode);
                                                             setState(() {
-                                                                homeCitycode = location.citycode;
+                                                                homeCitycode = Application.citycode =  location.citycode;
                                                                 startUpTime = DateTime.now();
                                                             });
                                                             StorageUtil.remove(storageBuilding);
@@ -174,7 +192,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                                                         child: Text("取消"),
                                                         onPressed: () {
                                                             setState(() {
-                                                                homeCitycode = localCitycode;
+                                                                homeCitycode = Application.citycode = localCitycode;
                                                                 startUpTime = DateTime.now();
                                                             });
                                                             print("5------获取citycode成功（取消）, citycode为：" + homeCitycode);
@@ -187,7 +205,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                                         });
                                 } else {
                                     print("4.1------检测到本地citycode和定位得到的citycode【相同】");
-                                    homeCitycode = localCitycode;
+                                    homeCitycode = Application.citycode = localCitycode;
                                 }
                             }
                             print("5------获取citycode成功, citycode为：" + homeCitycode);
@@ -227,7 +245,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                print("8------获取本地buildingMap成功，buildingMap: " + val);
                var localBuildingMap = json.decode(val);
                if (localBuildingMap['citycode'] == citycode) {
-                   cityBuildingMap = localBuildingMap;
+                   cityBuildingMap = Application.cityBuildingMap = localBuildingMap;
+                   print("Application.cityBuildingMap : " + Application.cityBuildingMap.toString());
                    getBuildingUrlFlag = false;
                    _startTimer();
                    _initFavorite(Application.userInfo['id'], cityBuildingMap['id']);
@@ -241,7 +260,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                     if (val != null && val['data'] != "" && mounted) {
                         print("8.1------获取最近的building成功, 为: " + val['data'][0].toString());
                         setState(() {
-                            cityBuildingMap = val['data'][0];
+                            cityBuildingMap = Application.cityBuildingMap = val['data'][0];
                             // todo 本地存储buildingId
                             StorageUtil.save(storageBuilding, json.encode(cityBuildingMap));
                             print("9------本地存储buildingMap, mapString: " + json.encode(cityBuildingMap));
@@ -369,7 +388,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     void _loadingPresentBuilding (map) {
         if (cityBuildingMap == null || (cityBuildingMap != null && map != null && cityBuildingMap['name'] != map['name'])) {
             setState(() {
-                cityBuildingMap = map;
+                cityBuildingMap = Application.cityBuildingMap = map;
                 _initFavorite(Application.userInfo['id'], cityBuildingMap['id']);
             });
             StorageUtil.save(storageBuilding, json.encode(cityBuildingMap));
@@ -396,7 +415,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     void _loadingPresentCity (citycode) {
         if (homeCitycode == null || (homeCitycode != null && homeCitycode != citycode)) {
             setState(() {
-                homeCitycode = citycode;
+                homeCitycode = Application.citycode = citycode;
                 eqMap = null;
                 startUpTime = DateTime.now();
                 StorageUtil.save(storageCitycode, homeCitycode);

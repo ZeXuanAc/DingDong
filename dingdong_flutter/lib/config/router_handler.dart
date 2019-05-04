@@ -7,7 +7,7 @@ import 'package:dingdong_flutter/page/index_page.dart';
 
 Handler indexPageHandler = Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params){
-      return IndexPage();
+      return IndexPage(0);
     }
 );
 

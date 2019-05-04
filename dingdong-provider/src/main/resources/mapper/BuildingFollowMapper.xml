@@ -9,6 +9,18 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
+  <resultMap id="DtoResultMap" type="com.zxac.dto.BuildingFollowDto">
+    <result column="uid" jdbcType="INTEGER" property="uid" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="building_id" jdbcType="INTEGER" property="buildingId" />
+    <result column="building_name" jdbcType="INTEGER" property="buildingName" />
+    <result column="citycode" jdbcType="INTEGER" property="citycode" />
+    <result column="city_name" jdbcType="VARCHAR" property="cityName" />
+    <result column="latitude" jdbcType="VARCHAR" property="latitude" />
+    <result column="longitude" jdbcType="VARCHAR" property="longitude" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
   <sql id="Base_Column_List">
     id, uid, phone, building_id, create_time, update_time
   </sql>
@@ -79,11 +91,10 @@
     and building_id = #{buildingId,jdbcType=INTEGER}
   </delete>
 
-  <select id="allFollowBuilding" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from building_follow
-    where uid = #{uid,jdbcType=INTEGER}
+  <select id="allFollowBuilding" resultMap="DtoResultMap">
+    select uid, phone, building_id, b.name as building_name, b.citycode, b.city_name, b.latitude, b.longitude, bf.create_time, bf.update_time
+    from building_follow as bf, building as b
+    where bf.uid = #{uid,jdbcType=INTEGER} and bf.building_id = b.id
     order by create_time desc
   </select>
 

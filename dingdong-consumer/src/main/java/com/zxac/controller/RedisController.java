@@ -60,8 +60,9 @@ public class RedisController {
             RedisUtil.close(jedis);
         }
         storeyMap = mapList.stream().collect(Collectors.groupingBy(map -> map.get("storeyId")));
-        storeyMap.values().forEach(list -> list.sort(Comparator.comparing(map -> map.get("priority"))));
+        storeyMap.values().forEach(list -> list.sort(Comparator.comparing(map -> map.get("priority")))); // 根据priority对list内容排序
         Map<String, List<Map<String, String>>> finalMap = new LinkedHashMap<>();
+        // 根据map中的list排序
         storeyMap.entrySet().stream().sorted(Comparator.comparing(map -> map.getValue().get(0).get("storeyPriority"))).forEach(e -> finalMap.put(e.getKey(), e.getValue()));
         return Result.success(finalMap);
     }

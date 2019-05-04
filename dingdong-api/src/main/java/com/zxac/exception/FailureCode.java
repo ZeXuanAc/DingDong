@@ -5,6 +5,8 @@ public enum FailureCode {
     CODE1("-1", "系统错误"),
 
     CODE500("500", "服务器繁忙"),
+    CODE501("501", "location地址格式错误"),
+
 
     // redis 相关
     CODE600("600", "jedis is null, 请检查redis相关是否正常"),

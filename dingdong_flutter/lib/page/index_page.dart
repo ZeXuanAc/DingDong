@@ -5,10 +5,20 @@ import 'follow_building_page.dart';
 import 'home_page.dart';
 
 class IndexPage extends StatefulWidget {
-    _IndexPageState createState() => _IndexPageState();
+    final int currentIndex = 0;
+
+    IndexPage(currentIndex);
+
+    _IndexPageState createState() => _IndexPageState(this.currentIndex);
 }
 
 class _IndexPageState extends State<IndexPage> {
+    int currentIndex = 0;
+    var currentPage;
+
+    _IndexPageState(currentIndex){
+        this.currentIndex = currentIndex;
+    }
 
     final List tabBodies = [
         HomePage(),
@@ -31,8 +41,7 @@ class _IndexPageState extends State<IndexPage> {
         ),
     ];
 
-    int currentIndex = 0;
-    var currentPage;
+
     @override
     void initState() {
         currentPage = tabBodies[currentIndex];
