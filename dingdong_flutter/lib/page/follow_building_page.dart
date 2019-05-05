@@ -172,7 +172,7 @@ class _FollowBuildingPageState extends State<FollowBuildingPage> {
                             children: <Widget>[
                                 Text('('+ followBuildingList.length.toString() + ')', style: new TextStyle(color: Colors.grey, fontSize: 20.0),),
                             ],
-                    ),
+                        ),
                     ) ,
                 ],
             ),

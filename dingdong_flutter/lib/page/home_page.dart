@@ -18,7 +18,7 @@ import 'package:dingdong_flutter/config/application.dart';
 
 class HomePage extends StatefulWidget {
     _HomePageState createState() {
-      return _HomePageState();
+        return _HomePageState();
     }
 }
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
@@ -166,7 +166,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
 
     void toMapView(lat, lng, floor) async {
-      await BaiduMapService.mapView(lat, lng, floor);
+        await BaiduMapService.mapView(lat, lng, floor);
     }
 
 
@@ -289,16 +289,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         StorageUtil.get(storageBuilding).then((val) {
             var getBuildingUrlFlag = true;
             if (val != null && val != "") {
-               print("8------获取本地buildingMap成功，buildingMap: " + val);
-               var localBuildingMap = json.decode(val);
-               if (localBuildingMap['citycode'] == citycode) {
-                   cityBuildingMap = Application.cityBuildingMap = localBuildingMap;
-                   print("Application.cityBuildingMap : " + Application.cityBuildingMap.toString());
-                   getBuildingUrlFlag = false;
-                   _startTimer();
-                   _initFavorite(Application.userInfo['id'], cityBuildingMap['id']);
-                   print("8.1------开启定时器");
-               }
+                print("8------获取本地buildingMap成功，buildingMap: " + val);
+                var localBuildingMap = json.decode(val);
+                if (localBuildingMap['citycode'] == citycode) {
+                    cityBuildingMap = Application.cityBuildingMap = localBuildingMap;
+                    print("Application.cityBuildingMap : " + Application.cityBuildingMap.toString());
+                    getBuildingUrlFlag = false;
+                    _startTimer();
+                    _initFavorite(Application.userInfo['id'], cityBuildingMap['id']);
+                    print("8.1------开启定时器");
+                }
             }
             if (citycode != "-1" && getBuildingUrlFlag) {
                 print("8------本地buildingMap不存在或不为该city下，开始获取该city下的最近building");
@@ -332,26 +332,26 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         const oneSec = const Duration(milliseconds: timer_duration);
         startUpTime = DateTime.now();
         if (cityBuildingMap != null && cityBuildingMap.isNotEmpty) {
-          if (httpTimer == null) {
-            httpTimer = new Timer.periodic(oneSec, (Timer t) =>
-                getHomePageContentUrl(cityBuildingMap['citycode'], cityBuildingMap['id'], Application.userInfo['gender']).then((val){
-                  if (val != null && mounted) {
-                    setState(() {
-                      eqMap = val;
-                    });
-                  }
-                }).timeout(new Duration(milliseconds: home_page_content_url), onTimeout: (){
-                  _toastMsg("请求主页数据超时, 请检查网络", home_page_timeout);
-                })
-            );
-            print("开启httpTimer定时器");
-          }
-          if (nowTimeTimer == null) {
-            nowTimeTimer = new Timer.periodic(oneSec, (Timer t) =>
-                setNowTimeState()
-            );
-            print("开启nowTimeTimer定时器");
-          }
+            if (httpTimer == null) {
+                httpTimer = new Timer.periodic(oneSec, (Timer t) =>
+                    getHomePageContentUrl(cityBuildingMap['citycode'], cityBuildingMap['id'], Application.userInfo['gender']).then((val){
+                        if (val != null && mounted) {
+                            setState(() {
+                                eqMap = val;
+                            });
+                        }
+                    }).timeout(new Duration(milliseconds: home_page_content_url), onTimeout: (){
+                        _toastMsg("请求主页数据超时, 请检查网络", home_page_timeout);
+                    })
+                );
+                print("开启httpTimer定时器");
+            }
+            if (nowTimeTimer == null) {
+                nowTimeTimer = new Timer.periodic(oneSec, (Timer t) =>
+                    setNowTimeState()
+                );
+                print("开启nowTimeTimer定时器");
+            }
         }
     }
 
@@ -368,15 +368,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     void _initFavorite(uid, buildingId) {
         print("初始化favorite");
         followBuildingCount(Application.userInfo['id'], cityBuildingMap['id']).then((val) {
-           if (val != null && val['code'] == "200") {
-               setState(() {
-                   if (val['data'] == 0) {
-                       favoriteIcon = Icon(Icons.favorite_border, color: Colors.red,);
-                   } else {
-                       favoriteIcon = Icon(Icons.favorite, color: Colors.red,);
-                   }
-               });
-           }
+            if (val != null && val['code'] == "200") {
+                setState(() {
+                    if (val['data'] == 0) {
+                        favoriteIcon = Icon(Icons.favorite_border, color: Colors.red,);
+                    } else {
+                        favoriteIcon = Icon(Icons.favorite, color: Colors.red,);
+                    }
+                });
+            }
         }).catchError((e){
             ToastUtil.toastMsg("获取该building关注值失败");
         });
@@ -688,8 +688,8 @@ Widget _listView(sEqMap, nowTime) {
     }
     return Container(
         child: ListView(
-                children: wList,
-            )
+            children: wList,
+        )
     );
 }
 
@@ -739,7 +739,7 @@ Widget _stackImage(eqMap, apartTime){
                                 borderRadius: BorderRadius.circular(15.0),
                                 image: DecorationImage(image: AssetImage("assets/images/red.jpg")),
                                 // 生成俩层阴影，一层黄， 阴影位置由offset决定,阴影模糊层度由blurRadius大小决定（大就更透明更扩散），阴影模糊大小由spreadRadius决定
-                                boxShadow: [BoxShadow(color: Color(0x99FFFF00), offset: Offset(2.0, 2.0), blurRadius: 10.0, spreadRadius: 2.0),],
+                                boxShadow: [BoxShadow(color: Color(0xCCfe010e), offset: Offset(2.0, 2.0), blurRadius: 10.0, spreadRadius: 2.0),],
                             ),
                         ),
                         new Container(
@@ -776,4 +776,3 @@ Widget _stackImage(eqMap, apartTime){
         ]
     );
 }
-

@@ -20,7 +20,7 @@ class _IndexPageState extends State<IndexPage> {
         this.currentIndex = currentIndex;
     }
 
-    final List tabBodies = [
+    final List<Widget> tabBodies = [
         HomePage(),
         FollowBuildingPage(),
         UserCenterPage()
