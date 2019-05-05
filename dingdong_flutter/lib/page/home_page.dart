@@ -560,7 +560,8 @@ Widget _listView(sEqMap, nowTime) {
                                 new Container(
                                     height: ScreenUtil.getInstance().setWidth(140),
                                     decoration: BoxDecoration(
-                                        color: Color(0x99FF6347),
+//                                        color: Color(0x99031f51),
+                                        color: Color(0x9993c9e1),
                                         borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
                                     ),
                                     child: Center(
