@@ -48,7 +48,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         WidgetsBinding.instance.addObserver(this);
     }
 
-
     @override
     Widget build(BuildContext context) {
         ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
@@ -61,62 +60,110 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             }
             _startTimer();
             return Scaffold(
-                appBar: _buildAppBar("无"),
-                body: Center(
-                    child: new FluttieAnimation(Application.loadingAnimation),
-                ),
+                body: _buildBody(true)
             );
         } else {
             return Container (
                 child: Scaffold(
-                    appBar: _buildAppBar(cityBuildingMap['name']),
-                    body: _buildBody(),
+                    body: _buildBody(false),
                 )
             );
         }
     }
 
+    Widget _buildBody (loading) {
+        if (loading) {
+            _startLoadingAnimation();
+            return Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage("assets/images/home.jpg"),
+                        fit: BoxFit.fitWidth,
+                    ),
+                ),
+                child: Stack(
+                    children: <Widget>[
+                        _buildTopHeader("无"),
+                        Center(
+                            child: new FluttieAnimation(Application.loadingAnimation),
+                        )
+                    ],
+                ),
+            );
+        } else {
+            return Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage("assets/images/home.jpg"),
+                        fit: BoxFit.fitWidth,
+                    ),
+                ),
+                child: _buildBodyContent(),
+            );
+        }
+    }
 
-    Widget _buildAppBar (titleText) {
-        return AppBar(
-            leading: new Icon(Icons.home, color: Colors.blue,),
-            title: new Text.rich(new TextSpan(
-                text: titleText,
-                style: TextStyle(color: Colors.black,),
-                recognizer: new TapGestureRecognizer()
-                    ..onTap = () {
-                        _buildingOption();
-                    }
-            )),
-            centerTitle: true,
-            backgroundColor: Colors.white,
-            actions: <Widget>[
-                new IconButton( // action button
-                  icon: favoriteIcon,
-                  onPressed: () {
-                    _pressFavorite();
-                  },
-                ),
-                new IconButton( // action button
-                    icon: new Icon(Icons.location_on, color: Colors.blue,),
-                    onPressed: () {
-                        _cityOption();
-                    },
-                ),
-            ],
+    Widget _buildBodyContent () {
+        if (eqMap['data'][eqMap['data'].keys.elementAt(0)][0]['buildingId'].toString() != cityBuildingMap['id'].toString()) {
+            _startLoadingAnimation();
+            return Stack(
+                children: <Widget>[
+                    _buildTopHeader("无"),
+                    Center(
+                        child: new FluttieAnimation(Application.loadingAnimation),
+                    )
+                ],
+            );
+        } else {
+            return Stack(
+                children: <Widget>[
+                    _buildTopHeader(cityBuildingMap['name']),
+                    new Padding(
+                        padding: new EdgeInsets.only(top: 80.0),
+                        child: _listView(eqMap['data'], nowTime),
+                    )
+                ],
+            );
+        }
+
+    }
+
+    Widget _buildTopHeader (titleText) {
+        return new Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 32.0),
+            child: new Row(
+                children: <Widget>[
+                    new Icon(Icons.home, color: Colors.blue,),
+                    new Expanded(
+                        child: new Padding(
+                            padding: const EdgeInsets.only(left: 28.0),
+                            child: new Text.rich(new TextSpan(
+                                text: titleText,
+                                style: TextStyle(color: Colors.black, fontSize: ScreenUtil.getInstance().setSp(48.0)),
+                                recognizer: new TapGestureRecognizer()
+                                    ..onTap = () {
+                                        _buildingOption();
+                                    }
+                            )),
+                        ),
+                    ),
+                    new IconButton( // action button
+                        icon: favoriteIcon,
+                        onPressed: () {
+                            _pressFavorite();
+                        },
+                    ),
+                    new IconButton( // action button
+                        icon: new Icon(Icons.location_on, color: Colors.blue,),
+                        onPressed: () {
+                            _cityOption();
+                        },
+                    ),
+                ],
+            ),
         );
     }
 
-    Widget _buildBody () {
-        if (eqMap['data'][eqMap['data'].keys.elementAt(0)][0]['buildingId'].toString() != cityBuildingMap['id'].toString()) {
-            _startLoadingAnimation();
-            return Center(
-                child: new FluttieAnimation(Application.loadingAnimation),
-            );
-        } else {
-            return _listView(eqMap['data'], nowTime);
-        }
-    }
 
     void toMapView(lat, lng, floor) async {
       await BaiduMapService.mapView(lat, lng, floor);
@@ -547,7 +594,6 @@ Widget _listView(sEqMap, nowTime) {
                 decoration: BoxDecoration(
                     image: DecorationImage(
                         image: AssetImage("assets/images/flower.jpg"),
-//                        image: NetworkImage("http://img7.3png.com/c4314640cf6f234a98ca48d6c9532e4f344a.jpeg/p"),
                         fit: BoxFit.cover,
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(20.0),),
@@ -561,7 +607,7 @@ Widget _listView(sEqMap, nowTime) {
                                     height: ScreenUtil.getInstance().setWidth(140),
                                     decoration: BoxDecoration(
 //                                        color: Color(0x99031f51),
-                                        color: Color(0x9993c9e1),
+                                        color: Color(0x9973a6d5),
                                         borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
                                     ),
                                     child: Center(
