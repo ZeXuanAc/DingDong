@@ -22,6 +22,7 @@ public class UserController {
         try {
             return userService.autoLogin(token);
         } catch (Exception e) {
+            log.warn("autoLogin: ", e);
             throw new BusinessException(FailureCode.CODE706);
         }
     }
@@ -31,6 +32,7 @@ public class UserController {
         try {
             return userService.login(phone, password);
         } catch (Exception e) {
+            log.warn("login: ", e);
             throw new BusinessException(FailureCode.CODE700);
         }
     }
@@ -40,6 +42,7 @@ public class UserController {
         try {
             return userService.signUp(dto);
         } catch (Exception e) {
+            log.warn("signUp: ", e);
             throw new BusinessException(FailureCode.CODE705);
         }
     }
@@ -49,6 +52,7 @@ public class UserController {
         try {
             return userService.editInfo(dto);
         } catch (Exception e) {
+            log.warn("user/editInfo: ", e);
             throw new BusinessException(FailureCode.CODE750);
         }
     }
@@ -58,6 +62,7 @@ public class UserController {
         try {
             return userService.followBuildingCount(uid, buildingId);
         } catch (Exception e) {
+            log.warn("user/followBuildingCount: ", e);
             throw new BusinessException(FailureCode.CODE780);
         }
     }
@@ -68,6 +73,7 @@ public class UserController {
         try {
             return userService.followBuilding(uid, phone, buildingId);
         } catch (Exception e) {
+            log.warn("user/followBuilding: ", e);
             throw new BusinessException(FailureCode.CODE773);
         }
     }
@@ -77,6 +83,7 @@ public class UserController {
         try {
             return userService.unFollowBuilding(uid, buildingId);
         } catch (Exception e) {
+            log.warn("user/unFollowBuilding: ", e);
             throw new BusinessException(FailureCode.CODE778);
         }
     }
@@ -86,6 +93,7 @@ public class UserController {
         try {
             return userService.allFollowBuilding(uid, location);
         } catch (Exception e) {
+            log.warn("user/allFollowBuilding: ", e);
             throw new BusinessException(FailureCode.CODE785);
         }
     }

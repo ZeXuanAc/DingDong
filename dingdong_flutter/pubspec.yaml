@@ -19,6 +19,7 @@ dependencies:
   shared_preferences: ^0.5.2
   fluro: "^1.4.0"
   font_awesome_flutter: ^8.0.1
+  flutter_svg: ^0.5.5+1
 #  flutter_baidu_map: ^0.0.5
 
 dev_dependencies:

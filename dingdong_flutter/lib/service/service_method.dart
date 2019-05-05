@@ -145,3 +145,16 @@ Future allFollowBuilding (uid, location) async{
         throw Exception('【${servicePath['allFollowBuilding']}】接口出现异常.........');
     }
 }
+
+/// 修改用户信息
+Future editInfo (id, token, gender) async{
+    Response response;
+    Dio dio = new Dio();
+    var data = {'id': id, 'token': token, "gender": gender};
+    response = await dio.get(servicePath['editInfo'], queryParameters: data);
+    if (response.statusCode == 200){
+        return response.data;
+    } else {
+        throw Exception('【${servicePath['editInfo']}】接口出现异常.........');
+    }
+}

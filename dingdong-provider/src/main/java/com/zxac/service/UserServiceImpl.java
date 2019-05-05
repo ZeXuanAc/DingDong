@@ -170,7 +170,7 @@ public class UserServiceImpl implements UserService {
     public Result editInfo(UserDto dto) {
         Jedis jedis = null;
         if (dto.getId() == null) {
-            throw new BusinessException(FailureCode.CODE752);
+            return Result.failure(FailureCode.CODE752);
         }
         int result = userMapper.updateByPrimaryKeySelective(User.accept(dto));
         if (result == 1) {
@@ -178,19 +178,25 @@ public class UserServiceImpl implements UserService {
             try {
                 jedis = RedisUtil.getJedis();
                 if (jedis != null) {
+                    if (dto.getToken() == null) {
+                        log.warn("请携带用户token, 用户id为：{}", dto.getId());
+                        throw new BusinessException(FailureCode.CODE754);
+                    }
                     if (jedis.exists(dto.getToken())) {
-                        jedis.hmset(dto.getToken(), ObjectUtil.toMap(dto, String.class, "token"));
-                        return Result.success("用户信息修改成功");
+                        UserDto newDto = UserDto.accept(userMapper.selectByPrimaryKey(dto.getId()));
+                        jedis.hmset(dto.getToken(), ObjectUtil.toMap(newDto, String.class, "token"));
+                        newDto.setToken(dto.getToken());
+                        return Result.success("用户信息修改成功", newDto);
                     } else {
-                        return Result.failure(FailureCode.CODE701);
+                        throw new BusinessException(FailureCode.CODE701);
                     }
                 } else {
                     log.error("jedis is null");
-                    return Result.failure(FailureCode.CODE600);
+                    throw new BusinessException(FailureCode.CODE600);
                 }
             } catch (Exception e) {
-                log.error("修改用户信息异常, 用户token: {}", dto.getToken());
-                return Result.failure(FailureCode.CODE750);
+                log.error("修改用户信息异常, 用户id: {}", dto.getId());
+                throw new BusinessException(FailureCode.CODE753);
             } finally {
                 RedisUtil.close(jedis);
             }

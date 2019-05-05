@@ -30,6 +30,8 @@ public enum FailureCode {
     CODE750("750", "用户信息修改异常"),
     CODE751("751", "mysql 用户信息修改错误"),
     CODE752("752", "修改用户信息请携带用户id"),
+    CODE753("753", "修改redis用户信息错误"),
+    CODE754("754", "修改用户信息请携带用户token"),
 
     CODE770("770", "关注building失败，参数错误"),
     CODE771("771", "关注building失败，mysql插入错误"),

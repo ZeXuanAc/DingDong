@@ -4,6 +4,9 @@ import 'package:dingdong_flutter/utils/storage_util.dart';
 import 'package:dingdong_flutter/config/common.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dingdong_flutter/config/application.dart';
+import 'package:dingdong_flutter/page/gender/gender_card.dart';
+import 'package:dingdong_flutter/page/gender/gender.dart';
+
 
 class UserCenterPage extends StatefulWidget {
     UserCenterPage({Key key}) : super(key: key);
@@ -14,6 +17,7 @@ class UserCenterPage extends StatefulWidget {
 
 class _UserCenterPageState extends State<UserCenterPage> {
 
+    Gender gender = Gender.female;
 
     @override
     Widget build(BuildContext context) {
@@ -27,9 +31,18 @@ class _UserCenterPageState extends State<UserCenterPage> {
                         padding: const EdgeInsets.fromLTRB(20.0, 100.0, 20.0, 10.0),
                         child: Card(
                             elevation: 5.0,
-                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),  //设置圆角
-                            child: ListView(
-                                children: getUserInfoList(),
+                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),  //设置圆角
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        image: AssetImage("assets/images/user_center.jpg"),
+                                        fit: BoxFit.cover,
+                                    ),
+                                    borderRadius: BorderRadius.all(Radius.circular(20.0),),
+                                ),
+                                child: ListView(
+                                    children: getUserInfoList(),
+                                ),
                             )
                         )
                     )
@@ -40,11 +53,138 @@ class _UserCenterPageState extends State<UserCenterPage> {
 
     List<Widget> getUserInfoList (){
         List<Widget> widgetList = [];
-        if (Application.userInfo != null) {
-            Application.userInfo.forEach((key, val) {
-                widgetList.add(_buildCardContent(key, val));
-            });
+        String genderStr = Application.userInfo['gender'];
+        String vip = Application.userInfo['vip'];
+        if (genderStr == "1") {
+            genderStr = "男";
+            gender = Gender.male;
+        } else if (genderStr == "2") {
+            genderStr = "女";
+            gender = Gender.female;
+        } else {
+            genderStr = "无";
+            gender = Gender.other;
         }
+        if (vip == "1") {
+            vip = "尊贵会员";
+        } else {
+            vip = "暂时不是";
+        }
+        widgetList.add(GestureDetector(
+            child: Container(
+                height: 60.0,
+                child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: <Widget>[
+                        Container(
+                            width: ScreenUtil.getInstance().setWidth(80.0), height: ScreenUtil.getInstance().setHeight(80.0),
+                            margin: EdgeInsets.only(left: 20.0),
+                            decoration: BoxDecoration(
+                                image: DecorationImage(image: AssetImage("assets/images/icon_natural_person.png")),
+                            ),
+                        ),
+                        Container(
+                            width: ScreenUtil.getInstance().setWidth(550),
+                            margin: EdgeInsets.only(left: 30.0),
+                            child: Text(Application.userInfo['name'], style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300), textAlign: TextAlign.left,),
+                        ),
+                    ],
+                ),
+            ),
+            onTap: () => {
+            },
+        ));
+        widgetList.add(GestureDetector(
+            child: Container(
+                height: 60.0,
+                child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: <Widget>[
+                        Container(
+                            width: ScreenUtil.getInstance().setWidth(80.0), height: ScreenUtil.getInstance().setHeight(80.0),
+                            margin: EdgeInsets.only(left: 20.0),
+                            decoration: BoxDecoration(
+                                image: DecorationImage(image: AssetImage("assets/images/phone.png")),
+                            ),
+                        ),
+                        Container(
+                            width: ScreenUtil.getInstance().setWidth(550),
+                            margin: EdgeInsets.only(left: 30.0),
+                            child: Text(Application.userInfo['phone'], style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300), textAlign: TextAlign.left,),
+                        ),
+                    ],
+                ),
+            ),
+            onTap: () => {
+            },
+        ));
+        widgetList.add(GestureDetector(
+            child: Container(
+                height: 60.0,
+                child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: <Widget>[
+                        Container(
+                            width: ScreenUtil.getInstance().setWidth(65.0), height: ScreenUtil.getInstance().setHeight(65.0),
+                            margin: EdgeInsets.only(left: 22.0),
+                            decoration: BoxDecoration(
+                                image: DecorationImage(image: AssetImage("assets/images/gender.png")),
+                            ),
+                        ),
+                        Container(
+                            width: ScreenUtil.getInstance().setWidth(550),
+                            margin: EdgeInsets.only(left: 32.0),
+                            child: Text(genderStr, style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300), textAlign: TextAlign.left,),
+                        ),
+                    ],
+                ),
+            ),
+            onTap: () => {
+                showDialog<Null>(
+                    context: context,
+                    builder: (BuildContext context) {
+                        return SimpleDialog(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 54.0, vertical: 18.0),
+                            children: <Widget>[
+                                GenderCard(
+                                    gender: gender,
+                                    onChanged: (val) => setState(() => gender = val),
+                                ),
+                            ],
+                        );
+                    },
+                ).then((val){
+                    print("返回值: " + val.toString());
+                    setState(() {
+                        Application.userInfo['gender'] = val;
+                    });
+                })
+            },
+        ));
+        widgetList.add(GestureDetector(
+            child: Container(
+                height: 60.0,
+                child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: <Widget>[
+                        Container(
+                            width: ScreenUtil.getInstance().setWidth(90.0), height: ScreenUtil.getInstance().setHeight(90.0),
+                            margin: EdgeInsets.only(left: 19.0),
+                            decoration: BoxDecoration(
+                                image: DecorationImage(image: AssetImage("assets/images/vip.png")),
+                            ),
+                        ),
+                        Container(
+                            width: ScreenUtil.getInstance().setWidth(550),
+                            margin: EdgeInsets.only(left: 28.0),
+                            child: Text(vip, style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300), textAlign: TextAlign.left,),
+                        ),
+                    ],
+                ),
+            ),
+            onTap: () => {
+            },
+        ));
         return widgetList;
     }
 }
@@ -94,28 +234,3 @@ Widget buildAppBar(context) {
     );
 }
 
-Widget _buildCardContent(key, value) {
-    return GestureDetector(
-        child: Container(
-            height: 60.0,
-            child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                    Container(
-                        width: ScreenUtil.getInstance().setWidth(250),
-                        margin: EdgeInsets.only(left: 30.0),
-                        child: Text(key, style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w300, color: Colors.cyan),
-                            textAlign: TextAlign.left, )
-                    ),
-                    Container(
-                        width: ScreenUtil.getInstance().setWidth(500),
-                        margin: EdgeInsets.only(left: 30.0),
-                        child: Text(value, style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300), textAlign: TextAlign.left,),
-                    ),
-                ],
-            ),
-        ),
-        onTap: () => {
-        },
-    );
-}

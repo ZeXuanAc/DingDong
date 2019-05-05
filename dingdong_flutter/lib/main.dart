@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttie/fluttie.dart';
 import 'page/index_page.dart';
 import 'package:amap_location/amap_location.dart';
@@ -13,9 +14,11 @@ import 'package:dingdong_flutter/service/service_method.dart';
 void main() {
     AMapLocationClient.setApiKey("4cad2d787551c53980ca94675c5db6b6");
 
-    runApp(MaterialApp(
-        home: MyApp(), // becomes the route named '/'
-    ));
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
+        .then((_) => runApp(MaterialApp(home: MyApp(), // becomes the route named '/'
+    )));
+
 }
 
 
@@ -90,6 +93,7 @@ class _MyAppState extends State<MyApp>{
                 autoLogin(val).then((result){
                    if(result['code'] == "200") {
                        Application.userInfo = result['data'];
+                       Application.userInfo['token'] = val;
                        print ("login(2)---> 用户自动登陆成功: " + Application.userInfo.toString());
                        setState(() {
                            firstPage =  new IndexPage(0);

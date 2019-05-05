@@ -68,7 +68,7 @@ class CityOptionCard extends StatelessWidget {
         ),
       ),
       onTap: () => {
-      Navigator.pop(context, map)
+        Navigator.pop(context, map)
       },
     );
   }
