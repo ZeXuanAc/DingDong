@@ -17,6 +17,7 @@ class _FollowBuildingPageState extends State<FollowBuildingPage> {
     Map resultMap;
     List followBuildingList = [];
     bool show = false;
+    double buildingRowOpacity = 1.0;
 
     @override
     void initState() {
@@ -143,9 +144,9 @@ class _FollowBuildingPageState extends State<FollowBuildingPage> {
                 initialItemCount: followBuildingList.length,
                 key: _listKey,
                 itemBuilder: (context, index, animation) {
-                    return new FollowBuildingRow(
-                        map: listModel[index],
-                        animation: animation,
+                    return new Opacity(
+                        opacity: buildingRowOpacity,
+                        child: FollowBuildingRow(listModel[index],animation,),
                     );
                 },
             )

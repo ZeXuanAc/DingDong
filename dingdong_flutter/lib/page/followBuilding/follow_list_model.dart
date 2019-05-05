@@ -19,10 +19,7 @@ class FollowListModel {
     if (removedItem != null) {
       _animatedList.removeItem(
         index,
-        (context, animation) => new FollowBuildingRow(
-              map: removedItem,
-              animation: animation,
-            ),
+        (context, animation) => new FollowBuildingRow(removedItem, animation,),
         duration: new Duration(milliseconds: (150 + 200 * (index/length)).toInt())
       );
     }
