@@ -11,10 +11,7 @@ import com.zxac.exception.FailureCode;
 import com.zxac.model.BuildingFollow;
 import com.zxac.model.Result;
 import com.zxac.model.User;
-import com.zxac.utils.DistanceUtil;
-import com.zxac.utils.ObjectUtil;
-import com.zxac.utils.RedisUtil;
-import com.zxac.utils.UuidUtil;
+import com.zxac.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -84,7 +81,7 @@ public class UserServiceImpl implements UserService {
         }
         if (phone != null && r.matcher(phone).matches()) {
             String token = UuidUtil.getUUID();
-            UserDto userDto = UserDto.accept(userMapper.selectByPhonePassword(phone, password));
+            UserDto userDto = UserDto.accept(userMapper.selectByPhonePassword(phone, MD5Util.crypt(password)));
             if (userDto == null) {
                 return Result.failure(FailureCode.CODE703);
             }
@@ -132,6 +129,7 @@ public class UserServiceImpl implements UserService {
         if (userMapper.selectCountByPhone(dto.getPhone()) > 0) {
             return Result.failure(FailureCode.CODE708);
         }
+        dto.setPassword(MD5Util.crypt(dto.getPassword()));
         User user = User.accept(dto);
         int result = userMapper.insertSelective(user);
         if (result == 1) {
