@@ -18,6 +18,8 @@ class UserCenterPage extends StatefulWidget {
 class _UserCenterPageState extends State<UserCenterPage> {
 
     Gender gender = Gender.female;
+    String genderStr = Application.userInfo['gender'];
+    String vip = Application.userInfo['vip'];
 
     @override
     Widget build(BuildContext context) {
@@ -53,8 +55,6 @@ class _UserCenterPageState extends State<UserCenterPage> {
 
     List<Widget> getUserInfoList (){
         List<Widget> widgetList = [];
-        String genderStr = Application.userInfo['gender'];
-        String vip = Application.userInfo['vip'];
         if (genderStr == "1") {
             genderStr = "男";
             gender = Gender.male;
@@ -154,9 +154,8 @@ class _UserCenterPageState extends State<UserCenterPage> {
                         );
                     },
                 ).then((val){
-                    print("返回值: " + val.toString());
                     setState(() {
-                        Application.userInfo['gender'] = val;
+                        genderStr = Application.userInfo['gender'];
                     });
                 })
             },

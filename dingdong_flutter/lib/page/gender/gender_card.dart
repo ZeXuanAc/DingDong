@@ -129,8 +129,10 @@ class _GenderCardState extends State<GenderCard>
     editInfo(Application.userInfo['id'], Application.userInfo['token'], genderInfo).then((val) {
       if (val != null && val['code'] == "200") {
         print("gerder_card: " + val['data']['gender'].toString());
-        final String afterGender = val['data']['gender'];
-        Navigator.pop(context, afterGender);
+        setState(() {
+          Application.userInfo['gender'] = val['data']['gender'];
+        });
+        Navigator.pop(context);
         ToastUtil.toastMsg("性别修改成功");
       }
     });
