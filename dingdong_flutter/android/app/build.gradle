@@ -67,9 +67,8 @@ android {
 	buildTypes {
 		release {
 			ndk {
-				abiFilters 'armeabi'
+				abiFilters 'armeabi-v7a','arm64-v8a'
 			}
-			buildConfigField ("boolean","LOG","true")
 			minifyEnabled false
 			signingConfig signingConfigs.release
 			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

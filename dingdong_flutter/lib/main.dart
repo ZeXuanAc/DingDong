@@ -67,8 +67,13 @@ class _MyAppState extends State<MyApp>{
                     theme: ThemeData(
                         primaryColor:Colors.blue
                     ),
-                    home: Center(
-                        child: Text("广告"),
+                    home: Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage("assets/images/advertise.jpg"),
+                          fit: BoxFit.fitWidth,
+                        ),
+                      ),
                     )
                 ),
             );
