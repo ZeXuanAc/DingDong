@@ -125,7 +125,6 @@ class _GenderCardState extends State<GenderCard>
     } else {
       genderInfo = "0";
     }
-    print("选择了：" + gender.toString() + "--- genderInfo: " + genderInfo);
     editInfo(Application.userInfo['id'], Application.userInfo['token'], genderInfo).then((val) {
       if (val != null && val['code'] == "200") {
         print("gerder_card: " + val['data']['gender'].toString());
