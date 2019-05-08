@@ -1,16 +1,16 @@
 import request from '../utils/request'
 
-export function login(data) {
+export function login(params) {
   return request({
-    url: '/user/login',
-    method: 'post',
-    data
+    url: '/backEnd/login',
+    method: 'get',
+    params: params
   })
 }
 
 export function getInfo(token) {
   return request({
-    url: '/user/info',
+    url: '/admin/userInfo',
     method: 'get',
     params: { token }
   })
@@ -18,7 +18,7 @@ export function getInfo(token) {
 
 export function logout() {
   return request({
-    url: '/user/logout',
-    method: 'post'
+    url: '/admin/logout',
+    method: 'get'
   })
 }

@@ -1,5 +1,6 @@
 package com.zxac.utils;
 
+import com.zxac.exception.AuthException;
 import com.zxac.exception.BusinessException;
 import com.zxac.exception.FailureCode;
 import com.zxac.model.Result;
@@ -25,6 +26,11 @@ public class GlobalExceptionHandler {
             log.error("业务异常：" + e.getMessage());
             BusinessException businessException = (BusinessException)e;
             return Result.failure(businessException.getCode(), businessException.getMessage());
+        }
+        if(e instanceof AuthException) {
+            log.warn("权限异常：" + e.getMessage());
+            AuthException authException = (AuthException)e;
+            return Result.failure(authException.getCode(), authException.getMessage());
         }
         //未知错误
         return Result.failure(FailureCode.CODE1);

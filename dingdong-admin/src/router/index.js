@@ -17,13 +17,6 @@ export const constantRoutes = [
     component: () => import('../views/login/index'),
     hidden: true
   },
-
-  {
-    path: '/404',
-    component: () => import('../views/404'),
-    hidden: true
-  },
-
   {
     path: '/',
     component: Layout,
@@ -36,9 +29,9 @@ export const constantRoutes = [
     }]
   },
   {
-    path: '/nested',
+    path: '/infoManage',
     component: Layout,
-    redirect: '/nested/menu1',
+    redirect: '/infoManage/building',
     name: 'Nested',
     meta: {
       title: '信息管理',
@@ -46,73 +39,84 @@ export const constantRoutes = [
     },
     children: [
       {
-        path: 'menu1',
-        component: () => import('../views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'city管理' }
-      },
-      {
-        path: 'menu2',
-        component: () => import('../views/nested/menu2/index'),
+        path: 'building',
+        component: () => import('../views/info-manage/building/index'),
         meta: { title: 'building管理' }
       },
       {
-        path: 'menu3',
-        component: () => import('../views/nested/menu2/index'),
+        path: 'storey',
+        component: () => import('../views/info-manage/storey/index'),
         meta: { title: 'storey管理' }
       },
       {
-        path: 'menu4',
-        component: () => import('../views/nested/menu2/index'),
+        path: 'equipment',
+        component: () => import('../views/info-manage/equipment/index'),
         meta: { title: 'equipment管理' }
       }
     ]
   },
   {
-    path: '/example',
+    path: '/charts',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: '表格和tree', icon: 'example' },
+    redirect: 'noRedirect',
+    name: 'Charts',
+    meta: {
+      title: 'charts',
+      icon: 'dashboard'
+    },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('../views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
+        path: 'keyboard',
+        component: () => import('../views/charts/keyboard'),
+        name: 'KeyboardChart',
+        meta: { title: 'keyboardChart', noCache: true }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('../views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
+        path: 'line',
+        component: () => import('../views/charts/line'),
+        name: 'LineChart',
+        meta: { title: 'lineChart', noCache: true }
+      },
+      {
+        path: 'mix-chart',
+        component: () => import('../views/charts/mix-chart'),
+        name: 'MixChart',
+        meta: { title: 'mixChart', noCache: true }
       }
     ]
-  },
+  }
+]
 
+// 异步挂载的路由
+// 动态需要根据权限加载的路由表
+export const asyncRoutes = [
   {
-    path: '/form',
+    path: '/city',
+    component: Layout,
+    children: [{
+      path: 'index',
+      name: 'City',
+      component: () => import('../views/city/index'),
+      meta: { title: 'city管理', icon: 'dashboard', roles: ['admin'] }
+    }]
+  },
+  {
+    path: '/eq-init',
     component: Layout,
     children: [
       {
         path: 'index',
-        name: 'Form',
-        component: () => import('../views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        name: 'From',
+        component: () => import('../views/eq-init/index'),
+        meta: { title: '设备初始化', icon: 'form', roles: ['admin', 'editor'] }
       }
     ]
   },
   {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
-      }
-    ]
+    path: '/404',
+    component: () => import('../views/404'),
+    hidden: true
   },
-
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

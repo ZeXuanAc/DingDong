@@ -48,6 +48,17 @@ public enum FailureCode {
     CODE785("785", "查询allFollowBuilding异常"),
     CODE786("786", "查询allFollowBuilding失败，参数异常"),
 
+    CODE790("790", "管理员登陆失败"),
+    CODE791("791", "管理员登陆缺失参数"),
+    CODE794("794", "管理平台获取用户信息失败"),
+    CODE795("795", "管理平台获取用户信息失败--参数缺失"),
+    CODE796("796", "管理平台获取用户信息失败--查询用户为空"),
+    CODE797("797", "管理平台登出用户失败"),
+
+
+    // 权限相关
+    CODE900("900", "admin平台无token参数或token失效"),
+
     ;
 
     private String name;
