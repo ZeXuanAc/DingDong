@@ -45,7 +45,7 @@ public class CityEquipmentServiceImpl implements CityEquipmentService {
      */
     @Override
     public List<City> getAllCity() {
-        return cityMapper.getAll();
+        return null;
     }
 
 

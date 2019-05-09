@@ -1,7 +1,12 @@
 package com.zxac.model;
 
+import com.zxac.dto.CityDto;
+import org.springframework.beans.BeanUtils;
+
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class City implements Serializable {
     private Integer id;
@@ -72,5 +77,21 @@ public class City implements Serializable {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public static City accept (CityDto dto) {
+        if (dto == null) {
+            return null;
+        }
+        City model = new City();
+        BeanUtils.copyProperties(dto, model);
+        return model;
+    }
+
+    public static List<City> acceptDto (List<CityDto> dtoList) {
+        if (dtoList == null || dtoList.isEmpty()) {
+            return null;
+        }
+        return dtoList.stream().map(City::accept).collect(Collectors.toList());
     }
 }

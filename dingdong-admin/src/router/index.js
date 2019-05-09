@@ -61,7 +61,7 @@ export const constantRoutes = [
     redirect: 'noRedirect',
     name: 'Charts',
     meta: {
-      title: 'charts',
+      title: '数据统计',
       icon: 'charts'
     },
     children: [

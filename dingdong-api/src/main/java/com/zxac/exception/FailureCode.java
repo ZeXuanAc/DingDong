@@ -12,6 +12,7 @@ public enum FailureCode {
     CODE600("600", "jedis is null, 请检查redis相关是否正常"),
     CODE601("601", "redis 更新错误"),
     CODE602("602", "jedis is null"),
+    CODE603("603", "jedis 删除key异常"),
 
     // 登陆相关错误
     CODE700("700", "登陆异常"),
@@ -55,6 +56,21 @@ public enum FailureCode {
     CODE796("796", "管理平台--获取用户信息失败--查询用户为空"),
     CODE797("797", "管理平台--登出用户失败"),
     CODE799("799", "管理平台--获取用户数异常"),
+
+    // city接口相关
+    CODE800("800", "管理平台--查询cityList异常"),
+    CODE810("810", "管理平台--新增city异常"),
+    CODE811("811", "管理平台--新增city失败--插入mysql数据异常"),
+    CODE812("812", "管理平台--新增city失败--请携带name和citycode"),
+    CODE813("813", "管理平台--新增city失败--该citycode已存在"),
+    CODE820("820", "管理平台--删除city异常"),
+    CODE821("821", "管理平台--删除city异常--删除mysql数据异常"),
+    CODE822("822", "管理平台--删除city失败--请携带正确citycode"),
+    CODE823("823", "管理平台--删除city失败--数据库无此id数据"),
+    CODE830("830", "管理平台--更新city异常"),
+    CODE831("831", "管理平台--更新city失败--更新mysql数据异常"),
+    CODE832("832", "管理平台--更新city失败--请携带正确cityId"),
+    CODE833("833", "管理平台--更新city失败--请携带正确citycode"),
 
 
     // 权限相关

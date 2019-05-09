@@ -14,14 +14,14 @@
     id, citycode, name, province, priority, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from city
     where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  <delete id="deleteByCitycode" parameterType="java.lang.String">
     delete from city
-    where id = #{id,jdbcType=INTEGER}
+    where citycode = #{citycode,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.zxac.model.City">
     insert into city (id, citycode, name, province, priority,
@@ -82,7 +82,7 @@
     update city
     <set>
       <if test="citycode != null">
-        name = #{citycode,jdbcType=VARCHAR},
+        citycode = #{citycode,jdbcType=VARCHAR},
       </if>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
@@ -113,10 +113,21 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <select id="getAll" resultMap="BaseResultMap">
+  <select id="getCityListByDto" parameterType="com.zxac.dto.CityDto" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from city
+    <where>
+      <if test="citycode != null and citycode != ''">
+        citycode = #{citycode}
+      </if>
+      <if test="name != null and name != ''">
+        AND name like CONCAT('%', #{name}, '%')
+      </if>
+      <if test="province != null and province != ''">
+        AND province like CONCAT('%', #{province}, '%')
+      </if>
+    </where>
   </select>
 
   <select id="citycodeNum" resultType="java.lang.Integer">

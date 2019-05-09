@@ -1,10 +1,15 @@
 package com.zxac.utils;
 
 import com.zxac.constant.Common;
+import com.zxac.exception.BusinessException;
+import com.zxac.exception.FailureCode;
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.Pipeline;
+
+import java.util.Set;
 
 
 @Slf4j
@@ -81,6 +86,33 @@ public final class RedisUtil {
             jedis.close();
         }
     }
+
+    /**
+     * 删除多个key
+     * @param pattern
+     */
+    public static void delKeys (String pattern) {
+        Jedis jedis = null;
+        try {
+            jedis = RedisUtil.getJedis();
+            if (jedis != null) {
+                Pipeline pipeline = jedis.pipelined();
+                Set<String> keys = jedis.keys(pattern);
+                String[] keysArr = new String[keys.size()];
+                pipeline.del(keys.toArray(keysArr));
+                pipeline.sync();
+            } else {
+                log.error("jedis is null");
+                throw new BusinessException(FailureCode.CODE600);
+            }
+        } catch (Exception e) {
+            log.error("删除redis key异常, pattern: ", pattern);
+            throw new BusinessException(FailureCode.CODE603);
+        } finally {
+            close(jedis);
+        }
+    }
+
 
     /**
      * 关闭jedisPool

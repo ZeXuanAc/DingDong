@@ -59,6 +59,9 @@ public class EquipmentStatusDto implements Serializable {
     private String createTimeStr; // 数据包生成时间
 
     public static EquipmentStatusDto accept (Equipment model, Integer buildingId, String citycode, String status, String createTime){
+        if (model == null) {
+            return null;
+        }
         EquipmentStatusDto dto = new EquipmentStatusDto();
         BeanUtils.copyProperties(model, dto);
         dto.setBuildingId(buildingId);
@@ -69,12 +72,18 @@ public class EquipmentStatusDto implements Serializable {
     }
 
     public static EquipmentStatusDto accept (Equipment model){
+        if (model == null) {
+            return null;
+        }
         EquipmentStatusDto dto = new EquipmentStatusDto();
         BeanUtils.copyProperties(model, dto);
         return dto;
     }
 
     public static List<EquipmentStatusDto> acceptList (List<Equipment> modelList){
+        if (modelList == null || modelList.isEmpty()) {
+            return null;
+        }
         return modelList.stream().map(EquipmentStatusDto::accept).collect(Collectors.toList());
     }
 }

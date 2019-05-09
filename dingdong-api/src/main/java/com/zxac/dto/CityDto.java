@@ -1,6 +1,7 @@
 package com.zxac.dto;
 
-import com.zxac.model.Building;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.zxac.model.City;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 
@@ -9,53 +10,42 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class BuildingDto implements Serializable {
+public class CityDto implements Serializable {
 
     private Integer id;
 
-    private String name;
-
     private String citycode;
 
-    private String cityName;
+    private String name;
 
-    private Integer eqNum;
-
-    private String longitude;
-
-    private String latitude;
+    private String province;
 
     private Integer priority;
 
-    private Double distance; // 单位为M
-
-    private String distanceStr;
-
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
-
-    public static BuildingDto accept (Building model){
+    public static CityDto accept (City model){
         if (model == null) {
             return null;
         }
-        BuildingDto dto = new BuildingDto();
+        CityDto dto = new CityDto();
         BeanUtils.copyProperties(model, dto);
         return dto;
     }
 
-    public static List<BuildingDto> acceptList (List<Building> modelList){
+    public static List<CityDto> acceptList (List<City> modelList){
         if (modelList == null || modelList.isEmpty()) {
             return null;
         }
-        return modelList.stream().map(BuildingDto::accept).collect(Collectors.toList());
+        return modelList.stream().map(CityDto::accept).collect(Collectors.toList());
     }
-
 }

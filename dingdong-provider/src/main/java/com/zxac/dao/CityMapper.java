@@ -1,15 +1,14 @@
 package com.zxac.dao;
 
 
+import com.zxac.dto.CityDto;
 import com.zxac.model.City;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 public interface CityMapper {
-    int deleteByPrimaryKey(Integer id);
-
-    int insert(City record);
+    int deleteByCitycode(@Param("citycode") String citycode);
 
     int insertSelective(City record);
 
@@ -17,9 +16,7 @@ public interface CityMapper {
 
     int updateByPrimaryKeySelective(City record);
 
-    int updateByPrimaryKey(City record);
-
-    List<City> getAll();
+    List<City> getCityListByDto(CityDto dto);
 
     Integer citycodeNum(@Param("citycode") String citycode);
 }

@@ -1,6 +1,6 @@
 import request from '../utils/request'
 
-export function cityNum(params) {
+export function cityInfo(params) {
   return request({
     url: '',
     method: 'get',
