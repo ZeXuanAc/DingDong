@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '../../api/user'
+import { getUserNum, login, logout, getInfo } from '../../api/user'
 import { getToken, setToken, removeToken } from '../../utils/auth'
 import router, { resetRouter } from '../../router'
 
@@ -7,7 +7,8 @@ const state = {
   name: '',
   avatar: '',
   introduction: '',
-  roles: []
+  roles: [],
+  userNum: '0'
 }
 
 const mutations = {
@@ -25,10 +26,27 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
+  },
+  SET_USERNUM: (state, userNum) => {
+    state.userNum = userNum
   }
 }
 
 const actions = {
+  // user getUserNum
+  getUserNum({ commit }) {
+    console.log('start store getUserNum')
+    return new Promise((resolve, reject) => {
+      getUserNum().then(response => {
+        commit('SET_USERNUM', response.data)
+        console.log('get api userNum : ' + response.data)
+        resolve(response.data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
   // user login
   login({ commit }, userInfo) {
     const { username, password } = userInfo

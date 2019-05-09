@@ -17,6 +17,17 @@ public class UserController {
     @Reference(application = "${dubbo.application.id}", url = "dubbo://localhost:12345")
     private UserService userService;
 
+
+    @GetMapping(value = "user/num")
+    public Result userNum(){
+        try {
+            return userService.userNum();
+        } catch (Exception e) {
+            log.warn("userNum: ", e);
+            throw new BusinessException(FailureCode.CODE799);
+        }
+    }
+
     @GetMapping(value = "autoLogin")
     public Result autoLogin(String token){
         try {

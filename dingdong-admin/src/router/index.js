@@ -25,7 +25,7 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('../views/dashboard/index'),
-      meta: { title: '首页', icon: 'dashboard' }
+      meta: { title: '首页', icon: 'home' }
     }]
   },
   {
@@ -35,7 +35,7 @@ export const constantRoutes = [
     name: 'Nested',
     meta: {
       title: '信息管理',
-      icon: 'nested'
+      icon: 'infoManage'
     },
     children: [
       {
@@ -62,7 +62,7 @@ export const constantRoutes = [
     name: 'Charts',
     meta: {
       title: 'charts',
-      icon: 'dashboard'
+      icon: 'charts'
     },
     children: [
       {
@@ -97,7 +97,7 @@ export const asyncRoutes = [
       path: 'index',
       name: 'City',
       component: () => import('../views/city/index'),
-      meta: { title: 'city管理', icon: 'dashboard', roles: ['admin'] }
+      meta: { title: 'city管理', icon: 'international', roles: ['admin'] }
     }]
   },
   {
@@ -108,7 +108,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'From',
         component: () => import('../views/eq-init/index'),
-        meta: { title: '设备初始化', icon: 'form', roles: ['admin', 'editor'] }
+        meta: { title: '设备初始化', icon: 'init', roles: ['admin'] }
       }
     ]
   },

@@ -11,6 +11,8 @@ public interface UserMapper {
 
     int updateByPrimaryKeySelective(User record);
 
+    int getAllCount();
+
     int selectCountByPhone(@Param("phone") String phone);
 
     User selectByPhonePassword(@Param("phone") String phone, @Param("password") String password);

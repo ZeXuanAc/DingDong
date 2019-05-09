@@ -7,6 +7,13 @@ public interface UserService {
 
 
     /**
+     * 用户数
+     * @return
+     */
+    Result userNum();
+
+
+    /**
      * 自动登陆，验证token是否存在，存在则登陆
      * @param token
      * @return

@@ -18,7 +18,7 @@
     update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from building
     where id = #{id,jdbcType=INTEGER}
@@ -29,11 +29,11 @@
   </delete>
   <insert id="insert" parameterType="com.zxac.model.Building">
     insert into building (id, name, citycode,
-      city_name, eq_num, longitude, 
+      city_name, eq_num, longitude,
       latitude, priority, create_time, update_time
       )
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{citycode,jdbcType=VARCHAR},
-      #{cityName,jdbcType=VARCHAR}, #{eqNum,jdbcType=INTEGER}, #{longitude,jdbcType=VARCHAR}, 
+      #{cityName,jdbcType=VARCHAR}, #{eqNum,jdbcType=INTEGER}, #{longitude,jdbcType=VARCHAR},
       #{latitude,jdbcType=VARCHAR}, #{priority,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
   </insert>
@@ -155,6 +155,9 @@
     select
     <include refid="Base_Column_List" />
     from building
-    where citycode = #{citycode,jdbcType=VARCHAR}
+    <if test="citycode != null and citycode != ''">
+      where citycode = #{citycode,jdbcType=VARCHAR}
+    </if>
+
   </select>
 </mapper>

@@ -48,10 +48,17 @@ public class CityEquipmentController {
         return Result.success(storeyList);
     }
 
+
+    @GetMapping(value = "equipment/all")
+    public Result getAllEquipment(){
+        List<Equipment> equipmentList = cityEquipmentService.getAllEquipment();
+        return Result.success(equipmentList);
+    }
+
     @GetMapping(value = "equipment/building")
     public Result getEquipmentByBuildingId(Integer buildingId){
-        List<Equipment> storeyList = cityEquipmentService.getEquipmentListByBuildingId(buildingId);
-        return Result.success(storeyList);
+        List<Equipment> equipmentList = cityEquipmentService.getEquipmentListByBuildingId(buildingId);
+        return Result.success(equipmentList);
     }
 
     @GetMapping(value = "equipment/storey")

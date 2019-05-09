@@ -51,7 +51,7 @@ public interface CityEquipmentService {
      * @param citycode
      * @return
      */
-    List<EquipmentStatusDto> getAllEquipment(String citycode);
+    List<EquipmentStatusDto> getAllEquipmentDto(String citycode);
 
     /**
      * 得到该楼层下的所有设备

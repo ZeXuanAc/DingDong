@@ -22,7 +22,6 @@ public class AdminController {
 
     @GetMapping(value = "backEnd/login")
     public Result autoLogin(HttpServletRequest request, String username, String password){
-        System.out.println("admin: " + username);
         try {
             Result result = adminService.login(username, password);
             if (result.getCode().equals(Common.SUCCESS_CODE)) {
@@ -39,7 +38,6 @@ public class AdminController {
 
     @GetMapping(value = "admin/userInfo")
     public Result userInfo(HttpServletRequest request, String token){
-        System.out.println("token : " + token);
         try {
             Integer uid = (Integer) request.getSession().getAttribute("uid");
             return adminService.userInfo(uid);

@@ -164,6 +164,8 @@
     select
     <include refid="Base_Column_List" />
     from storey
-    where building_id = #{buildingId,jdbcType=INTEGER}
+    <if test="buildingId != null and buildingId != 0">
+      where building_id = #{buildingId,jdbcType=INTEGER}
+    </if>
   </select>
 </mapper>

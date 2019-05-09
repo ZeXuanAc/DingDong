@@ -43,7 +43,7 @@ public class PracticeDataTask extends DynamicScheduledTask{
 
     @Override
     public void doTask() {
-        List<EquipmentStatusDto> equipmentStatusDtoList = cityEquipmentService.getAllEquipment("");
+        List<EquipmentStatusDto> equipmentStatusDtoList = cityEquipmentService.getAllEquipmentDto("");
         final List<EquipmentStatusDto> eqList = equipmentStatusDtoList.stream().filter(equipment -> equipment.getCondition().equals("1")).collect(Collectors.toList());
         int eqNum = eqList.size();
         if (eqNum > 0) {

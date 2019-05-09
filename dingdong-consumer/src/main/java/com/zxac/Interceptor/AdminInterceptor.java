@@ -16,7 +16,6 @@ public class AdminInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession();
         // 只有返回true才会继续向下执行，返回false取消当前请求
-        System.out.println("session : " + session.toString());
         String token = request.getHeader("X-Token");
         if (token == null || !token.equals(session.getAttribute("token"))) {
             throw new AuthException(FailureCode.CODE900);

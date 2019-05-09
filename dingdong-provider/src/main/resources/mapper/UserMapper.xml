@@ -113,6 +113,10 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
+  <select id="getAllCount" resultType="java.lang.Integer">
+    select count(*) from user
+  </select>
+
   <select id="selectCountByPhone" resultType="java.lang.Integer">
     select count(*) from user
     where phone = #{phone,jdbcType=VARCHAR}

@@ -1,5 +1,12 @@
 import request from '../utils/request'
 
+export function getUserNum() {
+  return request({
+    url: '/user/num',
+    method: 'get'
+  })
+}
+
 export function login(params) {
   return request({
     url: '/backEnd/login',

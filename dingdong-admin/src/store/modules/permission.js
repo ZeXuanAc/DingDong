@@ -6,7 +6,6 @@ import { asyncRoutes, constantRoutes } from '../../router'
  * @param route
  */
 function hasPermission(roles, route) {
-  console.log('hasPermission: role: ' + roles + ', route: ' + JSON.stringify(route))
   if (route.meta && route.meta.roles) {
     return roles.some(role => route.meta.roles.includes(role))
   } else {
@@ -49,15 +48,12 @@ const mutations = {
 
 const actions = {
   generateRoutes({ commit }, roles) {
-    console.log('generateRoutes : ' + roles)
     return new Promise(resolve => {
       let accessedRoutes
       if (roles.includes('admin')) {
         accessedRoutes = asyncRoutes || []
       } else {
-        console.log('开始获取role权限。。。')
         accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
-        console.log('动态获取的权限：' + JSON.stringify(accessedRoutes))
       }
       commit('SET_ROUTES', accessedRoutes)
       resolve(accessedRoutes)

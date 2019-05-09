@@ -37,6 +37,11 @@ public class UserServiceImpl implements UserService {
     private BuildingFollowMapper buildingFollowMapper;
 
     @Override
+    public Result userNum() {
+        return Result.success(userMapper.getAllCount());
+    }
+
+    @Override
     public Result autoLogin(String token) {
         Jedis jedis = null;
         Map<String, String> userMap;
