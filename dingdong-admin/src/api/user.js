@@ -2,7 +2,7 @@ import request from '../utils/request'
 
 export function getUserNum() {
   return request({
-    url: '/user/num',
+    url: '/admin/user/num',
     method: 'get'
   })
 }

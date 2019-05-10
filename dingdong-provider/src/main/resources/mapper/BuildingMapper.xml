@@ -158,6 +158,15 @@
     <if test="citycode != null and citycode != ''">
       where citycode = #{citycode,jdbcType=VARCHAR}
     </if>
+  </select>
 
+  <select id="getListByAdminId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from building b, admin_building ab
+    where b.id = ab.building_id
+    <if test="adminId != null and adminId != 0">
+      and ab.admin_id = #{adminId,jdbcType=INTEGER}
+    </if>
   </select>
 </mapper>

@@ -5,6 +5,8 @@ import com.zxac.dto.CityDto;
 import com.zxac.exception.BusinessException;
 import com.zxac.exception.FailureCode;
 import com.zxac.model.Result;
+import com.zxac.permission.Module;
+import com.zxac.permission.PermissionModule;
 import com.zxac.service.CityService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +21,8 @@ public class CityController {
     private CityService cityService;
 
 
-    @GetMapping(value = "city/insert")
+    @PermissionModule(belong = Module.ADMIN)
+    @GetMapping(value = "/admin/city/insert")
     public Result insert(CityDto dto) {
         try {
             return cityService.insert(dto);
@@ -29,7 +32,8 @@ public class CityController {
         }
     }
 
-    @GetMapping(value = "city/delete")
+    @PermissionModule(belong = Module.ADMIN)
+    @GetMapping(value = "/admin/city/delete")
     public Result delete(String citycode) {
         try {
             return cityService.delete(citycode);
@@ -39,7 +43,8 @@ public class CityController {
         }
     }
 
-    @GetMapping(value = "getCityList")
+    @PermissionModule(belong = Module.ADMIN)
+    @GetMapping(value = "admin/getCityList")
     public Result getCityList(@RequestParam(defaultValue = "1") int pageNum,
                               @RequestParam(defaultValue = "10") int pageSize,
                               CityDto dto){
@@ -51,7 +56,8 @@ public class CityController {
         }
     }
 
-    @GetMapping(value = "city/update")
+    @PermissionModule(belong = Module.ADMIN)
+    @GetMapping(value = "admin/city/update")
     public Result update(CityDto dto) {
         try {
             return cityService.update(dto);
@@ -59,6 +65,11 @@ public class CityController {
             log.error("city update : ", e);
             throw new BusinessException(FailureCode.CODE830);
         }
+    }
+
+    @GetMapping(value = "allCity")
+    public Result getAllCity(){
+        return cityService.getAll();
     }
 
     @GetMapping(value = "citycode/get")

@@ -2,7 +2,7 @@ import request from '../utils/request'
 
 export function storeyInfo() {
   return request({
-    url: '/storey',
+    url: 'admin/storey',
     method: 'get'
   })
 }

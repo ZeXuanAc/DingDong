@@ -1,8 +1,6 @@
 package com.zxac.service;
 
-import com.zxac.model.Storey;
-
-import java.util.List;
+import com.zxac.model.Result;
 
 public interface StoreyService {
 
@@ -11,7 +9,7 @@ public interface StoreyService {
      * @param buildingId
      * @return
      */
-    List<Storey> getStoreyList(Integer buildingId);
+    Result getStoreyList(Integer buildingId);
 
 
 }

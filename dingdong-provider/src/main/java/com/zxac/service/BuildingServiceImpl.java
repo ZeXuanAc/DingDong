@@ -1,9 +1,16 @@
 package com.zxac.service;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.zxac.dao.BuildingMapper;
 import com.zxac.dto.BuildingDto;
+import com.zxac.dto.CityDto;
+import com.zxac.exception.FailureCode;
 import com.zxac.model.Building;
+import com.zxac.model.City;
+import com.zxac.model.Result;
 import com.zxac.utils.DistanceUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,4 +52,33 @@ public class BuildingServiceImpl implements BuildingService {
         return dtoList;
     }
 
+
+    @Override
+    public Result getBuildingList(int pageNum, int pageSize, Integer adminId) {
+        if (adminId == null || adminId == 0) {
+            return Result.failure(FailureCode.CODE850);
+        }
+        Page<Object> page = PageHelper.startPage(pageNum, pageSize);
+        List<Building> buildingList = buildingMapper.getListByAdminId(adminId);
+        List<BuildingDto> dtoList = BuildingDto.acceptList(buildingList);
+        PageInfo pageInfo = new PageInfo(dtoList);
+        pageInfo.setPageNum(pageNum);
+        pageInfo.setTotal(page.getTotal());
+        return Result.success(pageInfo);
+    }
+
+    @Override
+    public Result insert(BuildingDto dto) {
+        return null;
+    }
+
+    @Override
+    public Result delete(Integer buildingId) {
+        return null;
+    }
+
+    @Override
+    public Result update(BuildingDto dto) {
+        return null;
+    }
 }

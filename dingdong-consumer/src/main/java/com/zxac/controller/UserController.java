@@ -18,7 +18,7 @@ public class UserController {
     private UserService userService;
 
 
-    @GetMapping(value = "user/num")
+    @GetMapping(value = "admin/user/num")
     public Result userNum(){
         try {
             return userService.userNum();

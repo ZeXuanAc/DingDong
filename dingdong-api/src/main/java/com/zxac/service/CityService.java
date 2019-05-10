@@ -39,4 +39,10 @@ public interface CityService {
      */
     Integer checkCityCode(String citycode);
 
+    /**
+     * 得到所有city信息
+     * @return
+     */
+    Result getAll();
+
 }

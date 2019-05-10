@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Service(interfaceClass = AdminService.class)
@@ -36,7 +37,10 @@ public class AdminServiceImpl implements AdminService {
         List<Admin> adminList = adminMapper.selectByNamePassword(name, password);
         if (adminList != null && adminList.size() == 1) {
             String token = UuidUtil.getUUID();
-            return Result.success(token, adminList.get(0).getId());
+            HashMap data = new HashMap();
+            data.put("adminId", adminList.get(0).getId());
+            data.put("role", adminList.get(0).getRoles());
+            return Result.success(token, data);
         } else {
             return Result.failure(FailureCode.CODE703);
         }

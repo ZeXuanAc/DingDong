@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 
 @RestController
 @Slf4j
@@ -21,12 +22,14 @@ public class AdminController {
     private AdminService adminService;
 
     @GetMapping(value = "backEnd/login")
-    public Result autoLogin(HttpServletRequest request, String username, String password){
+    public Result login(HttpServletRequest request, String username, String password){
         try {
             Result result = adminService.login(username, password);
             if (result.getCode().equals(Common.SUCCESS_CODE)) {
+                HashMap data = (HashMap) result.getData();
                 request.getSession().setAttribute("token", result.getMsg());
-                request.getSession().setAttribute("uid", result.getData());
+                request.getSession().setAttribute("adminId", data.get("adminId"));
+                request.getSession().setAttribute("role", data.get("role"));
             }
             return result;
         } catch (Exception e) {
@@ -39,8 +42,8 @@ public class AdminController {
     @GetMapping(value = "admin/userInfo")
     public Result userInfo(HttpServletRequest request, String token){
         try {
-            Integer uid = (Integer) request.getSession().getAttribute("uid");
-            return adminService.userInfo(uid);
+            Integer adminId = (Integer) request.getSession().getAttribute("adminId");
+            return adminService.userInfo(adminId);
         } catch (Exception e) {
             log.warn("admin userInfo: ", e);
             throw new BusinessException(FailureCode.CODE794);

@@ -21,17 +21,21 @@ public class BuildingDto implements Serializable {
 
     private String name;
 
-    private String citycode;
+    private String citycode; // 所在城市的citycode
 
-    private String cityName;
+    private String cityName; // 所在城市的名称
 
-    private Integer eqNum;
+    private Integer eqNum; // 设备数
 
-    private String longitude;
+    private Integer storeyNum; // 楼层数
 
-    private String latitude;
+    private Integer followUserNum; // 关注的用户数
 
-    private Integer priority;
+    private String longitude; // building 经度（暂无使用）
+
+    private String latitude; // building 纬度（暂无使用）
+
+    private Integer priority; // 优先级，在app展示building的时候用到
 
     private Double distance; // 单位为M
 

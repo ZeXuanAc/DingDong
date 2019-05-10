@@ -5,7 +5,7 @@ import com.zxac.config.UrlConfig;
 import com.zxac.constant.Common;
 import com.zxac.dto.EquipmentStatusDto;
 import com.zxac.model.Result;
-import com.zxac.service.CityEquipmentService;
+import com.zxac.service.EquipmentService;
 import com.zxac.utils.JsonUtil;
 import com.zxac.utils.ObjectUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -39,11 +39,11 @@ public class PracticeDataTask extends DynamicScheduledTask{
     private int[] statusArr = new int[200];
 
     @Reference(application = "${dubbo.application.id}", url = "dubbo://localhost:12345")
-    private CityEquipmentService cityEquipmentService;
+    private EquipmentService equipmentService;
 
     @Override
     public void doTask() {
-        List<EquipmentStatusDto> equipmentStatusDtoList = cityEquipmentService.getAllEquipmentDto("");
+        List<EquipmentStatusDto> equipmentStatusDtoList = equipmentService.getAllEquipmentDto("");
         final List<EquipmentStatusDto> eqList = equipmentStatusDtoList.stream().filter(equipment -> equipment.getCondition().equals("1")).collect(Collectors.toList());
         int eqNum = eqList.size();
         if (eqNum > 0) {

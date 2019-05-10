@@ -120,5 +120,10 @@ public class CityServiceImpl implements CityService {
         return cityMapper.citycodeNum(citycode);
     }
 
+    @Override
+    public Result getAll() {
+        return Result.success(cityMapper.getCityListByDto(new CityDto()));
+    }
+
 
 }

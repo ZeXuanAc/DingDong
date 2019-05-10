@@ -2,7 +2,7 @@ import request from '../utils/request'
 
 export function cityInfo(params) {
   return request({
-    url: 'getCityList',
+    url: '/admin/getCityList',
     method: 'get',
     params: params
   })
@@ -10,7 +10,7 @@ export function cityInfo(params) {
 
 export function cityInsert(params) {
   return request({
-    url: 'city/insert',
+    url: '/admin/city/insert',
     method: 'get',
     params: params
   })
@@ -18,7 +18,7 @@ export function cityInsert(params) {
 
 export function cityUpdate(params) {
   return request({
-    url: 'city/update',
+    url: '/admin/city/update',
     method: 'get',
     params: params
   })
@@ -26,7 +26,7 @@ export function cityUpdate(params) {
 
 export function cityDelete(params) {
   return request({
-    url: 'city/delete',
+    url: '/admin/city/delete',
     method: 'get',
     params: params
   })

@@ -22,4 +22,7 @@ public interface BuildingMapper {
     // 通过 citycode 得到符合的建筑
     List<Building> getListByCitycode(@Param("citycode") String citycode);
 
+    // 通过 admin_id 得到符合的building
+    List<Building> getListByAdminId(@Param("adminId") Integer adminId);
+
 }

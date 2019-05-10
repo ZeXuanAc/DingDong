@@ -18,7 +18,7 @@ public class AdminInterceptor extends HandlerInterceptorAdapter {
         // 只有返回true才会继续向下执行，返回false取消当前请求
         String token = request.getHeader("X-Token");
         if (token == null || !token.equals(session.getAttribute("token"))) {
-            throw new AuthException(FailureCode.CODE900);
+            throw new AuthException(FailureCode.CODE520);
         }
         return true;
     }

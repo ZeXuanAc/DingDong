@@ -3,6 +3,8 @@ package com.zxac.controller;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.zxac.model.Equipment;
 import com.zxac.model.Result;
+import com.zxac.permission.Module;
+import com.zxac.permission.PermissionModule;
 import com.zxac.service.EquipmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +20,8 @@ public class EquipmentController {
     private EquipmentService equipmentService;
 
 
-    @GetMapping(value = "equipment/all")
+    @PermissionModule(belong = Module.NORMAL)
+    @GetMapping(value = "admin/equipment/all")
     public Result getAllEquipment(){
         List<Equipment> equipmentList = equipmentService.getAllEquipment();
         return Result.success(equipmentList);

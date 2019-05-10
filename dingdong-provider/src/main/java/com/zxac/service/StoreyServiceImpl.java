@@ -2,6 +2,7 @@ package com.zxac.service;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.zxac.dao.StoreyMapper;
+import com.zxac.model.Result;
 import com.zxac.model.Storey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,10 @@ public class StoreyServiceImpl implements StoreyService {
      * @return
      */
     @Override
-    public List<Storey> getStoreyList(Integer buildingId) {
+    public Result getStoreyList(Integer buildingId) {
         List<Storey> storeyList = storeyMapper.getListByBuildingId(buildingId);
-        storeyList.sort(Comparator.comparing(Storey::getName));
-        return storeyList;
+        storeyList.sort(Comparator.comparing(Storey::getPriority));
+        return Result.success(storeyList);
     }
 
 

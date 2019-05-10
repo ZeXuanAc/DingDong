@@ -7,7 +7,9 @@ public enum FailureCode {
     CODE500("500", "服务器繁忙"),
     CODE501("501", "location地址格式错误"),
     CODE510("510", "参数绑定错误（请检查数据类型）"),
-
+    // 权限相关
+    CODE520("520", "admin平台无token参数或token失效"),
+    CODE530("530", "权限校验失败"),
 
     // redis 相关
     CODE600("600", "jedis is null, 请检查redis相关是否正常"),
@@ -58,7 +60,7 @@ public enum FailureCode {
     CODE797("797", "管理平台--登出用户失败"),
     CODE799("799", "管理平台--获取用户数异常"),
 
-    // city接口相关
+    // city接口相关 （800 ~ 849）
     CODE800("800", "管理平台--查询cityList异常"),
     CODE810("810", "管理平台--新增city异常"),
     CODE811("811", "管理平台--新增city失败--插入mysql数据异常"),
@@ -73,9 +75,17 @@ public enum FailureCode {
     CODE832("832", "管理平台--更新city失败--请携带正确cityId"),
     CODE833("833", "管理平台--更新city失败--请携带正确citycode"),
 
+    // building 相关 （850 ~ 899）
+    CODE850("850", "管理平台--查询building失败--请携带正确adminId"),
 
-    // 权限相关
-    CODE900("900", "admin平台无token参数或token失效"),
+
+    // storey 相关 （900 ~ 949）
+    CODE900("900", "管理平台--查询storey信息异常"),
+
+
+    // equipment 相关 (950 ~ 999 )
+
+
 
     ;
 
