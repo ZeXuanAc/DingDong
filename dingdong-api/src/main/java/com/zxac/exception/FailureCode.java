@@ -6,6 +6,7 @@ public enum FailureCode {
 
     CODE500("500", "服务器繁忙"),
     CODE501("501", "location地址格式错误"),
+    CODE510("510", "参数绑定错误（请检查数据类型）"),
 
 
     // redis 相关
