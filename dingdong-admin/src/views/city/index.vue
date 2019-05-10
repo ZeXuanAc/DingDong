@@ -70,7 +70,7 @@
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="getList" />
+    <pagination v-show="total > 0" :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
     <el-dialog title="新增city" :visible.sync="dialogInsertVisible">
       <el-form ref="insertForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
@@ -101,17 +101,6 @@
         </el-button>
       </div>
     </el-dialog>
-
-    <!--<el-dialog :visible.sync="dialogDeleteVisible" title="确定删除吗？">-->
-      <!--<div slot="footer" class="dialog-footer" style="width: 300px;">-->
-        <!--<el-button @click="dialogDeleteVisible = false">-->
-          <!--取消-->
-        <!--</el-button>-->
-        <!--<el-button type="danger" @click="deleteData()">-->
-          <!--确定-->
-        <!--</el-button>-->
-      <!--</div>-->
-    <!--</el-dialog>-->
   </div>
 </template>
 
