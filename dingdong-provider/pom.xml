@@ -61,6 +61,13 @@
         </dependency>
         <!-- mybatis druid数据库及分页  end  -->
 
+        <!-- pagehelper -->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>1.2.10</version>
+        </dependency>
+
         <!-- 热部署 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

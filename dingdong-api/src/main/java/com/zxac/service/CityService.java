@@ -23,7 +23,7 @@ public interface CityService {
      * 筛选得到城市列表
      * @return
      */
-    Result getCityListByDto(CityDto dto);
+    Result getCityListByDto(int pageNum, int pageSize, CityDto dto);
 
 
     /**

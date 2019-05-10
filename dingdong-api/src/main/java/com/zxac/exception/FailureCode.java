@@ -66,7 +66,7 @@ public enum FailureCode {
     CODE820("820", "管理平台--删除city异常"),
     CODE821("821", "管理平台--删除city异常--删除mysql数据异常"),
     CODE822("822", "管理平台--删除city失败--请携带正确citycode"),
-    CODE823("823", "管理平台--删除city失败--数据库无此id数据"),
+    CODE823("823", "管理平台--删除city失败--数据库无此citycode数据"),
     CODE830("830", "管理平台--更新city异常"),
     CODE831("831", "管理平台--更新city失败--更新mysql数据异常"),
     CODE832("832", "管理平台--更新city失败--请携带正确cityId"),

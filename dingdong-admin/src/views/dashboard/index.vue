@@ -32,7 +32,7 @@ const lineChartData = {
 }
 
 export default {
-  name: 'Dashboard',
+  name: '',
   components: {
     PanelGroup
   },

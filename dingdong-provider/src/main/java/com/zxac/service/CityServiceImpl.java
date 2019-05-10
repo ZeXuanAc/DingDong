@@ -1,6 +1,9 @@
 package com.zxac.service;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.zxac.constant.Common;
 import com.zxac.dao.CityMapper;
 import com.zxac.dto.CityDto;
@@ -75,10 +78,14 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
-    public Result getCityListByDto(CityDto dto) {
+    public Result getCityListByDto(int pageNum, int pageSize, CityDto dto) {
+        Page<Object> page = PageHelper.startPage(pageNum, pageSize);
         List<City> cityList = cityMapper.getCityListByDto(dto);
         List<CityDto> dtoList = CityDto.acceptList(cityList);
-        return Result.success(dtoList);
+        PageInfo pageInfo = new PageInfo(dtoList);
+        pageInfo.setPageNum(pageNum);
+        pageInfo.setTotal(page.getTotal());
+        return Result.success(pageInfo);
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.zxac.model.Result;
 import com.zxac.service.CityService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -39,9 +40,11 @@ public class CityController {
     }
 
     @GetMapping(value = "getCityList")
-    public Result getCityList(CityDto dto){
+    public Result getCityList(@RequestParam(defaultValue = "1") int pageNum,
+                              @RequestParam(defaultValue = "10") int pageSize,
+                              CityDto dto){
         try {
-            return cityService.getCityListByDto(dto);
+            return cityService.getCityListByDto(pageNum, pageSize, dto);
         } catch (Exception e) {
             log.error("getCityList : ", e);
             throw new BusinessException(FailureCode.CODE800);
