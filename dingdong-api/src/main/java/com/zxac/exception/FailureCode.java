@@ -78,7 +78,7 @@ public enum FailureCode {
     CODE833("833", "管理平台--更新city失败--请携带正确citycode"),
 
     // building 相关 （850 ~ 899）
-    CODE850("850", "管理平台--查询building失败--请携带正确adminId"),
+    CODE850("850", "管理平台--查询失败--请携带正确adminId"),
     CODE851("851", "管理平台--新增building失败--请携带完整参数"),
     CODE852("852", "管理平台--新增building异常"),
     CODE853("853", "管理平台--新增building失败--admin-building插入异常"),
@@ -88,10 +88,16 @@ public enum FailureCode {
     CODE865("865", "管理平台--更新building异常"),
     CODE866("866", "管理平台--获取buildingList信息（adminId）异常"),
 
-
     // storey 相关 （900 ~ 949）
     CODE900("900", "管理平台--查询storey信息异常"),
-
+    CODE904("904", "管理平台--查询storeyDto信息异常"),
+    CODE901("901", "管理平台--storey--请携带完整参数（buildingId, name, floor）"),
+    CODE902("902", "管理平台--storey--id不能为空"),
+    CODE903("903", "管理平台--删除storey失败--请先删除该storey相关equipment数据"),
+    CODE906("906", "管理平台--新增storey异常"),
+    CODE907("907", "管理平台--删除storey异常"),
+    CODE908("908", "管理平台--更新storey异常"),
+    CODE910("910", "管理平台--获取buildingName和floor的set异常"),
 
     // equipment 相关 (950 ~ 999 )
 

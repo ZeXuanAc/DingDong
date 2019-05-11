@@ -1,6 +1,7 @@
 package com.zxac.dao;
 
 
+import com.zxac.dto.StoreyDto;
 import com.zxac.model.Storey;
 import org.apache.ibatis.annotations.Param;
 
@@ -21,5 +22,7 @@ public interface StoreyMapper {
 
     List<Storey> getListByBuildingId(@Param("buildingId") Integer buildingId);
 
+    // 通过 admin_id 或 其他条件 得到符合的building
+    List<StoreyDto> getListByDto(StoreyDto dto);
 
 }

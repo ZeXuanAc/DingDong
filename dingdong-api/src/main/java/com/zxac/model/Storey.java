@@ -1,7 +1,13 @@
 package com.zxac.model;
 
+import com.zxac.dto.StoreyDto;
+import org.springframework.beans.BeanUtils;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Storey implements Serializable {
     private Integer id;
@@ -113,4 +119,21 @@ public class Storey implements Serializable {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
+
+    public static Storey accept (StoreyDto dto) {
+        if (dto == null) {
+            return new Storey();
+        }
+        Storey model = new Storey();
+        BeanUtils.copyProperties(dto, model);
+        return model;
+    }
+
+    public static List<Storey> acceptDto (List<StoreyDto> dtoList) {
+        if (dtoList == null || dtoList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return dtoList.stream().map(Storey::accept).collect(Collectors.toList());
+    }
+
 }

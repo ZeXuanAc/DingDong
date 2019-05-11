@@ -1,5 +1,6 @@
 package com.zxac.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.zxac.model.Storey;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
@@ -24,6 +25,8 @@ public class StoreyDto implements Serializable {
 
     private Integer buildingId; // 所属buildingId
 
+    private String buildingName; // 所属buildingName
+
     private String floor; // 所在楼层
 
     private String gender; // 所属性别类型
@@ -36,8 +39,12 @@ public class StoreyDto implements Serializable {
 
     private Integer priority; // 优先级，在app首页展示building的时候使用
 
+    private Integer adminId; // 所属adminId
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
 

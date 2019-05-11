@@ -80,8 +80,8 @@ public class BuildingServiceImpl implements BuildingService {
         if (ArrayUtils.contains(admin.getRoles().split(","), "admin")) {
             adminId = 0;
         }
-        Page<Object> page = PageHelper.startPage(pageNum, pageSize);
         dto.setAdminId(adminId);
+        Page<Object> page = PageHelper.startPage(pageNum, pageSize);
         List<Building> buildingList = buildingMapper.getListByAdminIdAndDto(dto);
         List<BuildingDto> dtoList = BuildingDto.acceptList(buildingList);
         PageInfo pageInfo = new PageInfo(dtoList);

@@ -38,7 +38,7 @@ public interface BuildingService {
     Result insert(BuildingDto dto);
 
     /**
-     * 删除city
+     * 删除building
      * @param buildingId
      * @return
      */
