@@ -119,7 +119,7 @@ export default {
       listLoading: true,
       listQuery: {
         pageNum: 1,
-        pageSize: 20,
+        pageSize: 10,
         name: undefined,
         citycode: undefined,
         province: undefined
@@ -151,6 +151,8 @@ export default {
           return v
         })
         this.total = response.data.total
+        this.listLoading = false
+      }).catch(() => {
         this.listLoading = false
       })
     },

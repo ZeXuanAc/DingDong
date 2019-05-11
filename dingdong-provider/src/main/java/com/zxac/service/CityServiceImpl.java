@@ -46,7 +46,7 @@ public class CityServiceImpl implements CityService {
         }
         int result = cityMapper.insertSelective(City.accept(dto));
         if (result != 1) {
-            throw new BusinessException(FailureCode.CODE811);
+            throw new BusinessException(FailureCode.CODE650);
         }
         return Result.success("新增city信息成功");
     }
@@ -62,7 +62,7 @@ public class CityServiceImpl implements CityService {
             result = cityMapper.deleteByCitycode(citycode);
         } catch (Exception e) {
             log.warn("city delete: ", e);
-            throw new BusinessException(FailureCode.CODE821);
+            throw new BusinessException(FailureCode.CODE651);
         }
         if (result == 1) {
             try {
@@ -102,7 +102,7 @@ public class CityServiceImpl implements CityService {
             result = cityMapper.updateByPrimaryKeySelective(City.accept(dto));
         } catch (Exception e) {
             log.warn("city update: ", e);
-            throw new BusinessException(FailureCode.CODE831);
+            throw new BusinessException(FailureCode.CODE652);
         }
         // 这里的result值指的是查询到的数据条数（mysql执行返回的是Affected rows），也就是数据没更新result返回值也是1。
         if (result == 1) {

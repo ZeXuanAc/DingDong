@@ -22,7 +22,7 @@ public class CityController {
 
 
     @PermissionModule(belong = Module.ADMIN)
-    @GetMapping(value = "/admin/city/insert")
+    @GetMapping(value = "admin/city/insert")
     public Result insert(CityDto dto) {
         try {
             return cityService.insert(dto);
@@ -33,7 +33,7 @@ public class CityController {
     }
 
     @PermissionModule(belong = Module.ADMIN)
-    @GetMapping(value = "/admin/city/delete")
+    @GetMapping(value = "admin/city/delete")
     public Result delete(String citycode) {
         try {
             return cityService.delete(citycode);

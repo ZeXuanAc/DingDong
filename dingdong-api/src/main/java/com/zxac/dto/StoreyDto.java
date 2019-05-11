@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,7 +43,7 @@ public class StoreyDto implements Serializable {
 
     public static StoreyDto accept (Storey model){
         if (model == null) {
-            return null;
+            return new StoreyDto();
         }
         StoreyDto dto = new StoreyDto();
         BeanUtils.copyProperties(model, dto);
@@ -51,7 +52,7 @@ public class StoreyDto implements Serializable {
 
     public static List<StoreyDto> acceptList (List<Storey> modelList){
         if (modelList == null || modelList.isEmpty()) {
-            return null;
+            return new ArrayList<>();
         }
         return modelList.stream().map(StoreyDto::accept).collect(Collectors.toList());
     }

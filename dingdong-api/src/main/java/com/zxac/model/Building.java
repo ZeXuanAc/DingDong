@@ -1,7 +1,13 @@
 package com.zxac.model;
 
+import com.zxac.dto.BuildingDto;
+import org.springframework.beans.BeanUtils;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Building implements Serializable {
     private Integer id;
@@ -102,5 +108,21 @@ public class Building implements Serializable {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public static Building accept (BuildingDto dto) {
+        if (dto == null) {
+            return new Building();
+        }
+        Building model = new Building();
+        BeanUtils.copyProperties(dto, model);
+        return model;
+    }
+
+    public static List<Building> acceptDto (List<BuildingDto> dtoList) {
+        if (dtoList == null || dtoList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return dtoList.stream().map(Building::accept).collect(Collectors.toList());
     }
 }

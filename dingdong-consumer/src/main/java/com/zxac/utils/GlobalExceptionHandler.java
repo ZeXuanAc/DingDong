@@ -24,12 +24,12 @@ public class GlobalExceptionHandler {
     public <T> Result<?> defaultExceptionHandler(HttpServletRequest request, Exception e) {
         e.printStackTrace();
         if(e instanceof BusinessException) {
-            log.error("业务异常：" + e.getMessage());
+            log.warn("业务异常：" + e.getMessage());
             BusinessException businessException = (BusinessException)e;
             return Result.failure(businessException.getCode(), businessException.getMessage());
         }
         if(e instanceof AuthException) {
-            log.warn("权限异常：" + e.getMessage());
+//            log.warn("权限异常：" + e.getMessage());
             AuthException authException = (AuthException)e;
             return Result.failure(authException.getCode(), authException.getMessage());
         }

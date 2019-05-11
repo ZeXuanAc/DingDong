@@ -71,14 +71,12 @@ const actions = {
       getInfo(state.token).then(response => {
         const { data } = response
 
-        console.log('getInfo response data: ' + JSON.stringify(data))
         if (!data) {
           reject('Verification failed, please Login again.')
         }
 
         const { id, roles, name, avatar, introduction } = data
 
-        console.log('getInfo response roles: ' + roles)
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
           reject('getInfo: roles must be a non-null array!')

@@ -17,6 +17,11 @@ public enum FailureCode {
     CODE602("602", "jedis is null"),
     CODE603("603", "jedis 删除key异常"),
 
+    // 通用
+    CODE650("650", "管理平台--新增数据失败--mysql插入异常"),
+    CODE651("651", "管理平台--删除数据失败--mysql删除异常"),
+    CODE652("652", "管理平台--更新数据失败--mysql更新异常"),
+
     // 登陆相关错误
     CODE700("700", "登陆异常"),
     CODE701("701", "redis token不存在或者过期"),
@@ -63,20 +68,25 @@ public enum FailureCode {
     // city接口相关 （800 ~ 849）
     CODE800("800", "管理平台--查询cityList异常"),
     CODE810("810", "管理平台--新增city异常"),
-    CODE811("811", "管理平台--新增city失败--插入mysql数据异常"),
     CODE812("812", "管理平台--新增city失败--请携带name和citycode"),
     CODE813("813", "管理平台--新增city失败--该citycode已存在"),
     CODE820("820", "管理平台--删除city异常"),
-    CODE821("821", "管理平台--删除city异常--删除mysql数据异常"),
     CODE822("822", "管理平台--删除city失败--请携带正确citycode"),
     CODE823("823", "管理平台--删除city失败--数据库无此citycode数据"),
     CODE830("830", "管理平台--更新city异常"),
-    CODE831("831", "管理平台--更新city失败--更新mysql数据异常"),
     CODE832("832", "管理平台--更新city失败--请携带正确cityId"),
     CODE833("833", "管理平台--更新city失败--请携带正确citycode"),
 
     // building 相关 （850 ~ 899）
     CODE850("850", "管理平台--查询building失败--请携带正确adminId"),
+    CODE851("851", "管理平台--新增building失败--请携带完整参数"),
+    CODE852("852", "管理平台--新增building异常"),
+    CODE853("853", "管理平台--新增building失败--admin-building插入异常"),
+    CODE858("858", "管理平台--buildingId不能为空"),
+    CODE860("860", "管理平台--删除building失败--请先删除该building相关storey数据"),
+    CODE861("861", "管理平台--删除building异常"),
+    CODE865("865", "管理平台--更新building异常"),
+    CODE866("866", "管理平台--获取buildingList信息（adminId）异常"),
 
 
     // storey 相关 （900 ~ 949）

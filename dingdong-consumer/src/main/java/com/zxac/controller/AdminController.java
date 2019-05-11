@@ -50,7 +50,7 @@ public class AdminController {
         }
     }
 
-    @GetMapping(value = "admin/logout")
+    @GetMapping(value = "backEnd/logout")
     public Result logout(HttpServletRequest request){
         try {
             request.getSession().removeAttribute("token");

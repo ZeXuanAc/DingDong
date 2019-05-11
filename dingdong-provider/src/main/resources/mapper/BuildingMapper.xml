@@ -27,17 +27,7 @@
     delete from building
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.zxac.model.Building">
-    insert into building (id, name, citycode,
-      city_name, eq_num, longitude,
-      latitude, priority, create_time, update_time
-      )
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{citycode,jdbcType=VARCHAR},
-      #{cityName,jdbcType=VARCHAR}, #{eqNum,jdbcType=INTEGER}, #{longitude,jdbcType=VARCHAR},
-      #{latitude,jdbcType=VARCHAR}, #{priority,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
-      )
-  </insert>
-  <insert id="insertSelective" parameterType="com.zxac.model.Building">
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.zxac.model.Building">
     insert into building
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -137,19 +127,6 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.zxac.model.Building">
-    update building
-    set name = #{name,jdbcType=VARCHAR},
-      citycode = #{citycode,jdbcType=VARCHAR},
-      city_name = #{cityName,jdbcType=VARCHAR},
-      eq_num = #{eqNum,jdbcType=INTEGER},
-      longitude = #{longitude,jdbcType=VARCHAR},
-      latitude = #{latitude,jdbcType=VARCHAR},
-      priority = #{priority,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
 
   <select id="getListByCitycode" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
@@ -160,13 +137,23 @@
     </if>
   </select>
 
-  <select id="getListByAdminId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="getListByAdminIdAndDto" parameterType="com.zxac.dto.BuildingDto" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List" />
+    b.id, b.name, b.citycode, b.city_name, b.eq_num, b.longitude, b.latitude, b.priority, b.create_time,
+    b.update_time
     from building b, admin_building ab
     where b.id = ab.building_id
     <if test="adminId != null and adminId != 0">
       and ab.admin_id = #{adminId,jdbcType=INTEGER}
+    </if>
+    <if test="name != null and name != ''">
+      and b.name like CONCAT('%', #{name}, '%')
+    </if>
+    <if test="citycode != null and citycode != ''">
+      and b.citycode like CONCAT('%', #{citycode}, '%')
+    </if>
+    <if test="cityName != null and cityName != ''">
+      and b.city_name like CONCAT('%', #{cityName}, '%')
     </if>
   </select>
 </mapper>

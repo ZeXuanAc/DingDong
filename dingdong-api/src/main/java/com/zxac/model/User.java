@@ -3,6 +3,7 @@ package com.zxac.model;
 import com.zxac.dto.UserDto;
 import org.springframework.beans.BeanUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -101,7 +102,7 @@ public class User {
 
     public static User accept (UserDto dto) {
         if (dto == null) {
-            return null;
+            return new User();
         }
         User model = new User();
         BeanUtils.copyProperties(dto, model);
@@ -110,7 +111,7 @@ public class User {
 
     public static List<User> acceptDto (List<UserDto> dtoList) {
         if (dtoList == null || dtoList.isEmpty()) {
-            return null;
+            return new ArrayList<>();
         }
         return dtoList.stream().map(User::accept).collect(Collectors.toList());
     }

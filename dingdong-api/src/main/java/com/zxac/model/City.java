@@ -4,6 +4,7 @@ import com.zxac.dto.CityDto;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -81,7 +82,7 @@ public class City implements Serializable {
 
     public static City accept (CityDto dto) {
         if (dto == null) {
-            return null;
+            return new City();
         }
         City model = new City();
         BeanUtils.copyProperties(dto, model);
@@ -90,7 +91,7 @@ public class City implements Serializable {
 
     public static List<City> acceptDto (List<CityDto> dtoList) {
         if (dtoList == null || dtoList.isEmpty()) {
-            return null;
+            return new ArrayList<>();
         }
         return dtoList.stream().map(City::accept).collect(Collectors.toList());
     }

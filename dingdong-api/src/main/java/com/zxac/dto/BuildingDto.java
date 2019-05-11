@@ -1,10 +1,12 @@
 package com.zxac.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.zxac.model.Building;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,14 +43,18 @@ public class BuildingDto implements Serializable {
 
     private String distanceStr;
 
+    private Integer adminId; // 相关联的adminId
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
 
     public static BuildingDto accept (Building model){
         if (model == null) {
-            return null;
+            return new BuildingDto();
         }
         BuildingDto dto = new BuildingDto();
         BeanUtils.copyProperties(model, dto);
@@ -57,7 +63,7 @@ public class BuildingDto implements Serializable {
 
     public static List<BuildingDto> acceptList (List<Building> modelList){
         if (modelList == null || modelList.isEmpty()) {
-            return null;
+            return new ArrayList<>();
         }
         return modelList.stream().map(BuildingDto::accept).collect(Collectors.toList());
     }

@@ -6,6 +6,7 @@ import lombok.*;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,7 +74,7 @@ public class EquipmentStatusDto implements Serializable {
 
     public static EquipmentStatusDto accept (Equipment model){
         if (model == null) {
-            return null;
+            return new EquipmentStatusDto();
         }
         EquipmentStatusDto dto = new EquipmentStatusDto();
         BeanUtils.copyProperties(model, dto);
@@ -82,7 +83,7 @@ public class EquipmentStatusDto implements Serializable {
 
     public static List<EquipmentStatusDto> acceptList (List<Equipment> modelList){
         if (modelList == null || modelList.isEmpty()) {
-            return null;
+            return new ArrayList<>();
         }
         return modelList.stream().map(EquipmentStatusDto::accept).collect(Collectors.toList());
     }

@@ -40,6 +40,10 @@
             <artifactId>dubbo-spring-boot-starter</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
 
         <!-- mybatis druid数据库及分页  start  -->
         <dependency>

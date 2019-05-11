@@ -17,10 +17,18 @@ public interface BuildingService {
 
     /**
      * 得到adminId下的building信息，当admin的role为admin的时候获取全部信息
-     * @param adminId
+     * @param dto
      * @return
      */
-    Result getBuildingList(int pageNum, int pageSize, Integer adminId);
+    Result getBuildingList(int pageNum, int pageSize, BuildingDto dto);
+
+
+    /**
+     * 得到相关楼层的信息
+     * @param buildingId
+     * @return
+     */
+    Result getBuildingStoreyList(Integer buildingId);
 
     /**
      * 新增数据
