@@ -73,7 +73,7 @@ public class StoreyController {
         try {
             return storeyService.update(dto);
         } catch (Exception e) {
-            log.error("StoreyDto update : ", e);
+            log.error("storey update : ", e);
             throw new BusinessException(FailureCode.CODE908);
         }
     }

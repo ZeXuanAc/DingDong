@@ -1,7 +1,9 @@
 package com.zxac.service;
 
+import com.zxac.dto.EquipmentDto;
 import com.zxac.dto.EquipmentStatusDto;
 import com.zxac.model.Equipment;
+import com.zxac.model.Result;
 
 import java.util.List;
 
@@ -37,5 +39,36 @@ public interface EquipmentService {
      * @return
      */
     List<EquipmentStatusDto> getAllEquipmentDto(String citycode);
+
+
+    /**
+     * 得到adminId下的equipment信息，当admin的role为admin的时候获取全部信息
+     * @param dto
+     * @return
+     */
+    Result getEquipmentListByAdminIdDto(int pageNum, int pageSize, EquipmentDto dto);
+
+
+    /**
+     * 新增数据
+     * @param dto
+     * @return
+     */
+    Result insert(EquipmentDto dto);
+
+    /**
+     * 删除equipment
+     * @param eqId
+     * @return
+     */
+    Result delete(Integer eqId);
+
+    /**
+     * 更新数据
+     * @param dto
+     * @return
+     */
+    Result update(EquipmentDto dto);
+
 
 }

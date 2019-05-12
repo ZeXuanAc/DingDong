@@ -13,7 +13,7 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
-  <resultMap id="DtoResultMap" type="com.zxac.dto.EquipmentStatusDto">
+  <resultMap id="StatusDtoResultMap" type="com.zxac.dto.EquipmentStatusDto">
     <id column="eq_id" jdbcType="INTEGER" property="eqId" />
     <result column="eq_name" jdbcType="VARCHAR" property="eqName" />
     <result column="storey_id" jdbcType="INTEGER" property="storeyId" />
@@ -30,6 +30,20 @@
     <result column="longitude" jdbcType="VARCHAR" property="longitude" />
     <result column="priority" jdbcType="INTEGER" property="priority" />
     <result column="storey_priority" jdbcType="INTEGER" property="storeyPriority" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <resultMap id="DtoResultMap" type="com.zxac.dto.EquipmentDto">
+    <id column="eq_id" jdbcType="INTEGER" property="eqId" />
+    <result column="eq_name" jdbcType="VARCHAR" property="eqName" />
+    <result column="storey_id" jdbcType="INTEGER" property="storeyId" />
+    <result column="storey_name" jdbcType="VARCHAR" property="storeyName" />
+    <result column="floor" jdbcType="VARCHAR" property="floor" />
+    <result column="storey_gender" jdbcType="VARCHAR" property="storeyGender" />
+    <result column="building_id" jdbcType="INTEGER" property="buildingId" />
+    <result column="building_name" jdbcType="VARCHAR" property="buildingName" />
+    <result column="condition" jdbcType="VARCHAR" property="condition" />
+    <result column="priority" jdbcType="INTEGER" property="priority" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
     id, name, storey_id, address, `condition`, latitude, longitude, priority, create_time, update_time
@@ -44,16 +58,6 @@
     delete from equipment
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.zxac.model.Equipment">
-    insert into equipment (id, name, storey_id,
-      address, condition, latitude,
-      longitude, priority, create_time, update_time
-      )
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{storeyId,jdbcType=INTEGER},
-      #{address,jdbcType=VARCHAR}, #{condition,jdbcType=VARCHAR}, #{latitude,jdbcType=VARCHAR},
-      #{longitude,jdbcType=VARCHAR}, #{priority,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
-      )
-  </insert>
   <insert id="insertSelective" parameterType="com.zxac.model.Equipment">
     insert into equipment
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -70,7 +74,7 @@
         address,
       </if>
       <if test="condition != null">
-        condition,
+        `condition`,
       </if>
       <if test="latitude != null">
         latitude,
@@ -134,7 +138,7 @@
         address = #{address,jdbcType=VARCHAR},
       </if>
       <if test="condition != null">
-        condition = #{condition,jdbcType=VARCHAR},
+        `condition` = #{condition,jdbcType=VARCHAR},
       </if>
       <if test="latitude != null">
         latitude = #{latitude,jdbcType=VARCHAR},
@@ -154,20 +158,6 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.zxac.model.Equipment">
-    update equipment
-    set name = #{name,jdbcType=VARCHAR},
-      storey_id = #{storeyId,jdbcType=INTEGER},
-      address = #{address,jdbcType=VARCHAR},
-      condition = #{condition,jdbcType=VARCHAR},
-      latitude = #{latitude,jdbcType=VARCHAR},
-      longitude = #{longitude,jdbcType=VARCHAR},
-      priority = #{priority,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-
 
   <select id="getAll" resultMap="BaseResultMap">
     select
@@ -175,7 +165,7 @@
     from equipment
   </select>
 
-  <select id="getEqDtoList" parameterType="java.lang.String" resultMap="DtoResultMap">
+  <select id="getEqDtoList" parameterType="java.lang.String" resultMap="StatusDtoResultMap">
     SELECT b.name as building_name, b.citycode, b.city_name, a.* from building b,
     (select s.building_id, e.storey_id, s.name as storey_name, s.floor, s.gender as storey_gender, s.latitude, s.longitude, e.id as eq_id, e.name as eq_Name, e.address, e.condition, e.priority, s.priority as storey_priority from storey s, equipment e where s.id = e.storey_id) as a
     where b.id = a.building_id
@@ -197,4 +187,34 @@
     from equipment
     where storey_id in (SELECT id from storey where building_id = #{buildingId,jdbcType=INTEGER});
   </select>
+
+  <select id="getEquipmentListByAdminIdDto" parameterType="com.zxac.dto.EquipmentDto" resultMap="DtoResultMap">
+    select e.id as eq_id, e.name as eq_name, e.storey_id, e.`condition`, e.priority, s.name as storey_name, s.floor,
+      s.gender as storey_gender, b.id as building_id, b.name as building_name, e.update_time
+    from equipment e, storey s, building b, admin_building ab
+    where ab.building_id = b.id and s.building_id = b.id and e.storey_id = s.id
+    <if test="adminId != null and adminId != 0">
+      and ab.admin_id = #{adminId,jdbcType=INTEGER}
+    </if>
+    <if test="eqName != null and eqName != ''">
+      and e.name like CONCAT('%', #{eqName}, '%')
+    </if>
+    <if test="buildingName != null and buildingName != ''">
+      and b.name = #{buildingName}
+    </if>
+    <if test="storeyName != null and storeyName != ''">
+      and s.name = #{storeyName}
+    </if>
+    <if test="floor != null and floor != ''">
+      and s.floor = #{floor}
+    </if>
+    <if test="storeyGender != null and storeyGender != ''">
+      and s.gender = #{storeyGender}
+    </if>
+    <if test="condition != null and condition != ''">
+      and e.condition = #{condition}
+    </if>
+    order by update_time desc
+  </select>
+
 </mapper>

@@ -1,7 +1,13 @@
 package com.zxac.model;
 
+import com.zxac.dto.EquipmentDto;
+import org.springframework.beans.BeanUtils;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Equipment implements Serializable {
     private Integer id;
@@ -103,4 +109,23 @@ public class Equipment implements Serializable {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
+
+    public static Equipment accept (EquipmentDto dto) {
+        if (dto == null) {
+            return new Equipment();
+        }
+        Equipment model = new Equipment();
+        BeanUtils.copyProperties(dto, model);
+        model.setName(dto.getEqName());
+        model.setId(dto.getEqId());
+        return model;
+    }
+
+    public static List<Equipment> acceptDto (List<EquipmentDto> dtoList) {
+        if (dtoList == null || dtoList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return dtoList.stream().map(Equipment::accept).collect(Collectors.toList());
+    }
+
 }

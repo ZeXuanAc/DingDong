@@ -1,5 +1,6 @@
 package com.zxac.dao;
 
+import com.zxac.dto.EquipmentDto;
 import com.zxac.model.Equipment;
 import com.zxac.dto.EquipmentStatusDto;
 import org.apache.ibatis.annotations.Param;
@@ -9,15 +10,11 @@ import java.util.List;
 public interface EquipmentMapper {
     int deleteByPrimaryKey(Integer id);
 
-    int insert(Equipment record);
-
     int insertSelective(Equipment record);
 
     Equipment selectByPrimaryKey(Integer id);
 
     int updateByPrimaryKeySelective(Equipment record);
-
-    int updateByPrimaryKey(Equipment record);
 
     List<Equipment> getAll();
 
@@ -29,4 +26,7 @@ public interface EquipmentMapper {
 
     // 通过citycode得到该设备的所有信息
     List<EquipmentStatusDto> getEqDtoList(@Param("citycode") String citycode);
+
+    // 通过adminId和dto信息得到equipment
+    List<EquipmentDto> getEquipmentListByAdminIdDto(EquipmentDto dto);
 }

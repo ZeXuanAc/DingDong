@@ -153,7 +153,6 @@ export default {
       total: 0,
       buildingSet: new Set([]),
       floorSet: new Set([]),
-      storeyList: null,
       listLoading: true,
       listQuery: {
         pageNum: 1,
@@ -208,7 +207,7 @@ export default {
       this.getList()
     }).catch(e => {
       this.$message({
-        message: '获取buildingNameSet失败',
+        message: '获取buildingSet失败',
         type: 'danger'
       })
     })
@@ -253,7 +252,7 @@ export default {
         buildingId: undefined,
         name: '',
         floor: '',
-        gender: 0,
+        gender: '',
         eqNum: 0,
         priority: 0,
         latitude: '',
@@ -270,6 +269,7 @@ export default {
         .then(_ => {
           storeyDelete({ id: row.id }).then(response => {
             store.dispatch('storey/getStoreyNum')
+            this.getList()
             this.$notify({
               title: '成功',
               message: response.msg,
@@ -277,7 +277,6 @@ export default {
               duration: 1500
             })
           })
-          this.getList()
         })
         .catch(_ => {})
     },

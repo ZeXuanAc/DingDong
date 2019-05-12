@@ -90,7 +90,7 @@
           <el-input v-model="temp.cityName" placeholder="cityName" />
         </el-form-item>
         <el-form-item label="设备数量" prop="eqNum">
-          <el-input v-model="temp.eqNum" placeholder="eqNum" type="number" />
+          <el-input v-model="temp.eqNum" :disabled="dialogStatus === 'create'" placeholder="eqNum" type="number" />
         </el-form-item>
         <el-form-item label="优先级" prop="priority">
           <el-input v-model="temp.priority" placeholder="priority" type="number" />
@@ -165,7 +165,15 @@ export default {
           { required: true, message: 'cityName is required', trigger: 'change' }
         ]
       },
-      temp: {},
+      temp: {
+        citycode: '',
+        name: '',
+        cityName: '',
+        priority: 0,
+        eqNum: 0,
+        latitude: '',
+        longitude: ''
+      },
       dialogInsertOrUpdateVisible: false,
       dialogStoreyVisible: false,
       textMap: {
@@ -237,6 +245,7 @@ export default {
       this.$confirm('确认删除？')
         .then(_ => {
           buildingDelete({ id: row.id }).then(response => {
+            this.getList()
             store.dispatch('building/getBuildingNum')
             this.$notify({
               title: '成功',
@@ -245,7 +254,6 @@ export default {
               duration: 1500
             })
           })
-          this.getList()
         })
         .catch(_ => {})
     },

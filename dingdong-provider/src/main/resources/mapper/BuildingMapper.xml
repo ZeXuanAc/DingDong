@@ -155,5 +155,6 @@
     <if test="cityName != null and cityName != ''">
       and b.city_name like CONCAT('%', #{cityName}, '%')
     </if>
+    order by update_time desc
   </select>
 </mapper>

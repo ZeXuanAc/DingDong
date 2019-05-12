@@ -7,6 +7,7 @@ import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,6 +59,8 @@ public class EquipmentStatusDto implements Serializable {
     private Integer storeyPriority; // 楼层优先级
 
     private String createTimeStr; // 数据包生成时间
+
+    private Date updateTime; // 最近更新时间
 
     public static EquipmentStatusDto accept (Equipment model, Integer buildingId, String citycode, String status, String createTime){
         if (model == null) {
