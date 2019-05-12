@@ -22,4 +22,6 @@ public interface BuildingMapper {
     // 通过 admin_id 或 其他条件 得到符合的building
     List<Building> getListByAdminIdAndDto(BuildingDto dto);
 
+    List<String> getCitycodeList();
+
 }

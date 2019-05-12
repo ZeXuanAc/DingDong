@@ -94,7 +94,7 @@ class _MyAppState extends State<MyApp>{
         StorageUtil.get(storageToken).then((val){
             if (val != null) {
                 // todo 验证本地token，存在则返回用户信息，不存在则转至登录页登陆
-                print("login(1)---> 获取本地token");
+                print("login(1)---> 获取本地token : " + val);
                 autoLogin(val).then((result){
                    if(result['code'] == "200") {
                        Application.userInfo = result['data'];

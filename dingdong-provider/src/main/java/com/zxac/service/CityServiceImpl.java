@@ -5,25 +5,24 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zxac.constant.Common;
+import com.zxac.dao.BuildingMapper;
 import com.zxac.dao.CityMapper;
 import com.zxac.dto.CityDto;
 import com.zxac.exception.BusinessException;
 import com.zxac.exception.FailureCode;
+import com.zxac.model.Building;
 import com.zxac.model.City;
 import com.zxac.model.Result;
 import com.zxac.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Fail;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.Pipeline;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service(interfaceClass = CityService.class)
 @Component
@@ -32,6 +31,9 @@ public class CityServiceImpl implements CityService {
 
     @Autowired
     private CityMapper cityMapper;
+
+    @Autowired
+    private BuildingMapper buildingMapper;
 
 
     @Override
@@ -122,7 +124,12 @@ public class CityServiceImpl implements CityService {
 
     @Override
     public Result getAll() {
-        return Result.success(cityMapper.getCityListByDto(new CityDto()));
+        List<City> cityList = cityMapper.getCityListByDto(new CityDto());
+        cityList.sort(Comparator.comparing(City::getPriority).reversed());
+        List<String> citycodeList = buildingMapper.getCitycodeList();
+        // 去除没有下属没有building的city
+        cityList = cityList.stream().filter(city -> ArrayUtils.contains(citycodeList.toArray(), city.getCitycode())).collect(Collectors.toList());
+        return Result.success(cityList);
     }
 
 

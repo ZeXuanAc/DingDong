@@ -52,6 +52,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     Widget build(BuildContext context) {
         ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
 
+        print("build eqMap : " + eqMap.toString());
         if (eqMap == null || eqMap['data'] == null) {
             _toastMsg("网络开了小差, 请检查网络", home_page_timeout);
             if (Application.loadingAnimation != null && nowTime != null && nowTime.difference(animationTime).inSeconds >= 1) {
@@ -104,6 +105,22 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     }
 
     Widget _buildBodyContent () {
+        if (eqMap['data'].isEmpty) {
+            return Stack(
+                children: <Widget>[
+                    _buildTopHeader(cityBuildingMap['name']),
+                    Center(
+                        child: Text("你要的目前没有哦~",
+                            style: TextStyle(
+                                fontSize: 20.0,
+                                color: Colors.blue,
+                                shadows: [Shadow(color: Colors.lightBlueAccent, offset: Offset(0.2, 0.2), blurRadius: 5)], // 阴影
+                            ),
+                        )
+                    ),
+                ],
+            );
+        }
         if (eqMap['data'][eqMap['data'].keys.elementAt(0)][0]['buildingId'].toString() != cityBuildingMap['id'].toString()) {
             _startLoadingAnimation();
             return Stack(
@@ -303,6 +320,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
             if (citycode != "-1" && getBuildingUrlFlag) {
                 print("8------本地buildingMap不存在或不为该city下，开始获取该city下的最近building");
                 String latlng = location.latitude.toString() + "," + location.longitude.toString();
+                print("citycode: " + citycode + ", latlng: " + latlng);
                 getBuildingUrl(citycode, latlng).then((val){
                     if (val != null && val['data'] != "" && mounted) {
                         print("8.1------获取最近的building成功, 为: " + val['data'][0].toString());
@@ -319,6 +337,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
                         ToastUtil.toastNoBuilding();
                     }
                 }).catchError((e) {
+                    ToastUtil.toastMsg("获取最近的building失败");
                     LogUtil.e("homt_page._getAllBuilding: ", "${e.toString()}");     // Finally, callback fires.
                 });
             }
@@ -366,7 +385,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
     // 获取是否关注初始值并初始化
     void _initFavorite(uid, buildingId) {
-        print("初始化favorite");
+        print("初始化favorite：" + Application.userInfo.toString());
         followBuildingCount(Application.userInfo['id'], cityBuildingMap['id']).then((val) {
             if (val != null && val['code'] == "200") {
                 setState(() {
@@ -446,7 +465,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     // 进行城市选择
     void _cityOption () {
         onOwnPage = false;
-        print("进入city route页");
         Future future = Application.router.navigateTo(context, "/cityOptions");
         future.then((value) {
             print('city route 返回页面');

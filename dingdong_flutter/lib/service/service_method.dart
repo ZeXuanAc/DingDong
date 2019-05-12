@@ -7,6 +7,7 @@ import '../config/service_url.dart';
 Future getHomePageContentUrl(citycode, buildingId, gender) async{
     Response response;
     Dio dio = new Dio();
+    print("getHomePageContentUrl : citycode: " + citycode.toString() + ", buildingId: " + buildingId.toString() + ", gender: " + gender.toString());
     var data = {'citycode': citycode,'buildingId': buildingId, "gender": gender};
     response = await dio.get(servicePath['homePageContext'], queryParameters: data);
     if(response.statusCode == 200){
@@ -21,6 +22,7 @@ Future getBuildingUrl (citycode, location) async{
     Response response;
     Dio dio = new Dio();
     var data = {'citycode': citycode, 'location': location};
+    print("server_method: getBuildingUrl: " + citycode + ", location: " + location);
     response = await dio.get(servicePath['building'], queryParameters: data);
     if (response.statusCode == 200){
         return response.data;

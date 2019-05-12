@@ -86,11 +86,12 @@ public class UserServiceImpl implements UserService {
         }
         if (phone != null && r.matcher(phone).matches()) {
             String token = UuidUtil.getUUID();
-            UserDto userDto = UserDto.accept(userMapper.selectByPhonePassword(phone, MD5Util.crypt(password)));
-            if (userDto == null) {
+            User user = userMapper.selectByPhonePassword(phone, MD5Util.crypt(password));
+            if (user == null) {
                 return Result.failure(FailureCode.CODE703);
             }
             try {
+                UserDto userDto = UserDto.accept(user);
                 jedis = RedisUtil.getJedis();
                 if (jedis != null) {
                     userInfoMap = ObjectUtil.toMap(userDto, String.class, "token");
@@ -177,7 +178,6 @@ public class UserServiceImpl implements UserService {
         }
         int result = userMapper.updateByPrimaryKeySelective(User.accept(dto));
         if (result == 1) {
-            log.info("mysql 用户信息修改成功");
             try {
                 jedis = RedisUtil.getJedis();
                 if (jedis != null) {
@@ -283,10 +283,11 @@ public class UserServiceImpl implements UserService {
             return Result.failure(FailureCode.CODE501);
         }
         Map<String, List<BuildingFollowDto>> dtoListMap = dtoList.stream().collect(Collectors.groupingBy(BuildingFollowDto::getCityName));
+        // 同一cityName下的按照createTime排序
         dtoListMap.values().forEach(list -> list.sort(Comparator.comparing(BuildingFollowDto::getCreateTime).reversed()));
         Map<String, List<BuildingFollowDto>> finalMap = new LinkedHashMap<>();
+        // 不同cityName下的按照第一个的距离来排序
         dtoListMap.entrySet().stream().sorted(Comparator.comparing(map -> map.getValue().get(0).getDistance())).forEach(e -> finalMap.put(e.getKey(), e.getValue()));
-//        dtoListMap.entrySet().stream().sorted((map1, map2) -> map2.getValue().get(0).getCreateTime().compareTo(map1.getValue().get(0).getCreateTime())).forEach(e -> finalMap.put(e.getKey(), e.getValue()));
         return Result.success(finalMap);
     }
 }

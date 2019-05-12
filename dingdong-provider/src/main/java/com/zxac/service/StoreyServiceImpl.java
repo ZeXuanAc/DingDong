@@ -99,7 +99,7 @@ public class StoreyServiceImpl implements StoreyService {
         if (result != 1) {
             throw new BusinessException(FailureCode.CODE650);
         }
-        return Result.success("新增building成功");
+        return Result.success("新增storey成功");
     }
 
     @Override
@@ -148,7 +148,7 @@ public class StoreyServiceImpl implements StoreyService {
                 throw new BusinessException(FailureCode.CODE603);
             }
         }
-        return Result.success("更新building信息成功");
+        return Result.success("更新storey信息成功");
     }
 
 }

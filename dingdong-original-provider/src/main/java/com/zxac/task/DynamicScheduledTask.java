@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DynamicScheduledTask implements SchedulingConfigurer {
-    // 定时器执行频率，默认隔10s执行一次
+    // 定时器执行频率，默认1s执行一次
     private static final String DEFAULT_CRON = "0/1 * * * * ?";
     private String cron = DEFAULT_CRON;
 

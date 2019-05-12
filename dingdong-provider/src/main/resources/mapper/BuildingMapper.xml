@@ -157,4 +157,8 @@
     </if>
     order by update_time desc
   </select>
+
+  <select id="getCitycodeList" resultType="java.lang.String">
+    select DISTINCT citycode from building
+  </select>
 </mapper>
