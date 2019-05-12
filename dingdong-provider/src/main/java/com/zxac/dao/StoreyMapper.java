@@ -10,19 +10,22 @@ import java.util.List;
 public interface StoreyMapper {
     int deleteByPrimaryKey(Integer id);
 
-    int insert(Storey record);
-
     int insertSelective(Storey record);
 
     Storey selectByPrimaryKey(Integer id);
 
     int updateByPrimaryKeySelective(Storey record);
 
-    int updateByPrimaryKey(Storey record);
-
     List<Storey> getListByBuildingId(@Param("buildingId") Integer buildingId);
 
     // 通过 admin_id 或 其他条件 得到符合的building
     List<StoreyDto> getListByDto(StoreyDto dto);
+
+    // 通过 name、floor、gender查询
+    List<Storey> selectByNameFloorGender(@Param("storeyName") String storeyName,
+                                         @Param("floor") String floor,
+                                         @Param("buildingName") String buildingName,
+                                         @Param("citycode") String citycode,
+                                         @Param("storeyGender") String storeyGender);
 
 }

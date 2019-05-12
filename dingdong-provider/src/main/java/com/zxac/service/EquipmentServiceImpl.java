@@ -5,19 +5,16 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zxac.constant.Common;
-import com.zxac.dao.AdminMapper;
-import com.zxac.dao.BuildingMapper;
-import com.zxac.dao.EquipmentMapper;
-import com.zxac.dao.StoreyMapper;
-import com.zxac.dto.BuildingDto;
-import com.zxac.dto.EquipmentDto;
-import com.zxac.dto.EquipmentStatusDto;
+import com.zxac.dao.*;
+import com.zxac.dto.*;
 import com.zxac.exception.BusinessException;
 import com.zxac.exception.FailureCode;
 import com.zxac.model.*;
 import com.zxac.utils.RedisUtil;
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,16 +30,23 @@ import java.util.List;
 public class EquipmentServiceImpl implements EquipmentService{
 
     @Autowired
+    private AdminMapper adminMapper;
+
+    @Autowired
+    private AdminBuildingMapper adminBuildingMapper;
+
+    @Autowired
+    private CityMapper cityMapper;
+
+    @Autowired
     private BuildingMapper buildingMapper;
+
+    @Autowired
+    private StoreyMapper storeyMapper;
 
     @Autowired
     private EquipmentMapper equipmentMapper;
 
-    @Autowired
-    private AdminMapper adminMapper;
-
-    @Autowired
-    private StoreyMapper storeyMapper;
 
     /**
      * 得到所有设备
@@ -200,5 +204,78 @@ public class EquipmentServiceImpl implements EquipmentService{
         } catch (Exception e) {
             throw new BusinessException(FailureCode.CODE917);
         }
+    }
+
+    /**
+     * 判断该数据是否属于存在的city，不属于则新增city、building、storey、equipment信息
+     * @param dto
+     * @return
+     */
+    @Override
+    @Transactional
+    public Result init(EquipmentInitDto dto) {
+        // 判断是否属于已有的city
+        if(StringUtils.isBlank(dto.getCitycode()) || StringUtils.isBlank(dto.getCityName()) || StringUtils.isBlank(dto.getProvince())) {
+            return Result.failure(FailureCode.CODE926);
+        }
+        if(StringUtils.isBlank(dto.getBuildingName())) {
+            return Result.failure(FailureCode.CODE927);
+        }
+        if(StringUtils.isBlank(dto.getStoreyName()) || StringUtils.isBlank(dto.getFloor()) || StringUtils.isBlank(dto.getStoreyGender())
+                || StringUtils.isBlank(dto.getLatitude()) || StringUtils.isBlank(dto.getLongitude())) {
+            return Result.failure(FailureCode.CODE929);
+        }
+        if(StringUtils.isBlank(dto.getEqName())) {
+            return Result.failure(FailureCode.CODE930);
+        }
+        List<City> cityList = cityMapper.getCityListByDto(CityDto.builder().citycode(dto.getCitycode()).build());
+        if(cityList == null || cityList.size() != 1) {
+            City city = City.builder().citycode(dto.getCitycode()).name(dto.getCityName()).province(dto.getProvince()).build();
+            cityMapper.insertSelective(city);
+        }
+        log.info("equipment init city success..");
+
+        try {
+            List<Building> buildingList = buildingMapper.selectListByCitycodeName(dto.getBuildingName(), dto.getCitycode());
+            Building building;
+            if (buildingList != null && buildingList.size() == 1) {
+                building = buildingList.get(0);
+            } else {
+                if (dto.getAdminId() == null) {
+                    throw new BusinessException(FailureCode.CODE928);
+                }
+                building = Building.builder().name(dto.getBuildingName()).citycode(dto.getCitycode())
+                        .cityName(dto.getCityName()).eqNum(1).build();
+                buildingMapper.insertSelective(building);
+                AdminBuilding adminBuilding = new AdminBuilding();
+                adminBuilding.setAdminId(dto.getAdminId());
+                adminBuilding.setBuildingId(building.getId());
+                adminBuildingMapper.insertSelective(adminBuilding);
+            }
+            dto.setBuildingId(building.getId());
+            log.info("equipment init building success..");
+
+            List<Storey> storeyList = storeyMapper.selectByNameFloorGender(dto.getStoreyName(), dto.getFloor(), dto.getBuildingName(), dto.getCitycode(), dto.getStoreyGender());
+            Storey storey;
+            if (storeyList != null && storeyList.size() == 1) {
+                storey = storeyList.get(0);
+            } else {
+                storey = Storey.builder().name(dto.getStoreyName()).buildingId(dto.getBuildingId()).floor(dto.getFloor())
+                        .gender(dto.getStoreyGender()).latitude(dto.getLatitude()).longitude(dto.getLongitude()).eqNum(1).build();
+                storeyMapper.insertSelective(storey);
+            }
+            dto.setStoreyId(storey.getId());
+            log.info("equipment init storey success..");
+
+            Equipment equipment = new Equipment();
+            equipment.setName(dto.getEqName());
+            equipment.setStoreyId(dto.getStoreyId());
+            equipmentMapper.insertSelective(equipment);
+            log.info("equipment init equipment success..");
+        } catch (Exception e) {
+            log.warn("equipment init: ", e);
+            throw new BusinessException(FailureCode.CODE650);
+        }
+        return Result.success("设备初始化成功");
     }
 }

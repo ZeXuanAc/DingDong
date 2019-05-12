@@ -48,14 +48,12 @@ public class StoreyServiceImpl implements StoreyService {
     private EquipmentMapper equipmentMapper;
 
     /**
-     * 得到排序后的楼层列表
      * @param buildingId
      * @return
      */
     @Override
     public Result getStoreyList(Integer buildingId) {
         List<Storey> storeyList = storeyMapper.getListByBuildingId(buildingId);
-        storeyList.sort(Comparator.comparing(Storey::getPriority));
         return Result.success(storeyList);
     }
 

@@ -113,7 +113,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="设备数量" prop="eqNum">
-          <el-input v-model="temp.eqNum" placeholder="eqNum" type="number" />
+          <el-input v-model="temp.eqNum" :disabled="dialogStatus === 'create'" placeholder="eqNum" type="number" />
         </el-form-item>
         <el-form-item label="优先级" prop="priority">
           <el-input v-model="temp.priority" placeholder="priority" type="number" />
@@ -171,13 +171,16 @@ export default {
           { required: true, message: 'buildingName is required', trigger: 'change' }
         ],
         floor: [
-          { required: true, message: 'floor is required', trigger: 'change' }
+          { required: true, message: 'floor is required', trigger: 'change' },
+          { type: 'string', max: 10, message: 'floor不能大于10位', trigger: 'blur' }
         ],
         latitude: [
-          { required: true, message: 'latitude is required', trigger: 'change' }
+          { required: true, message: 'latitude is required', trigger: 'change' },
+          { type: 'string', max: 30, message: '纬度不能大于30位', trigger: 'blur' }
         ],
         longitude: [
-          { required: true, message: 'longitude is required', trigger: 'change' }
+          { required: true, message: 'longitude is required', trigger: 'change' },
+          { type: 'string', max: 30, message: '经度不能大于30位', trigger: 'blur' }
         ]
       },
       temp: {

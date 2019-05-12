@@ -2,6 +2,7 @@ package com.zxac.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.zxac.dto.EquipmentDto;
+import com.zxac.dto.EquipmentInitDto;
 import com.zxac.exception.BusinessException;
 import com.zxac.exception.FailureCode;
 import com.zxac.model.Equipment;
@@ -11,6 +12,7 @@ import com.zxac.permission.PermissionModule;
 import com.zxac.service.EquipmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -100,4 +102,22 @@ public class EquipmentController {
             throw new BusinessException(FailureCode.CODE916);
         }
     }
+
+
+    // 初始化设备信息接口
+    @PermissionModule(belong = Module.ADMIN)
+    @PostMapping(value = "admin/equipment/init")
+    public Result init(EquipmentInitDto dto) {
+        try {
+            return equipmentService.init(dto);
+        } catch (Exception e) {
+            log.warn("equipment init : ", e);
+            if (e instanceof BusinessException) {
+                throw e;
+            }
+            throw new BusinessException(FailureCode.CODE925);
+        }
+    }
+
+
 }

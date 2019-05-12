@@ -105,6 +105,14 @@ public enum FailureCode {
     CODE917("917", "管理平台--更新building和storey的eq_num异常"),
 
 
+    CODE925("925", "管理平台--初始化equipment异常"),
+    CODE926("926", "管理平台--初始化equipment失败--请携带citycode、province和cityName"),
+    CODE927("927", "管理平台--初始化equipment失败--请携带buildingName"),
+    CODE928("928", "管理平台--初始化equipment失败--请携带adminId"),
+    CODE929("929", "管理平台--初始化equipment失败--请携带storey相关参数"),
+    CODE930("930", "管理平台--初始化equipment失败--请携带eqName"),
+
+
 
     ;
 

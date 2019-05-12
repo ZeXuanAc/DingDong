@@ -161,4 +161,13 @@
   <select id="getCitycodeList" resultType="java.lang.String">
     select DISTINCT citycode from building
   </select>
+
+
+  <select id="selectListByCitycodeName" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from building
+    where citycode = #{citycode,jdbcType=VARCHAR}
+    and name = #{name,jdbcType=VARCHAR}
+  </select>
 </mapper>

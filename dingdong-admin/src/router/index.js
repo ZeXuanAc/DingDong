@@ -25,7 +25,7 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('../views/dashboard/index'),
-      meta: { title: '首页', icon: 'home' }
+      meta: { title: '首页', icon: 'home', keepAlive: false }
     }]
   },
   {
@@ -41,17 +41,17 @@ export const constantRoutes = [
       {
         path: 'building',
         component: () => import('../views/info-manage/building/index'),
-        meta: { title: 'building管理' }
+        meta: { title: 'building管理', keepAlive: false }
       },
       {
         path: 'storey',
         component: () => import('../views/info-manage/storey/index'),
-        meta: { title: 'storey管理' }
+        meta: { title: 'storey管理', keepAlive: false }
       },
       {
         path: 'equipment',
         component: () => import('../views/info-manage/equipment/index'),
-        meta: { title: 'equipment管理' }
+        meta: { title: 'equipment管理', keepAlive: false }
       }
     ]
   },
@@ -69,19 +69,19 @@ export const constantRoutes = [
         path: 'keyboard',
         component: () => import('../views/charts/keyboard'),
         name: 'KeyboardChart',
-        meta: { title: 'keyboardChart', noCache: true }
+        meta: { title: 'keyboardChart', noCache: true, keepAlive: false }
       },
       {
         path: 'line',
         component: () => import('../views/charts/line'),
         name: 'LineChart',
-        meta: { title: 'lineChart', noCache: true }
+        meta: { title: 'lineChart', noCache: true, keepAlive: false }
       },
       {
         path: 'mix-chart',
         component: () => import('../views/charts/mix-chart'),
         name: 'MixChart',
-        meta: { title: 'mixChart', noCache: true }
+        meta: { title: 'mixChart', noCache: true, keepAlive: false }
       }
     ]
   }
@@ -97,7 +97,7 @@ export const asyncRoutes = [
       path: 'index',
       name: 'City',
       component: () => import('../views/city/index'),
-      meta: { title: 'city管理', icon: 'international', roles: ['admin'] }
+      meta: { title: 'city管理', icon: 'international', roles: ['admin'], keepAlive: false }
     }]
   },
   {
@@ -108,7 +108,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'From',
         component: () => import('../views/eq-init/index'),
-        meta: { title: '设备初始化', icon: 'init', roles: ['admin'] }
+        meta: { title: '设备初始化', icon: 'init', roles: ['admin'], keepAlive: true }
       }
     ]
   },

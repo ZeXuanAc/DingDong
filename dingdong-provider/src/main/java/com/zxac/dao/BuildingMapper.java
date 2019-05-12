@@ -24,4 +24,6 @@ public interface BuildingMapper {
 
     List<String> getCitycodeList();
 
+    List<Building> selectListByCitycodeName(@Param("name") String name, @Param("citycode") String citycode);
+
 }

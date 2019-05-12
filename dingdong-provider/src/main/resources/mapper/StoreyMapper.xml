@@ -41,7 +41,7 @@
     delete from storey
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insertSelective" parameterType="com.zxac.model.Storey">
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.zxac.model.Storey">
     insert into storey
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -180,5 +180,15 @@
       and s.gender = #{gender}
     </if>
     order by update_time desc
+  </select>
+
+  <select id="selectByNameFloorGender" resultMap="BaseResultMap">
+    select s.id, s.name, s.building_id, s.floor, s.gender, s.longitude, s.latitude, s.eq_num, s.priority, s.create_time, s.update_time
+    from storey s, building b where s.building_id = b.id
+    and s.name = #{storeyName,jdbcType=VARCHAR}
+    and s.floor = #{floor,jdbcType=VARCHAR}
+    and b.name = #{buildingName,jdbcType=VARCHAR}
+    and b.citycode = #{citycode,jdbcType=VARCHAR}
+    and s.gender = #{storeyGender,jdbcType=VARCHAR}
   </select>
 </mapper>

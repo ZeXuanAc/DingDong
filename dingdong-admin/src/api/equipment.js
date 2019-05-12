@@ -38,3 +38,11 @@ export function equipmentDelete(params) {
     params: params
   })
 }
+
+export function equipmentInit(params) {
+  return request({
+    url: '/admin/equipment/init',
+    method: 'post',
+    params: params
+  })
+}

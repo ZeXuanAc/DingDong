@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class CityDto implements Serializable {
 
     private Integer id;

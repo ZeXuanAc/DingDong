@@ -60,8 +60,8 @@
       </el-table-column>
       <el-table-column label="状况" align="center">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.condition === '1'" type="primary">正常</el-tag>
-          <el-tag v-if="scope.row.condition === '0'" type="warning">维护中</el-tag>
+          <el-tag v-if="scope.row.condition === '1'" type="success">正常</el-tag>
+          <el-tag v-if="scope.row.condition === '0'" type="danger">维护中</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="洗手间性别" align="center">

@@ -1,6 +1,7 @@
 package com.zxac.service;
 
 import com.zxac.dto.EquipmentDto;
+import com.zxac.dto.EquipmentInitDto;
 import com.zxac.dto.EquipmentStatusDto;
 import com.zxac.model.Equipment;
 import com.zxac.model.Result;
@@ -71,4 +72,10 @@ public interface EquipmentService {
     Result update(EquipmentDto dto);
 
 
+    /**
+     * 初始化设备
+     * @param dto
+     * @return
+     */
+    Result init(EquipmentInitDto dto);
 }
