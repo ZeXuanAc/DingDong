@@ -35,14 +35,32 @@ public class DistanceUtil {
     }
 
 
-    public static String format2decimal(Double distance) {
+    public static String format2decimal(double distance) {
+        String result = String.valueOf(distance);
         String unit = "m";
         DecimalFormat df = new DecimalFormat("#.0");
         if (distance > 1000) {
             distance /= 1000;
             unit = "km";
         }
-        return df.format(distance) + unit;
+        if (distance != 0) {
+            result = df.format(distance);
+        }
+        return result + unit;
+    }
+
+
+    // 保留一位小数
+    public static String calcPercent(Integer num, Integer total) {
+        double doubleNum = num;
+        double doubleTotal = total;
+        double result = doubleNum / doubleTotal * 100;
+        DecimalFormat df = new DecimalFormat("#.0");
+        String resultStr = String.valueOf(result);
+        if (result != 0) {
+            resultStr = df.format(result);
+        }
+        return resultStr;
     }
 
 }

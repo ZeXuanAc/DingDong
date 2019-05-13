@@ -47,3 +47,12 @@ export function buildingStoreyList(params) {
     params
   })
 }
+
+export function getStoreyOccupancyRate(params) {
+  return request({
+    url: '/admin/building/storeyOccupancyRate',
+    method: 'get',
+    params
+  })
+}
+

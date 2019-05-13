@@ -5,7 +5,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
-@PropertySource(value = "classpath:config/urlConnection.properties")
+@PropertySource(value = "classpath:config/url_connection.properties")
 public class UrlConfig {
 
     @Value("${redis_set}")

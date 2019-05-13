@@ -208,7 +208,7 @@ export default {
     buildingList({ pageNum: 1, pageSize: 2147483647, adminId: this.$store.getters.id }).then(response => {
       response.data.list.forEach(item => this.buildingSet.add(item))
       this.getList()
-    }).catch(e => {
+    }).catch(() => {
       this.$message({
         message: '获取buildingSet失败',
         type: 'danger'

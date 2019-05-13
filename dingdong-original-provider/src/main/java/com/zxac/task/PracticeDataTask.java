@@ -32,7 +32,7 @@ public class PracticeDataTask extends DynamicScheduledTask{
     @Autowired
     public UrlConfig urlConfig;
 
-    @Value("${eqNum}")
+    @Value("${eq_num}")
     public Integer eqNumConfig;
 
     private int[] randomArr = new int[200];

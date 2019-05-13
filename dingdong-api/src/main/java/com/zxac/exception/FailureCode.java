@@ -16,6 +16,7 @@ public enum FailureCode {
     CODE601("601", "redis 更新错误"),
     CODE602("602", "jedis is null"),
     CODE603("603", "jedis 删除key异常"),
+    CODE604("604", "jedis 获取keys异常"),
 
     // 通用
     CODE650("650", "管理平台--新增数据失败--mysql插入异常"),
@@ -111,6 +112,12 @@ public enum FailureCode {
     CODE928("928", "管理平台--初始化equipment失败--请携带adminId"),
     CODE929("929", "管理平台--初始化equipment失败--请携带storey相关参数"),
     CODE930("930", "管理平台--初始化equipment失败--请携带eqName"),
+
+
+    CODE940("940", "storey占有率统计--待处理数据为空"),
+    CODE941("941", "storey占有率统计--批量插入异常"),
+    CODE942("942", "storey占有率统计--buildingId和latestTime不能为空"),
+    CODE943("943", "storey占有率统计--获取最新的building数据异常"),
 
 
 

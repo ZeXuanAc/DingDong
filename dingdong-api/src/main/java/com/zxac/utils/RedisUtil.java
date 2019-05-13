@@ -4,11 +4,10 @@ import com.zxac.constant.Common;
 import com.zxac.exception.BusinessException;
 import com.zxac.exception.FailureCode;
 import lombok.extern.slf4j.Slf4j;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -84,6 +83,29 @@ public final class RedisUtil {
     public static void close (Jedis jedis) {
         if (jedis != null) {
             jedis.close();
+        }
+    }
+
+    public static Map<String, Response<Map<String, String>>> getKeys (String pattern) {
+        Jedis jedis = null;
+        try {
+            jedis = RedisUtil.getJedis();
+            if (jedis != null) {
+                Pipeline pipeline = jedis.pipelined();
+                Set<String> keys = jedis.keys(pattern);
+                Map<String, Response<Map<String,String>>> responses = new HashMap<>(keys.size());
+                keys.forEach(key -> responses.put(key, pipeline.hgetAll(key)));
+                pipeline.sync();
+                return responses;
+            } else {
+                log.error("jedis is null");
+                throw new BusinessException(FailureCode.CODE600);
+            }
+        } catch (Exception e) {
+            log.error("获取redis key异常, pattern: ", pattern);
+            throw new BusinessException(FailureCode.CODE604);
+        } finally {
+            close(jedis);
         }
     }
 

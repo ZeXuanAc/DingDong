@@ -66,10 +66,10 @@ export const constantRoutes = [
     },
     children: [
       {
-        path: 'keyboard',
-        component: () => import('../views/charts/keyboard'),
-        name: 'KeyboardChart',
-        meta: { title: 'keyboardChart', noCache: true, keepAlive: false }
+        path: 'occupancyRate',
+        component: () => import('../views/charts/occupancy-rate'),
+        name: 'OccupancyRateChart',
+        meta: { title: '实时占有率', noCache: true, keepAlive: true }
       },
       {
         path: 'line',

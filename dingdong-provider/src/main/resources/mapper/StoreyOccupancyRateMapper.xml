@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxac.dao.StoreyOccupancyRateMapper">
+  <resultMap id="BaseResultMap" type="com.zxac.model.StoreyOccupancyRate">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="building_id" jdbcType="INTEGER" property="buildingId" />
+    <result column="storey_id" jdbcType="INTEGER" property="storeyId" />
+    <result column="total_eq_num" jdbcType="INTEGER" property="totalEqNum" />
+    <result column="use_eq_num" jdbcType="INTEGER" property="useEqNum" />
+    <result column="free_eq_num" jdbcType="INTEGER" property="freeEqNum" />
+    <result column="abnormal_eq_num" jdbcType="INTEGER" property="abnormalEqNum" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <resultMap id="DtoResultMap" type="com.zxac.dto.StoreyOccupancyRateDto">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="building_id" jdbcType="INTEGER" property="buildingId" />
+    <result column="storey_id" jdbcType="INTEGER" property="storeyId" />
+    <result column="storey_name" jdbcType="INTEGER" property="storeyName" />
+    <result column="total_eq_num" jdbcType="INTEGER" property="totalEqNum" />
+    <result column="use_eq_num" jdbcType="INTEGER" property="useEqNum" />
+    <result column="free_eq_num" jdbcType="INTEGER" property="freeEqNum" />
+    <result column="abnormal_eq_num" jdbcType="INTEGER" property="abnormalEqNum" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, building_id, storey_id, total_eq_num, use_eq_num, free_eq_num, abnormal_eq_num,
+    create_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from storey_occupancy_rate
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <insert id="insertSelective" parameterType="com.zxac.model.StoreyOccupancyRate">
+    insert into storey_occupancy_rate
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="buildingId != null">
+        building_id,
+      </if>
+      <if test="storeyId != null">
+        storey_id,
+      </if>
+      <if test="totalEqNum != null">
+        total_eq_num,
+      </if>
+      <if test="useEqNum != null">
+        use_eq_num,
+      </if>
+      <if test="freeEqNum != null">
+        free_eq_num,
+      </if>
+      <if test="abnormalEqNum != null">
+        abnormal_eq_num,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="buildingId != null">
+        #{buildingId,jdbcType=INTEGER},
+      </if>
+      <if test="storeyId != null">
+        #{storeyId,jdbcType=INTEGER},
+      </if>
+      <if test="totalEqNum != null">
+        #{totalEqNum,jdbcType=INTEGER},
+      </if>
+      <if test="useEqNum != null">
+        #{useEqNum,jdbcType=INTEGER},
+      </if>
+      <if test="freeEqNum != null">
+        #{freeEqNum,jdbcType=INTEGER},
+      </if>
+      <if test="abnormalEqNum != null">
+        #{abnormalEqNum,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <!-- 批量插入 -->
+  <insert id ="insertBatch" parameterType="java.util.List" >
+    insert into storey_occupancy_rate
+    (building_id, storey_id, total_eq_num, use_eq_num, free_eq_num, abnormal_eq_num)
+    values
+    <foreach collection ="list" item="item" index= "index" separator =",">
+      (
+      #{item.buildingId}, #{item.storeyId}, #{item.totalEqNum},
+      #{item.useEqNum},#{item.freeEqNum}, #{item.abnormalEqNum}
+      )
+    </foreach >
+  </insert >
+
+  <select id="selectByBuildingIdCreateTime" resultMap="DtoResultMap">
+    select sor.id, sor.building_id, sor.storey_id, s.name as storey_name, sor.total_eq_num, sor.use_eq_num, sor.free_eq_num,
+    sor.abnormal_eq_num, sor.create_time
+    from storey_occupancy_rate sor, storey s
+    where sor.storey_id = s.id
+    and sor.create_time &gt;= #{createTime}
+    and sor.building_id = #{buildingId}
+    order by create_time
+  </select>
+
+</mapper>

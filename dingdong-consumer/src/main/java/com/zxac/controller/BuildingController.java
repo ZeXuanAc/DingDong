@@ -6,6 +6,7 @@ import com.zxac.exception.BusinessException;
 import com.zxac.exception.FailureCode;
 import com.zxac.model.Result;
 import com.zxac.service.BuildingService;
+import com.zxac.service.StoreyOccupancyRateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +20,9 @@ public class BuildingController {
 
     @Reference(application = "${dubbo.application.id}", url = "dubbo://localhost:12345")
     private BuildingService buildingService;
+
+    @Reference(application = "${dubbo.application.id}", url = "dubbo://localhost:12345")
+    private StoreyOccupancyRateService storeyOccupancyRateService;
 
     // 得到该citycode下的building
     @GetMapping(value = "building")
@@ -87,6 +91,18 @@ public class BuildingController {
         } catch (Exception e) {
             log.error("building update : ", e);
             throw new BusinessException(FailureCode.CODE865);
+        }
+    }
+
+
+    // 得到该building下的storey的占有率
+    @GetMapping(value = "admin/building/storeyOccupancyRate")
+    public Result getStoreyOccupancyRate(Integer buildingId, String latestTime) {
+        try {
+            return storeyOccupancyRateService.getStoreyOccupancyRate(buildingId, latestTime);
+        } catch (Exception e) {
+            log.error("building update : ", e);
+            throw new BusinessException(FailureCode.CODE943);
         }
     }
 
