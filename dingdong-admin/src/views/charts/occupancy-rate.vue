@@ -1,6 +1,15 @@
 <template>
   <div class="chart-container">
-    <div class="filter-container" style="margin-bottom: 18px">
+    <div class="filter-container" style="margin-top: 20px;margin-left: 20px;">
+      <el-date-picker
+        v-model="datePickerValue"
+        type="datetimerange"
+        :picker-options="pickerOptions"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        align="right"
+      />
       <el-select v-model="buildingName" filterable placeholder="buildingName" clearable style="width: 200px" class="filter-item">
         <el-option v-for="item in buildingSet" :key="item.name" :label="item.name" :value="item.name" />
       </el-select>
@@ -15,6 +24,7 @@
 <script>
 import echarts from 'echarts'
 import { getStoreyOccupancyRate, buildingList } from '../../api/building'
+import { dateFormat } from '../../utils/index'
 
 export default {
   name: 'OccupancyRateChart',
@@ -28,11 +38,48 @@ export default {
       storeyNameData: [],
       xAxisData: [],
       latestTime: '',
-      intervalId: 0
+      endTime: '',
+      datePickerValue: [],
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近1小时',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近3小时',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 3)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近12小时',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 12)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近3天',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 3)
+            picker.$emit('pick', [start, end])
+          }
+        }]
+      }
     }
   },
   created() {
-    this.setInitDate()
+    this.setInitData()
+    this.setDatePikerValue()
     buildingList({ pageNum: 1, pageSize: 2147483647, adminId: this.$store.getters.id }).then(response => {
       response.data.list.forEach(item => this.buildingSet.add(item))
       this.buildingName = this.buildingSet.values().next().value.name
@@ -46,18 +93,22 @@ export default {
   },
   beforeDestroy() {
     this.destroyChat()
-    clearTimeout(this.timer)
   },
   methods: {
-    setInitDate() {
+    setDatePikerValue() {
       const date = new Date()
       const Y = date.getFullYear() + '-'
       const M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
       const D = date.getDate() + ' '
-      const h = '00:'
-      const m = '00:'
-      const s = '00'
+      const h = (date.getHours() - 2 < 10 ? '0' + (date.getHours() - 2) : date.getHours() - 2) + ':'
+      const nowH = date.getHours() + ':'
+      const m = date.getMinutes() + ':'
+      const s = date.getSeconds()
       this.latestTime = Y + M + D + h + m + s
+      this.endTime = Y + M + D + nowH + m + s
+      this.datePickerValue = [this.latestTime, this.endTime]
+    },
+    setInitData() {
       this.list = []
       this.xAxisData = []
       this.storeyNameData = []
@@ -66,8 +117,12 @@ export default {
       this.destroyChat()
       clearInterval(this.intervalId)
       this.setBuildingId(this.buildingName)
-      this.setInitDate()
-      getStoreyOccupancyRate({ buildingId: this.buildingId, latestTime: this.latestTime }).then(response => {
+      this.setInitData()
+      console.log('1---> latestTime: ' + this.latestTime + ' , endTime: ' + this.endTime)
+      this.latestTime = dateFormat(this.datePickerValue[0])
+      this.endTime = dateFormat(this.datePickerValue[1])
+      console.log('2---> latestTime: ' + this.latestTime + ' , endTime: ' + this.endTime)
+      getStoreyOccupancyRate({ buildingId: this.buildingId, latestTime: this.latestTime, endTime: this.endTime }).then(response => {
         this.list.push.apply(this.list, response.data.list)
         this.list.forEach(item => {
           this.storeyNameData.push(item.name)
@@ -78,27 +133,6 @@ export default {
         this.latestTime = response.data.latestTime
         this.xAxisData.push.apply(this.xAxisData, response.data.xAxisData)
         this.initChart()
-        this.intervalId = setInterval(() => {
-          this.getUpdateData()
-        }, 5000)
-      })
-    },
-    getUpdateData() {
-      console.log(new Date() + ' buildingId: ' + this.buildingId + ', latestTime: ' + this.latestTime)
-      getStoreyOccupancyRate({ buildingId: this.buildingId, latestTime: this.latestTime }).then(response => {
-        this.list.forEach(item => {
-          response.data.list.forEach(item2 => {
-            if (item2.name === item.name) {
-              item.data.push.apply(item.data, item2.data)
-            }
-          })
-          console.log('this.list.item.length: ' + item.data.length)
-        })
-        this.latestTime = response.data.latestTime
-        console.log('this.latestTime: ' + this.latestTime)
-        this.xAxisData.push.apply(this.xAxisData, response.data.xAxisData)
-        console.log('this.xAxisData.length: ' + this.xAxisData.length)
-        this.setChartOption()
       })
     },
     setBuildingId(buildingName) {
@@ -118,7 +152,7 @@ export default {
         title: {
           top: 20,
           left: 20,
-          text: this.buildingName + '的实时占有率曲线'
+          text: this.buildingName + '的历史占有率曲线'
         },
         tooltip: {
           trigger: 'axis'
@@ -156,10 +190,10 @@ export default {
         },
         dataZoom: [{
           type: 'inside',
-          start: 90,
+          start: 0,
           end: 100
         }, {
-          start: 90,
+          start: 0,
           end: 100,
           handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
           handleSize: '80%',

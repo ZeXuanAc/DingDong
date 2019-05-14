@@ -97,9 +97,10 @@ public class BuildingController {
 
     // 得到该building下的storey的占有率
     @GetMapping(value = "admin/building/storeyOccupancyRate")
-    public Result getStoreyOccupancyRate(Integer buildingId, String latestTime) {
+    public Result getStoreyOccupancyRate(Integer buildingId, String latestTime,
+                                         @RequestParam(required = false) String endTime) {
         try {
-            return storeyOccupancyRateService.getStoreyOccupancyRate(buildingId, latestTime);
+            return storeyOccupancyRateService.getStoreyOccupancyRate(buildingId, latestTime, endTime);
         } catch (Exception e) {
             log.error("building update : ", e);
             throw new BusinessException(FailureCode.CODE943);

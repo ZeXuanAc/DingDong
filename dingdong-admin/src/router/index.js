@@ -69,7 +69,7 @@ export const constantRoutes = [
         path: 'occupancyRate',
         component: () => import('../views/charts/occupancy-rate'),
         name: 'OccupancyRateChart',
-        meta: { title: '实时占有率', noCache: true, keepAlive: true }
+        meta: { title: '历史占有率', noCache: true, keepAlive: true }
       },
       {
         path: 'line',

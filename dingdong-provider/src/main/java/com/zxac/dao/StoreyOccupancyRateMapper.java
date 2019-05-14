@@ -16,6 +16,7 @@ public interface StoreyOccupancyRateMapper {
 
     // 得到>=createTime 和BuildingId的数据
     List<StoreyOccupancyRateDto> selectByBuildingIdCreateTime(@Param("buildingId") Integer buildingId,
-                                                              @Param("createTime") String createTime);
+                                                              @Param("createTime") String createTime,
+                                                              @Param("endTime") String endTime);
 
 }

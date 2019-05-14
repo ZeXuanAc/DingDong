@@ -81,11 +81,11 @@ public class StoreyOccupancyRateServiceImpl implements StoreyOccupancyRateServic
 
 
     @Override
-    public Result getStoreyOccupancyRate(Integer buildingId, String latestTime) {
+    public Result getStoreyOccupancyRate(Integer buildingId, String latestTime, String endTime) {
         if(buildingId == null || StringUtils.isBlank(latestTime)) {
             return Result.failure(FailureCode.CODE942);
         }
-        List<StoreyOccupancyRateDto> rateList = storeyOccupancyRateMapper.selectByBuildingIdCreateTime(buildingId, latestTime);
+        List<StoreyOccupancyRateDto> rateList = storeyOccupancyRateMapper.selectByBuildingIdCreateTime(buildingId, latestTime, endTime);
         String resultLatestTime = "";
         Map<String, List<StoreyOccupancyRateDto>> rateListMap = new HashMap<>();
         if (rateList != null && !rateList.isEmpty()) {

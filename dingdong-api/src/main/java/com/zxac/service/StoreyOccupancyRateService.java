@@ -21,5 +21,5 @@ public interface StoreyOccupancyRateService {
      * @param latestTime
      * @return
      */
-    Result getStoreyOccupancyRate(Integer buildingId, String latestTime);
+    Result getStoreyOccupancyRate(Integer buildingId, String latestTime, String endTime);
 }
