@@ -12,11 +12,9 @@ const mutations = {
 
 const actions = {
   getStoreyNum({ commit }) {
-    console.log('start store getStoreyNum')
     return new Promise((resolve, reject) => {
       storeyInfo().then(response => {
         commit('SET_STOREYNUM', response.data.length)
-        console.log('get api getStoreyNum : ' + response.data.length)
         resolve(response.data)
       }).catch(error => {
         reject(error)

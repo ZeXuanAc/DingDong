@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxac.dao.StoreyUseCountMapper">
+  <resultMap id="BaseResultMap" type="com.zxac.model.StoreyUseCount">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="start_time" jdbcType="VARCHAR" property="startTime" />
+    <result column="building_id" jdbcType="INTEGER" property="buildingId" />
+    <result column="storey_id" jdbcType="INTEGER" property="storeyId" />
+    <result column="storey_name" jdbcType="VARCHAR" property="storeyName" />
+    <result column="use_count" jdbcType="INTEGER" property="useCount" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, start_time, building_id, storey_id, storey_name, use_count, create_time, update_time
+  </sql>
+
+  <select id="getLatestStartTime" resultType="java.lang.String">
+    select start_time from storey_use_count group by start_time order by start_time desc limit 1
+  </select>
+
+  <insert id="insertBatch" parameterType="java.util.List">
+    insert into storey_use_count
+    (start_time, building_id, storey_id, storey_name, use_count)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (
+      #{item.startTime}, #{item.buildingId}, #{item.storeyId},
+      #{item.storeyName},#{item.useCount}
+      )
+    </foreach >
+  </insert>
+
+  <select id="getStoreyUseCountFromEquipmentStatus" resultMap="BaseResultMap">
+    select a.building_id, a.storey_id, s.name as storey_name, a.use_count from (
+      select building_id, storey_id, count(*) as use_count
+      from equipment_status es
+      where es.start_time &gt;= #{startTime}
+      and es.start_time &lt;= #{endTime}
+      and es.status = 1 GROUP BY es.storey_id
+    ) as a, storey s where a.storey_id = s.id;
+  </select>
+
+  <select id="selectByNowTime" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" /> from storey_use_count
+    where building_id = #{buildingId}
+    and start_time &gt;= #{startTime}
+    and start_time &lt;= #{endTime}
+  </select>
+
+</mapper>

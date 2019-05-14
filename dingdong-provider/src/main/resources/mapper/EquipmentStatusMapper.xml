@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zxac.dao.EquipmentStatusMapper">
+  <resultMap id="BaseResultMap" type="com.zxac.model.EquipmentStatus">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="start_time" jdbcType="VARCHAR" property="startTime" />
+    <result column="end_time" jdbcType="VARCHAR" property="endTime" />
+    <result column="eq_id" jdbcType="INTEGER" property="eqId" />
+    <result column="eq_name" jdbcType="VARCHAR" property="eqName" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="storey_id" jdbcType="INTEGER" property="storeyId" />
+    <result column="building_id" jdbcType="INTEGER" property="buildingId" />
+    <result column="citycode" jdbcType="VARCHAR" property="citycode" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, start_time, end_time, eq_id, eq_name, status, storey_id, building_id, citycode,
+    create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from equipment_status
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from equipment_status
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertBatch" parameterType="java.util.List">
+    insert into equipment_status
+    (start_time, end_time, eq_id, eq_name, status, storey_id, building_id, citycode)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (
+      #{item.startTime}, #{item.endTime}, #{item.eqId}, #{item.eqName},
+      #{item.status}, #{item.storeyId}, #{item.buildingId}, #{item.citycode}
+      )
+    </foreach>
+  </insert>
+
+  <select id="getOldestStartTime" resultType="java.lang.String">
+    select start_time from equipment_status order by start_time limit 1
+  </select>
+
+</mapper>

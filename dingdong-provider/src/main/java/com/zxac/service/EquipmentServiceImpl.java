@@ -31,21 +31,18 @@ public class EquipmentServiceImpl implements EquipmentService{
 
     @Autowired
     private AdminMapper adminMapper;
-
     @Autowired
     private AdminBuildingMapper adminBuildingMapper;
-
     @Autowired
     private CityMapper cityMapper;
-
     @Autowired
     private BuildingMapper buildingMapper;
-
     @Autowired
     private StoreyMapper storeyMapper;
-
     @Autowired
     private EquipmentMapper equipmentMapper;
+    @Autowired
+    private EquipmentStatusMapper equipmentStatusMapper;
 
 
     /**
@@ -277,5 +274,17 @@ public class EquipmentServiceImpl implements EquipmentService{
             throw new BusinessException(FailureCode.CODE650);
         }
         return Result.success("设备初始化成功");
+    }
+
+    @Override
+    public Result insertStatusDto(List<EquipmentStatus> statusList) {
+        if (statusList == null || statusList.isEmpty()) {
+            return Result.success("待处理数据为空，直接返回");
+        }
+        int count = equipmentStatusMapper.insertBatch(statusList);
+        if (!(count > 0)) {
+            return Result.failure("插入失败---> 待插入数：" + statusList.size() + ", 插入数： " + count);
+        }
+        return Result.success("equipmentStatus 持久化完成");
     }
 }

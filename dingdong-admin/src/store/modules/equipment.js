@@ -12,11 +12,9 @@ const mutations = {
 
 const actions = {
   getEquipmentNum({ commit }) {
-    console.log('start store getEquipmentNum')
     return new Promise((resolve, reject) => {
       equipmentInfo().then(response => {
         commit('SET_EQUIPMENTNUM', response.data.length)
-        console.log('get api getEquipmentNum : ' + response.data.length)
         resolve(response.data)
       }).catch(error => {
         reject(error)

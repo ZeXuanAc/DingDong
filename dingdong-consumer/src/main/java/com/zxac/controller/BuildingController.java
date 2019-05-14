@@ -7,6 +7,7 @@ import com.zxac.exception.FailureCode;
 import com.zxac.model.Result;
 import com.zxac.service.BuildingService;
 import com.zxac.service.StoreyOccupancyRateService;
+import com.zxac.service.StoreyUseCountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +24,10 @@ public class BuildingController {
 
     @Reference(application = "${dubbo.application.id}", url = "dubbo://localhost:12345")
     private StoreyOccupancyRateService storeyOccupancyRateService;
+
+    @Reference(application = "${dubbo.application.id}", url = "dubbo://localhost:12345")
+    private StoreyUseCountService storeyUseCountService;
+
 
     // 得到该citycode下的building
     @GetMapping(value = "building")
@@ -102,8 +107,20 @@ public class BuildingController {
         try {
             return storeyOccupancyRateService.getStoreyOccupancyRate(buildingId, latestTime, endTime);
         } catch (Exception e) {
-            log.error("building update : ", e);
+            log.error("building storeyOccupancyRate : ", e);
             throw new BusinessException(FailureCode.CODE943);
+        }
+    }
+
+
+    // 得到该building下的storey的使用量
+    @GetMapping(value = "admin/building/storeyUseCount")
+    public Result getStoreyUseCount(Integer buildingId, String endTime) {
+        try {
+            return storeyUseCountService.getStoreyUseCountList(buildingId, endTime);
+        } catch (Exception e) {
+            log.error("building storeyUseCount : ", e);
+            throw new BusinessException(FailureCode.CODE952);
         }
     }
 

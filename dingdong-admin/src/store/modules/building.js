@@ -12,11 +12,9 @@ const mutations = {
 
 const actions = {
   getBuildingNum({ commit }) {
-    console.log('start store getBuildingNum')
     return new Promise((resolve, reject) => {
       buildingInfo({ citycode: '' }).then(response => {
         commit('SET_BUILDINGNUM', response.data.length)
-        console.log('get api getBuildingNum : ' + response.data.length)
         resolve(response.data)
       }).catch(error => {
         reject(error)

@@ -39,11 +39,9 @@ const mutations = {
 const actions = {
   // user getUserNum
   getUserNum({ commit }) {
-    console.log('start store getUserNum')
     return new Promise((resolve, reject) => {
       getUserNum().then(response => {
         commit('SET_USERNUM', response.data)
-        console.log('get api userNum : ' + response.data)
         resolve(response.data)
       }).catch(error => {
         reject(error)

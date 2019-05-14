@@ -120,6 +120,11 @@ public enum FailureCode {
     CODE943("943", "storey占有率统计--获取最新的building数据异常"),
 
 
+    CODE950("950", "storeyUseCount定时任务insertBatch异常"),
+    CODE951("951", "获取最新的时间失败"),
+    CODE952("952", "storeyUseCount数据获取失败"),
+    CODE953("953", "storeyUseCount数据获取--请携带完整参数"),
+
 
     ;
 

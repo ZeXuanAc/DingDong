@@ -89,11 +89,11 @@
   </insert>
 
   <!-- 批量插入 -->
-  <insert id ="insertBatch" parameterType="java.util.List" >
+  <insert id ="insertBatch" parameterType="java.util.List">
     insert into storey_occupancy_rate
     (building_id, storey_id, total_eq_num, use_eq_num, free_eq_num, abnormal_eq_num)
     values
-    <foreach collection ="list" item="item" index= "index" separator =",">
+    <foreach collection="list" item="item" index="index" separator=",">
       (
       #{item.buildingId}, #{item.storeyId}, #{item.totalEqNum},
       #{item.useEqNum},#{item.freeEqNum}, #{item.abnormalEqNum}

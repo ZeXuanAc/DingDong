@@ -4,6 +4,7 @@ import com.zxac.dto.EquipmentDto;
 import com.zxac.dto.EquipmentInitDto;
 import com.zxac.dto.EquipmentStatusDto;
 import com.zxac.model.Equipment;
+import com.zxac.model.EquipmentStatus;
 import com.zxac.model.Result;
 
 import java.util.List;
@@ -78,4 +79,12 @@ public interface EquipmentService {
      * @return
      */
     Result init(EquipmentInitDto dto);
+
+
+    /**
+     * 批量插入status数据
+     * @param statusList
+     * @return
+     */
+    Result insertStatusDto(List<EquipmentStatus> statusList);
 }
