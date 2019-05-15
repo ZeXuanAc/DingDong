@@ -36,6 +36,14 @@ public class PracticeDataTask extends DynamicScheduledTask{
 
     @Value("${eq_num}")
     public Integer eqNumConfig;
+    @Value("${free_base}")
+    public Integer free_base;
+    @Value("${free_addition}")
+    public Integer free_addition;
+    @Value("${use_base}")
+    public Integer use_base;
+    @Value("${use_addition}")
+    public Integer use_addition;
 
     private int[] randomArr = new int[300]; // 记录每一个equipment当前还剩的时间
     private int[] statusArr = new int[300]; // 记录每一个equipment当前的状态
@@ -56,17 +64,16 @@ public class PracticeDataTask extends DynamicScheduledTask{
                 randomArr[i]--;
                 EquipmentStatusDto dto = eqList.get(i);
                 // 当random剩余的时间小于0时重新生成状态， 上一个状态为1（占用）的时间结束后自动转为0（空闲），上一个状态为0（空闲）的则随机生成状态
-                // 空闲时间随机范围为 （10 ~ 30），占用时间随机范围为（20 ~ 70）
                 // 每次随机生成状态和时间的时候保存时间到数据库
                 if (randomArr[i] <= 0) {
                     EquipmentStatus equipmentStatus = getEquipmentStatus(dto);
-                    randomArr[i] = (int) (Math.random() * 10) + 20;
+                    randomArr[i] = (int) (Math.random() * free_base) + free_addition;
                     if (statusArr[i] == 1) {
                         statusArr[i] = 0;
                     } else {
                         statusArr[i] = (int) (Math.random() * 2);
                         if (statusArr[i] == 1) {
-                            randomArr[i] = (int) (Math.random() * 20) + 50;
+                            randomArr[i] = (int) (Math.random() * use_base) + use_addition;
                         }
                     }
                     equipmentStatus.setStatus(String.valueOf(statusArr[i]));
@@ -98,7 +105,6 @@ public class PracticeDataTask extends DynamicScheduledTask{
                 equipmentService.insertStatusDto(equipmentStatusList);
             }
         }
-        System.out.println();
     }
 
 

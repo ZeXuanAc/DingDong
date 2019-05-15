@@ -18,4 +18,6 @@ public interface StoreyUseCountMapper {
                                          @Param("startTime") String startTime,
                                          @Param("endTime") String endTime);
 
+    int deleteStartTimeData(@Param("startTime") String startTime);
+
 }

@@ -13,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttie/fluttie.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:dingdong_flutter/config/application.dart';
 
 
 class HomePage extends StatefulWidget {

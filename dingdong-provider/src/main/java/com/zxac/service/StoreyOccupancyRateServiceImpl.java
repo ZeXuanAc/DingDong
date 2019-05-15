@@ -99,8 +99,9 @@ public class StoreyOccupancyRateServiceImpl implements StoreyOccupancyRateServic
         if (!rateListMap.isEmpty()) {
             for (Map.Entry<String, List<StoreyOccupancyRateDto>> entry: rateListMap.entrySet()) {
                 List<StoreyOccupancyRateDto> rateDtoList = entry.getValue();
+                rateDtoList.forEach(rateDto -> rateDto.setStoreyName(rateDto.getStoreyName() + "(" + rateDto.getTotalEqNum() + ")"));
                 Map<String, Object> seriesDataMap = new HashMap<>();
-                seriesDataMap.put("name", entry.getKey());
+                seriesDataMap.put("name", entry.getKey() + "(" + rateDtoList.get(0).getTotalEqNum() + ")");
                 List<String> rateStrList = rateDtoList.stream().map(StoreyOccupancyRateDto::getOccupancyRate).collect(Collectors.toList());
                 seriesDataMap.put("data", rateStrList);
                 if (dateList.isEmpty()) {

@@ -45,4 +45,8 @@
     select start_time from equipment_status order by start_time limit 1
   </select>
 
+  <select id="getLatestStartTime" resultType="java.lang.String">
+    select start_time from equipment_status order by start_time desc limit 1
+  </select>
+
 </mapper>

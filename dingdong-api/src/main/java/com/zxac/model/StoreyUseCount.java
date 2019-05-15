@@ -1,8 +1,9 @@
 package com.zxac.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class StoreyUseCount {
+public class StoreyUseCount implements Serializable {
     private Integer id;
 
     private String startTime;

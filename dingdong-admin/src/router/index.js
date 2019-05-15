@@ -72,16 +72,10 @@ export const constantRoutes = [
         meta: { title: '历史占有率', noCache: true, keepAlive: true }
       },
       {
-        path: 'line',
-        component: () => import('../views/charts/line'),
-        name: 'LineChart',
-        meta: { title: 'lineChart', noCache: true, keepAlive: false }
-      },
-      {
-        path: 'mix-chart',
-        component: () => import('../views/charts/mix-chart'),
-        name: 'MixChart',
-        meta: { title: 'mixChart', noCache: true, keepAlive: false }
+        path: 'storey_use_count',
+        component: () => import('../views/charts/storey_use_count'),
+        name: 'StoreyUseCount',
+        meta: { title: '今日访问量', noCache: true, keepAlive: true }
       }
     ]
   }

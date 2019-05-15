@@ -100,7 +100,7 @@ export default {
       const Y = date.getFullYear() + '-'
       const M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
       const D = date.getDate() + ' '
-      const h = (date.getHours() - 2 < 10 ? '0' + (date.getHours() - 2) : date.getHours() - 2) + ':'
+      const h = (date.getHours() - 1 < 10 ? '0' + (date.getHours() - 1) : date.getHours() - 1) + ':'
       const nowH = date.getHours() + ':'
       const m = date.getMinutes() + ':'
       const s = date.getSeconds()
@@ -115,7 +115,6 @@ export default {
     },
     getList() {
       this.destroyChat()
-      clearInterval(this.intervalId)
       this.setBuildingId(this.buildingName)
       this.setInitData()
       console.log('1---> latestTime: ' + this.latestTime + ' , endTime: ' + this.endTime)

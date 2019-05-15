@@ -12,4 +12,6 @@ public interface EquipmentStatusMapper {
     int insertBatch(List<EquipmentStatus> statusList);
 
     String getOldestStartTime();
+
+    String getLatestStartTime();
 }

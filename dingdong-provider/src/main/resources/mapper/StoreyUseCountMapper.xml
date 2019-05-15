@@ -48,4 +48,8 @@
     and start_time &lt;= #{endTime}
   </select>
 
+  <delete id="deleteStartTimeData">
+    delete from storey_use_count where start_time = #{startTime}
+  </delete>
+
 </mapper>
