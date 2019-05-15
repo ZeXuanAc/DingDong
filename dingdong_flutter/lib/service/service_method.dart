@@ -7,7 +7,6 @@ import '../config/service_url.dart';
 Future getHomePageContentUrl(citycode, buildingId, gender) async{
     Response response;
     Dio dio = new Dio();
-    print("getHomePageContentUrl : citycode: " + citycode.toString() + ", buildingId: " + buildingId.toString() + ", gender: " + gender.toString());
     var data = {'citycode': citycode,'buildingId': buildingId, "gender": gender};
     response = await dio.get(servicePath['homePageContext'], queryParameters: data);
     if(response.statusCode == 200){

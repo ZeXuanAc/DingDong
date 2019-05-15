@@ -106,7 +106,7 @@
     sor.abnormal_eq_num, sor.create_time
     from storey_occupancy_rate sor, storey s
     where sor.storey_id = s.id
-    and sor.create_time &gt;= #{createTime}
+    and sor.create_time &gt; #{createTime}
     <if test="endTime != null and endTime != ''">
       and sor.create_time &lt;= #{endTime}
     </if>

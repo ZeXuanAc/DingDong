@@ -89,7 +89,8 @@ public class StoreyOccupancyRateServiceImpl implements StoreyOccupancyRateServic
         String resultLatestTime = "";
         Map<String, List<StoreyOccupancyRateDto>> rateListMap = new HashMap<>();
         if (rateList != null && !rateList.isEmpty()) {
-            rateList.forEach(dto -> dto.setOccupancyRate(DistanceUtil.calcPercent(dto.getUseEqNum(), dto.getTotalEqNum())));
+            // 计算百分比，使用 / （总的 - 失联的）
+            rateList.forEach(dto -> dto.setOccupancyRate(DistanceUtil.calcPercent(dto.getUseEqNum(), dto.getTotalEqNum() - dto.getAbnormalEqNum())));
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             resultLatestTime = sdf.format(rateList.get(rateList.size() - 1).getCreateTime());
             rateListMap = rateList.stream().collect(Collectors.groupingBy(StoreyOccupancyRateDto::getStoreyName));
@@ -99,9 +100,9 @@ public class StoreyOccupancyRateServiceImpl implements StoreyOccupancyRateServic
         if (!rateListMap.isEmpty()) {
             for (Map.Entry<String, List<StoreyOccupancyRateDto>> entry: rateListMap.entrySet()) {
                 List<StoreyOccupancyRateDto> rateDtoList = entry.getValue();
-                rateDtoList.forEach(rateDto -> rateDto.setStoreyName(rateDto.getStoreyName() + "(" + rateDto.getTotalEqNum() + ")"));
+                rateDtoList.forEach(rateDto -> rateDto.setStoreyName(rateDto.getStoreyName()));
                 Map<String, Object> seriesDataMap = new HashMap<>();
-                seriesDataMap.put("name", entry.getKey() + "(" + rateDtoList.get(0).getTotalEqNum() + ")");
+                seriesDataMap.put("name", entry.getKey());
                 List<String> rateStrList = rateDtoList.stream().map(StoreyOccupancyRateDto::getOccupancyRate).collect(Collectors.toList());
                 seriesDataMap.put("data", rateStrList);
                 if (dateList.isEmpty()) {

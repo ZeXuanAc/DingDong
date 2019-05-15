@@ -51,7 +51,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
     Widget build(BuildContext context) {
         ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
 
-        print("build eqMap : " + eqMap.toString());
         if (eqMap == null || eqMap['data'] == null) {
             _toastMsg("网络开了小差, 请检查网络", home_page_timeout);
             if (Application.loadingAnimation != null && nowTime != null && nowTime.difference(animationTime).inSeconds >= 1) {
@@ -742,6 +741,21 @@ Widget _stackImage(eqMap, apartTime){
                     ),
                 ),
                 Text("空闲")
+            ]
+        );
+    } else if (eqMap['status'] == "2") {
+        imageWidget = Column(
+            children: <Widget>[
+                Container(
+                    width: ScreenUtil.getInstance().setWidth(180), height: ScreenUtil.getInstance().setWidth(180),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15.0),
+                        image: DecorationImage(image: AssetImage("assets/images/break.jpg")),
+                        // 生成阴影， 阴影位置由offset决定,阴影模糊层度由blurRadius大小决定（大就更透明更扩散），阴影模糊大小由spreadRadius决定
+                        boxShadow: [BoxShadow(color: Color(0x99d9f554), offset: Offset(2.0, 2.0), blurRadius: 10.0, spreadRadius: 2.0),],
+                    ),
+                ),
+                Text("失联")
             ]
         );
     } else if (eqMap['status'] == "1") {

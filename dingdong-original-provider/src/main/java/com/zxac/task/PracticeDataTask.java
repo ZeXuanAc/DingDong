@@ -23,7 +23,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Component
@@ -53,8 +52,8 @@ public class PracticeDataTask extends DynamicScheduledTask{
 
     @Override
     public void doTask() {
-        List<EquipmentStatusDto> equipmentStatusDtoList = equipmentService.getAllEquipmentDto("");
-        final List<EquipmentStatusDto> eqList = equipmentStatusDtoList.stream().filter(equipment -> equipment.getCondition().equals("1")).collect(Collectors.toList());
+        final List<EquipmentStatusDto> eqList = equipmentService.getAllEquipmentDto("");
+//        final List<EquipmentStatusDto> eqList = equipmentStatusDtoList.stream().filter(equipment -> equipment.getCondition().equals("1")).collect(Collectors.toList());
         List<EquipmentStatus> equipmentStatusList;
         int eqNum = eqList.size();
         if (eqNum > 0) {
@@ -83,7 +82,11 @@ public class PracticeDataTask extends DynamicScheduledTask{
                 }
 
                 // 生成数据
-                dto.setStatus(String.valueOf(statusArr[i]));
+                if (dto.getCondition().equals("0")) {
+                    dto.setStatus("2");
+                } else {
+                    dto.setStatus(String.valueOf(statusArr[i]));
+                }
                 dto.setCreateTimeStr(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 //                log.info(dto.toString());
                 // 发起http请求更新数据

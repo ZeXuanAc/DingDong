@@ -10,6 +10,9 @@
       <el-form-item label="城市名称" prop="cityName">
         <el-input v-model="form.cityName" style="width: 500px" />
       </el-form-item>
+      <el-form-item label="省份" prop="province">
+        <el-input v-model="form.province" style="width: 500px" />
+      </el-form-item>
       <el-form-item label="buildingName" prop="buildingName">
         <el-input v-model="form.buildingName" style="width: 500px" />
       </el-form-item>
@@ -57,6 +60,10 @@ export default {
         ],
         cityName: [
           { required: true, message: '请输入城市名称', trigger: 'change' }
+        ],
+        province: [
+          { required: true, message: '请输入省份', trigger: 'change' },
+          { type: 'string', max: 30, message: 'buildingName不能大于30位', trigger: 'blur' }
         ],
         buildingName: [
           { required: true, message: '请输入buildingName', trigger: 'change' },
