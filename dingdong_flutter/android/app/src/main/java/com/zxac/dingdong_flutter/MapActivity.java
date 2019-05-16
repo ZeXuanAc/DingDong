@@ -9,30 +9,14 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
-import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.BitmapDescriptor;
-import com.baidu.mapapi.map.BitmapDescriptorFactory;
-import com.baidu.mapapi.map.MapStatus;
-import com.baidu.mapapi.map.MapStatusUpdateFactory;
-import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.map.Marker;
-import com.baidu.mapapi.map.MarkerOptions;
-import com.baidu.mapapi.map.MyLocationConfiguration;
-import com.baidu.mapapi.map.MyLocationData;
-import com.baidu.mapapi.map.UiSettings;
+import com.baidu.mapapi.map.*;
 import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.search.route.IndoorPlanNode;
-import com.baidu.mapapi.search.route.IndoorRoutePlanOption;
-import com.baidu.mapapi.search.route.IndoorRouteResult;
-import com.baidu.mapapi.search.route.OnGetRoutePlanResultListener;
-import com.baidu.mapapi.search.route.RoutePlanSearch;
+import com.baidu.mapapi.search.route.*;
 import com.baidu.mapapi.walknavi.WalkNavigateHelper;
 import com.baidu.mapapi.walknavi.adapter.IWEngineInitListener;
 import com.baidu.mapapi.walknavi.adapter.IWRoutePlanListener;
@@ -80,8 +64,8 @@ public class MapActivity extends AppCompatActivity {
     private ImageButton returnEndBtn; // 回到终点按钮
     private LineTextView floorText; // floor文本
 
-    double lat = 30.305088; // todo
-    double lng = 120.113296; // todo
+//    double lat = 30.305088; // todo
+//    double lng = 120.113296; // todo
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,8 +130,8 @@ public class MapActivity extends AppCompatActivity {
             public void onReceiveLocation(BDLocation location) {
             bdLocation = location;
             // 定位获取当前位置
-            bdLocation.setLatitude(lat); // todo
-            bdLocation.setLongitude(lng); // todo
+//            bdLocation.setLatitude(lat); // todo
+//            bdLocation.setLongitude(lng); // todo
             startPt = new LatLng(bdLocation.getLatitude(), bdLocation.getLongitude());
             Log.d("======czx", "定位数据：latitude: " + startPt.latitude + " ; longitude : " + startPt.longitude);
 
@@ -168,7 +152,7 @@ public class MapActivity extends AppCompatActivity {
 
             initMapStatus(getApplicationContext());
 
-            bdLocation.setFloor("F4"); // todo
+//            bdLocation.setFloor("F4"); // todo
             // 如果定位结果在室内
             if (bdLocation.getFloor() != null) {
                 // 当前支持高精度室内定位
@@ -302,10 +286,10 @@ public class MapActivity extends AppCompatActivity {
                 }
                 Log.d("====czx", "startIndoorNavi 当前位置信息： latitude: " + location.getLatitude() + "; longitude: " + location.getLongitude());
 
-                lat += 0.00002; // todo
-                lng += 0.00002; // todo
-                location.setLatitude(lat); // todo
-                location.setLongitude(lng); // todo
+//                lat += 0.00002; // todo
+//                lng += 0.00002; // todo
+//                location.setLatitude(lat); // todo
+//                location.setLongitude(lng); // todo
                 Log.d("======czx", "重新获得定位：latitude: " + location.getLatitude() + "; longitude: " + location.getLongitude());
 
                 // 获取定位并展示在地图中
@@ -314,7 +298,7 @@ public class MapActivity extends AppCompatActivity {
                         .direction(location.getDirection()).latitude(location.getLatitude())
                         .longitude(location.getLongitude()).build();
                 mBaiduMap.setMyLocationData(locData);
-                location.setFloor("F4"); // todo
+//                location.setFloor("F4"); // todo
                 // 如果定位还在室内，则再次进行室内路径规划导航
                 if (location.getFloor() != null) {
                     IndoorPlanNode startNode = new IndoorPlanNode(new LatLng(location.getLatitude(), location.getLongitude()), location.getFloor());

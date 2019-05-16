@@ -1,5 +1,5 @@
-const serviceUrl = 'http://192.168.31.234:8080/'; // 开发环境url
-//const serviceUrl = 'http://192.168.43.120:8080/'; // 开发环境url
+//const serviceUrl = 'http://192.168.31.234:8080/'; // 开发环境url
+const serviceUrl = 'http://192.168.43.120:8080/'; // 开发环境url
 //const serviceUrl = 'http://47.107.118.14:8080/'; // 生产环境
 const servicePath = {
     'homePageContext': serviceUrl + 'redis/get', // 获取 building 下的设备信息

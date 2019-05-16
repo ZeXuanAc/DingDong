@@ -60,7 +60,7 @@ export default {
   methods: {
     setEndTimeInitValue() {
       const date = new Date()
-      const h = date.getHours() + ':'
+      const h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':'
       const m = '00'
       this.endTime = h + m
     },
